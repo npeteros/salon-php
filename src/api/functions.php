@@ -118,7 +118,21 @@ function getAppointmentsByCustomer(int $customerId): array|null
 {
     global $conn;
     $appointments = null;
-    $query = "SELECT * FROM appointments WHERE customer_id = {$customerId}";
+    $query =
+        "SELECT 
+            a.id as appointment_id,
+            u.name as stylist, 
+            s.name as service, 
+            a.status as status,
+            a.scheduled_date as schedule
+        FROM 
+            appointments a 
+        JOIN 
+            services s ON s.id = a.service_id 
+        JOIN 
+            users u ON u.id = a.stylist_id
+        WHERE customer_id = {$customerId};";
+
     if ($r = mysqli_query($conn, $query)) {
         while ($row = mysqli_fetch_assoc($r)) {
             $appointments[] = $row;
@@ -153,10 +167,10 @@ function getAppointmentsByStatus(string $status): array|null
     return $appointments;
 }
 
-function createAppointment(int $customerId, int $stylistId, string $status, string $scheduledDate): int
+function createAppointment(int $customerId, int $stylistId, int $serviceId, string $status = 'pending', string $scheduledDate): int
 {
     global $conn;
-    $query = "INSERT INTO appointments (customer_id, stylist_id, status, scheduled_date) VALUES ({$customerId}, {$stylistId}, '{$status}', '{$scheduledDate}')";
+    $query = "INSERT INTO appointments (customer_id, stylist_id, service_id, status, scheduled_date) VALUES ({$customerId}, {$stylistId}, {$serviceId}, '{$status}', '{$scheduledDate}')";
     if (mysqli_query($conn, $query)) {
         $id = mysqli_insert_id($conn);
         return $id;
@@ -401,6 +415,36 @@ function getServicesByName(string $name): array|null
     global $conn;
     $services = null;
     $query = "SELECT * FROM services WHERE name = '{$name}'";
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $services[] = $row;
+        }
+    }
+    return $services;
+}
+
+function getPopularServices(int $limit): array|null
+{
+    global $conn;
+    $services = null;
+    $query =
+        "SELECT
+            s.id as id,
+            s.name as name,
+            s.price as price,
+            s.duration as duration,
+            s.description as description,
+            COUNT(a.id) as appointment_count
+        FROM
+            services s
+        LEFT JOIN
+            appointments a ON s.id = a.service_id
+        GROUP BY
+            s.id, s.name
+        ORDER BY
+            appointment_count DESC
+        LIMIT {$limit};";
+
     if ($r = mysqli_query($conn, $query)) {
         while ($row = mysqli_fetch_assoc($r)) {
             $services[] = $row;

@@ -17,9 +17,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
             return printJsonData(200, getAppointmentById($_GET['id']));
         return printJsonData(200, getAllAppointments());
     case "POST":
-        if (!isset($_POST['customer_id']) || !isset($_POST['stylist_id']) || !isset($_POST['status']) || !isset($_POST['scheduled_date']))
+        if (!isset($_POST['customer_id']) || !isset($_POST['stylist_id']) || !isset($_POST['service_id']) || !isset($_POST['status']) || !isset($_POST['scheduled_date']))
             return printJsonData(400, "Missing required fields");
-        return createAppointment($_POST['customer_id'], $_POST['stylist_id'], $_POST['status'], $_POST['scheduled_date']) == -1 ? printJsonData(500, "Error creating appointment") : printJsonData(200, "Appointment created successfully");
+        return createAppointment((int) $_POST['customer_id'], (int) $_POST['stylist_id'], (int) $_POST['service_id'], $_POST['status'], $_POST['scheduled_date']) == -1 ? printJsonData(500, "Error creating appointment") : printJsonData(200, "Appointment created successfully");
     case "PATCH":
         if (!isset($_POST['customer_id']) || !isset($_POST['stylist_id']) || !isset($_POST['status']) || !isset($_POST['scheduled_date']))
             return printJsonData(400, "Missing required fields");

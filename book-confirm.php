@@ -9,12 +9,11 @@ $formattedDate = date('l, F j, Y', strtotime($_POST['date']));
 $formattedTime = date('g:i A', strtotime($_POST['time']));
 $formattedDuration = formatTime($service['duration']);
 $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
-// print_r($stylistReviewSummary);
 ?>
 
-<div class="min-h-lvh bg-[#D9D9D9]">
+<div class="h-fit min-h-lvh bg-[#D9D9D9]">
     <?php include './src/includes/dash_nav.php'; ?>
-    <div class="flex h-full gap-4">
+    <div class="flex h-fit md:h-lvh gap-4">
         <?php include './src/includes/side_nav.php'; ?>
 
         <div class="w-full m-6">
@@ -70,7 +69,7 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                     </li>
                 </ol>
                 <div class="w-full flex flex-col gap-4 px-4 pt-4">
-                    <div class="grid grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="w-full flex flex-col gap-4">
                             <div class="w-full flex flex-col">
                                 <div class="w-full flex justify-between items-center">
@@ -96,8 +95,10 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                                 <span class="w-full flex justify-between items-center">
                                     <span class="font-bold"><?php echo $stylist['name']; ?></span>
                                     <p class="flex items-center text-xs gap-2">
-                                        <span class="flex items-center"><?php echo printStars($stylistReviewSummary['average_rating']) ?></span>
-                                        <a class="text-blue-500 underline">(<?php echo $stylistReviewSummary['total_appointments']; ?>)</a>
+                                        <span
+                                            class="flex items-center"><?php echo printStars($stylistReviewSummary['average_rating']) ?></span>
+                                        <a
+                                            class="text-blue-500 underline">(<?php echo $stylistReviewSummary['total_appointments']; ?>)</a>
                                     </p>
                                 </span>
                                 <span class="text-sm"><?php echo $stylist['email']; ?></span>
@@ -135,8 +136,10 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                         </div>
                     </div>
                     <div class="flex flex-col">
-                        <form method="post" action='book-confirm.php' class="flex flex-col gap-4 w-full">
+                        <form id="confirm-booking" class="flex flex-col gap-4 w-full">
                             <div class="flex flex-col gap-2 w-full">
+                                <input type="hidden" name="customer" id="customer"
+                                    value="<?php echo $_SESSION['user']['id']; ?>">
                                 <input type="hidden" name="date" id="date" value="<?php echo $_POST['date'] ?>" />
                                 <input type="hidden" name="time" id="time" value="<?php echo $_POST['time'] ?>" />
                                 <input type="hidden" name="service" id="service"
@@ -144,7 +147,8 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                                 <input type="hidden" name="stylist" id="stylist"
                                     value="<?php echo $_POST['stylist']; ?>" />
                             </div>
-                            <button class=" bg-[#E53C37] hover:bg-[#AD1C1C] text-white rounded-lg px-4 py-2 w-full"
+                            <span class="text-center text-sm text-red-600" id="booking-error"></span>
+                            <button class="bg-[#E53C37] hover:bg-[#AD1C1C] text-white rounded-lg px-4 py-2 w-full"
                                 type="submit">Submit</button>
                         </form>
                         <form method="post" action="./book-stylist.php">
@@ -161,3 +165,5 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
         </div>
     </div>
 </div>
+
+<?php include 'src/includes/footer.php'; ?>
