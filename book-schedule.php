@@ -13,7 +13,7 @@ date_default_timezone_set('Asia/Manila');
                     <li
                         class="flex items-center text-[#E53C37] dark:text-[#E53C37] space-x-2.5 rtl:space-x-reverse sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-2 xl:after:mx-10 dark:after:border-gray-200 w-full">
                         <span
-                            class="flex items-center justify-center w-8 h-8 border border-blue-600 rounded-full shrink-0 dark:border-[#E53C37]">
+                            class="flex items-center justify-center w-8 h-8 rounded-full shrink-0 text-white dark:bg-[#E53C37]">
                             1
                         </span>
                         <span>
