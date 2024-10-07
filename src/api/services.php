@@ -1,11 +1,14 @@
 <?php
-include 'src/api/functions.php';
+include './functions.php';
 
 if ($_SERVER['REQUEST_METHOD']) {
     switch ($_SERVER['REQUEST_METHOD']) {
         case "GET":
-            if ($_GET['name'])
+            if (isset($_GET['name']))
                 return printJsonData(200, getServicesByName($_GET['name']));
+            if(isset($_GET['popular']))
+                if(isset($_GET['search']) && strlen($_GET['search'])) return printJsonData(200, getPopularServicesBySearch( $_GET['search']));
+                else return printJsonData(200, getPopularServices());
             return printJsonData(200, getAllServices());
         case "POST":
             if (!isset($_POST['name']) || !isset($_POST['price']) || !isset($_POST['duration']) || !isset($_POST['followup_duration']))

@@ -114,6 +114,40 @@ function getAppointmentsByScheduledDate(string $scheduledDate): array|null
     return $appointments;
 }
 
+function getAppointmentsByCustomerAndSearch(int $customerId, string $search): array|null
+{
+    global $conn;
+    $appointments = null;
+    $query =
+        "SELECT 
+            a.id as appointment_id,
+            u.name as stylist, 
+            u.img_path as stylist_img,
+            s.name as service, 
+            a.status as status,
+            a.scheduled_date as schedule
+        FROM 
+            appointments a 
+        JOIN 
+            services s ON s.id = a.service_id 
+        JOIN 
+            users u ON u.id = a.stylist_id
+        WHERE (customer_id = {$customerId})
+            AND
+            (s.name LIKE '%{$search}%'
+            OR a.status LIKE '%{$search}%'
+            OR a.scheduled_date LIKE '%{$search}%'
+            OR u.name LIKE '%{$search}%'
+            OR s.name LIKE '%{$search}%');";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $appointments[] = $row;
+        }
+    }
+    return $appointments;
+}
+
 function getAppointmentsByCustomer(int $customerId): array|null
 {
     global $conn;
@@ -122,6 +156,7 @@ function getAppointmentsByCustomer(int $customerId): array|null
         "SELECT 
             a.id as appointment_id,
             u.name as stylist, 
+            u.img_path as stylist_img,
             s.name as service, 
             a.status as status,
             a.scheduled_date as schedule
@@ -423,7 +458,7 @@ function getServicesByName(string $name): array|null
     return $services;
 }
 
-function getPopularServices(int $limit): array|null
+function getPopularServicesBySearch(string $search): array|null
 {
     global $conn;
     $services = null;
@@ -431,9 +466,40 @@ function getPopularServices(int $limit): array|null
         "SELECT
             s.id as id,
             s.name as name,
-            s.price as price,
-            s.duration as duration,
             s.description as description,
+            s.price as price,
+            COUNT(a.id) as appointment_count
+        FROM
+            services s
+        LEFT JOIN
+            appointments a ON s.id = a.service_id
+        WHERE
+            s.name LIKE '%{$search}%'
+            OR s.price LIKE '%{$search}%'
+            OR s.description LIKE '%{$search}%'
+        GROUP BY
+            s.id, s.name, s.price
+        ORDER BY
+            appointment_count DESC";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $services[] = $row;
+        }
+    }
+    return $services;
+}
+
+function getPopularServices(): array|null
+{
+    global $conn;
+    $services = null;
+    $query =
+        "SELECT
+            s.id as id,
+            s.name as name,
+            s.description as description,
+            s.price as price,
             COUNT(a.id) as appointment_count
         FROM
             services s
@@ -442,8 +508,7 @@ function getPopularServices(int $limit): array|null
         GROUP BY
             s.id, s.name
         ORDER BY
-            appointment_count DESC
-        LIMIT {$limit};";
+            appointment_count DESC";
 
     if ($r = mysqli_query($conn, $query)) {
         while ($row = mysqli_fetch_assoc($r)) {
@@ -687,6 +752,40 @@ function createUser(string $name, string $email, string $rawPassword)
     return printJsonData(500, "Failed to create user");
 }
 
+function updateUserProfile(int $id, string $newName, string $newEmail)
+{
+    global $conn;
+    $query = "SELECT email FROM users WHERE email = '{$newEmail}' AND id != {$id}";
+    if ($r = mysqli_query($conn, $query)) {
+        if (mysqli_num_rows($r) > 0)
+            return printJsonData(500, "Email already exists");
+    }
+
+    $query = "UPDATE users SET name = '{$newName}', email = '{$newEmail}', updated_at = CURRENT_TIMESTAMP WHERE id = {$id}";
+    if (mysqli_query($conn, $query)) {
+        return printJsonData(200, "Profile updated successfully");
+    }
+    return printJsonData(500, "Failed to update profile");
+}
+
+function updateUserPassword(int $id, string $oldPassword, string $rawNewPassword)
+{
+    global $conn;
+    $hashedOldPassword = sha1(trim($oldPassword));
+    $query = "SELECT password FROM users WHERE id = {$id} AND password = '{$hashedOldPassword}'";
+    if ($r = mysqli_query($conn, $query)) {
+        if (mysqli_num_rows($r) == 0)
+            return printJsonData(500, "Old password is incorrect");
+    }
+
+    $password = sha1(trim($rawNewPassword));
+    $query = "UPDATE users SET password = '{$password}', updated_at = CURRENT_TIMESTAMP WHERE id = {$id}";
+    if (mysqli_query($conn, $query)) {
+        return printJsonData(200, "Password updated successfully");
+    }
+    return printJsonData(500, "Failed to update password");
+}
+
 function updateUser(int $id, string $name, string $email, string $rawNewPassword)
 {
     global $conn;
@@ -699,12 +798,19 @@ function updateUser(int $id, string $name, string $email, string $rawNewPassword
     return printJsonData(500, "Failed to update user");
 }
 
-function deleteUser(int $id)
+function deleteUser(int $id, string $password)
 {
     global $conn;
+    $hashedOldPassword = sha1(trim($password));
+    $query = "SELECT password FROM users WHERE id = {$id} AND password = '{$hashedOldPassword}'";
+    if ($r = mysqli_query($conn, $query)) {
+        if (mysqli_num_rows($r) == 0)
+            return printJsonData(500, "Password is incorrect");
+    }
+
     $query = "DELETE FROM users WHERE id = {$id}";
     mysqli_query($conn, $query);
     if (mysqli_affected_rows($conn) > 0)
-        return printJsonData(200, "User deleted successfully");
-    return printJsonData(500, "Failed to delete user");
+        return printJsonData(200, "Account deleted successfully");
+    return printJsonData(500, "Failed to delete account");
 }

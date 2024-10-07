@@ -1,6 +1,6 @@
 <?php include 'src/includes/header.php'; ?>
 
-<div class="min-h-screen">
+<div class="min-h-screen bg-white">
     <?php include 'src/includes/navbar.php'; ?>
     <div class="mx-8 my-12 flex flex-col items-center justify-between md:mx-24 md:my-0 md:flex-row">
         <svg width="400" height="200" viewBox="0 0 1245 773" fill="none" xmlns="http://www.w3.org/2000/svg"

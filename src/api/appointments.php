@@ -5,15 +5,18 @@ include './functions.php';
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case "GET":
-        if ($_GET['scheduled_date'])
+        if (isset($_GET['scheduled_date']))
             return printJsonData(200, getAppointmentsByScheduledDate($_GET['scheduled_date']));
-        if ($_GET['customer_id'])
-            return printJsonData(200, getAppointmentsByCustomer($_GET['customer_id']));
-        if ($_GET['stylist_id'])
+        if (isset($_GET['customer_id']))
+            if (isset($_GET['search']))
+                return printJsonData(200, getAppointmentsByCustomerAndSearch((int) $_GET['customer_id'], $_GET['search']));
+            else
+                return printJsonData(200, getAppointmentsByCustomer((int) $_GET['customer_id']));
+        if (isset($_GET['stylist_id']))
             return printJsonData(200, getAppointmentsByStylist($_GET['stylist_id']));
-        if ($_GET['status'])
+        if (isset($_GET['status']))
             return printJsonData(200, getAppointmentsByStatus($_GET['status']));
-        if ($_GET['id'])
+        if (isset($_GET['id']))
             return printJsonData(200, getAppointmentById($_GET['id']));
         return printJsonData(200, getAllAppointments());
     case "POST":

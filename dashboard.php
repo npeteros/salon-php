@@ -2,17 +2,17 @@
 include 'src/includes/header.php';
 include 'src/api/functions.php';
 
-$popularServices = getPopularServices(3);
-$appointments = array_slice(getAppointmentsByCustomer($_SESSION['user']['id']), 0, 3);
+$popularServices = array_slice(getPopularServices(), 0, 3);
+$appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice(getAppointmentsByCustomer($_SESSION['user']['id']), 0, 3) : null;
 ?>
 
-<div class="h-fit min-h-lvh bg-[#D9D9D9]">
+<div class="h-fit min-h-lvh bg-[#D9D9D9] dark:bg-neutral-800">
     <?php include './src/includes/dash_nav.php'; ?>
     <div class="flex h-fit md:h-lvh gap-4">
         <?php include 'src/includes/side_nav.php'; ?>
 
         <div class="flex flex-col gap-4 w-full m-6">
-            <div class="bg-white hidden lg:flex justify-between gap-4 p-4 h-72 rounded-2xl">
+            <div class="bg-white dark:bg-neutral-700 hidden lg:flex justify-between gap-4 p-4 h-72 rounded-2xl">
                 <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" class="h-full"
                     viewBox="0 0 866.33071 605.73993" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <path
@@ -95,61 +95,58 @@ $appointments = array_slice(getAppointmentsByCustomer($_SESSION['user']['id']), 
                         transform="translate(-166.83465 -147.13004)" fill="#3f3d56" />
                 </svg>
                 <div class="flex flex-col gap-4 py-6">
-                    <span class="text-[#A80011] font-bold text-6xl w-3/4">Pamper yourself today!</span>
-                    <button class="bg-[#D01C27] hover:bg-[#A80011] w-fit px-6 py-2 text-white rounded-full"
-                        onclick="window.location.href = './book-schedule.php'">Book an
-                        Appointment Now!</button>
+                    <span class="text-[#A80011] dark:text-white font-bold text-6xl w-3/4">Pamper yourself today!</span>
+                    <button
+                        class="bg-[#D01C27] hover:bg-[#A80011] dark:bg-red-600 dark:hover:bg-red-700 w-fit px-6 py-2 text-white rounded-full"
+                        onclick="window.location.href = './book-schedule.php'">Book an Appointment Now!</button>
                 </div>
             </div>
 
             <div class="flex flex-col lg:flex-row gap-8 w-full">
                 <div class="flex flex-col gap-4 w-full lg:w-1/2">
-                    <span class="text-[#A80011] text-2xl font-medium">Popular Services</span>
-                    <?php foreach ($popularServices as $service): ?>
-                        <div class="bg-white flex justify-between p-4 rounded-2xl">
-                            <div class="bg-white w-full flex justify-between">
-                                <div class="flex gap-4 items-center">
-                                    <svg width="48" height="48" viewBox="0 0 32 32" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M31.6718 3.20422C22.3451 -0.11135 12.2076 -0.3852 2.71558 2.42202C2.33828 2.5123 1.98304 2.67769 1.67108 2.90831C1.35911 3.13893 1.09682 3.43004 0.89985 3.76427C0.702884 4.09851 0.575287 4.469 0.524677 4.85363C0.474067 5.23827 0.501482 5.62916 0.605285 6.00297C1.1248 8.08787 1.88259 10.4833 2.79272 12.6551C2.80835 12.7059 2.83276 12.6815 2.83276 12.6307C2.70093 11.6122 3.48411 10.3261 5.0202 9.85832C12.4023 7.50895 20.3468 7.61413 27.6641 10.1581C27.934 10.2504 28.2196 10.2878 28.5042 10.2679C28.7887 10.2481 29.0664 10.1715 29.3209 10.0426C29.5754 9.91372 29.8015 9.7352 29.9859 9.51755C30.1702 9.29991 30.3092 9.04754 30.3945 8.77535C31.3046 5.84575 31.6718 3.85654 31.7626 3.35851C31.7782 3.26574 31.6962 3.23059 31.6718 3.2052V3.20422ZM9.16949 9.64935C8.05136 9.88274 6.5055 10.2499 5.34538 10.6347C3.02611 11.4344 3.13353 14.2566 4.36885 15.157C4.45967 14.6336 5.0202 13.9217 5.64518 13.6815C7.96054 12.7713 10.4468 12.2274 12.9604 12.0028C11.6831 11.4843 10.437 10.7411 9.18609 9.64837L9.16949 9.64935ZM27.6328 15.2996C24.3008 13.734 20.6887 12.8523 17.0101 12.7065C13.3315 12.5608 9.66094 13.1539 6.21547 14.451C5.11101 14.8679 4.41963 16.2117 5.11101 17.487C6.31883 19.6707 7.68954 21.7602 9.21148 23.7378C8.99274 22.98 9.37945 21.5767 10.8638 21.1178C14.9691 19.8561 19.2766 20.3912 22.1398 21.5504C22.9484 21.8756 24.0929 21.6783 24.7345 20.7174C25.8286 19.0319 26.8237 17.2842 27.7148 15.4832C27.7549 15.4021 27.7149 15.3416 27.6328 15.2996ZM20.9807 25.4165C19.7797 24.81 18.6814 24.0189 17.7259 23.0718C17.2835 22.6294 16.6322 21.9937 15.9457 21.2359C14.3783 21.2359 12.8569 21.3931 11.23 21.9127C9.71928 22.3853 9.57768 24.1304 10.2388 25.0405C11.3569 26.434 12.1411 27.1859 13.392 28.4789C14.055 29.1291 14.9452 29.4954 15.8738 29.5C16.8024 29.5045 17.6962 29.147 18.3655 28.5033C19.342 27.5268 19.9426 26.8754 21.0461 25.6245C21.1115 25.5581 21.0861 25.4419 20.9797 25.4165H20.9807Z"
-                                            fill="black" />
-                                    </svg>
-                                    <div class="flex flex-col gap-1">
-                                        <span class="font-medium"><?php echo $service['name']; ?></span>
-                                        <div class="flex flex-col text-sm text-[#49454F]">
-                                            <span>&#x20B1; <?php echo $service['price']; ?></span>
-                                            <span>Booked <?php echo $service['appointment_count']; ?> time<?php echo (int) $service['appointment_count'] > 1 ? 's' : '' ?></span>
+                    <span class="text-[#A80011] dark:text-white text-2xl font-medium">Popular Services</span>
+                    <?php if (isset($popularServices))
+                        foreach ($popularServices as $service): ?>
+                            <div class="bg-white dark:bg-neutral-400 flex justify-between p-4 rounded-2xl">
+                                <div class="w-full flex justify-between">
+                                    <div class="flex gap-4 items-center text-black">
+                                        <svg width="48" height="48" viewBox="0 0 32 32" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M31.6718 3.20422C22.3451 -0.11135 12.2076 -0.3852 2.71558 2.42202C2.33828 2.5123 1.98304 2.67769 1.67108 2.90831C1.35911 3.13893 1.09682 3.43004 0.89985 3.76427C0.702884 4.09851 0.575287 4.469 0.524677 4.85363C0.474067 5.23827 0.501482 5.62916 0.605285 6.00297C1.1248 8.08787 1.88259 10.4833 2.79272 12.6551C2.80835 12.7059 2.83276 12.6815 2.83276 12.6307C2.70093 11.6122 3.48411 10.3261 5.0202 9.85832C12.4023 7.50895 20.3468 7.61413 27.6641 10.1581C27.934 10.2504 28.2196 10.2878 28.5042 10.2679C28.7887 10.2481 29.0664 10.1715 29.3209 10.0426C29.5754 9.91372 29.8015 9.7352 29.9859 9.51755C30.1702 9.29991 30.3092 9.04754 30.3945 8.77535C31.3046 5.84575 31.6718 3.85654 31.7626 3.35851C31.7782 3.26574 31.6962 3.23059 31.6718 3.2052V3.20422ZM9.16949 9.64935C8.05136 9.88274 6.5055 10.2499 5.34538 10.6347C3.02611 11.4344 3.13353 14.2566 4.36885 15.157C4.45967 14.6336 5.0202 13.9217 5.64518 13.6815C7.96054 12.7713 10.4468 12.2274 12.9604 12.0028C11.6831 11.4843 10.437 10.7411 9.18609 9.64837L9.16949 9.64935ZM27.6328 15.2996C24.3008 13.734 20.6887 12.8523 17.0101 12.7065C13.3315 12.5608 9.66094 13.1539 6.21547 14.451C5.11101 14.8679 4.41963 16.2117 5.11101 17.487C6.31883 19.6707 7.68954 21.7602 9.21148 23.7378C8.99274 22.98 9.37945 21.5767 10.8638 21.1178C14.9691 19.8561 19.2766 20.3912 22.1398 21.5504C22.9484 21.8756 24.0929 21.6783 24.7345 20.7174C25.8286 19.0319 26.8237 17.2842 27.7148 15.4832C27.7549 15.4021 27.7149 15.3416 27.6328 15.2996ZM20.9807 25.4165C19.7797 24.81 18.6814 24.0189 17.7259 23.0718C17.2835 22.6294 16.6322 21.9937 15.9457 21.2359C14.3783 21.2359 12.8569 21.3931 11.23 21.9127C9.71928 22.3853 9.57768 24.1304 10.2388 25.0405C11.3569 26.434 12.1411 27.1859 13.392 28.4789C14.055 29.1291 14.9452 29.4954 15.8738 29.5C16.8024 29.5045 17.6962 29.147 18.3655 28.5033C19.342 27.5268 19.9426 26.8754 21.0461 25.6245C21.1115 25.5581 21.0861 25.4419 20.9797 25.4165H20.9807Z"
+                                                fill="currentColor" />
+                                        </svg>
+                                        <div class="flex flex-col gap-1">
+                                            <span class="font-medium"><?php echo $service['name']; ?></span>
+                                            <span
+                                                class="text-sm"><?php echo strlen($service['description'] > 70) ? substr($service['description'], 0, 70) . "..." : $service['description']; ?></span>
                                         </div>
                                     </div>
+                                    <span
+                                        class="text-[#49454F] dark:text-neutral-900">&#x20B1;<?php echo $service['price']; ?></span>
                                 </div>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M5 21.3644V5.36444C5 4.81444 5.19583 4.34361 5.5875 3.95194C5.97917 3.56027 6.45 3.36444 7 3.36444H17C17.55 3.36444 18.0208 3.56027 18.4125 3.95194C18.8042 4.34361 19 4.81444 19 5.36444V21.3644L12 18.3644L5 21.3644ZM7 18.3144L12 16.1644L17 18.3144V5.36444H7V18.3144Z"
-                                        fill="#1D1B20" />
-                                </svg>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; else
+                        null; ?>
                 </div>
                 <div class="flex w-full lg:w-1/2">
                     <div class="flex flex-col gap-4 w-full">
-                        <div class="h-full lg:h-1/2 w-full flex flex-col gap-4">
-                            <span class="text-[#A80011] text-2xl font-medium">Appointments</span>
-                            <table class="bg-[#A80011] w-full rounded-xl">
-                                <thead class="text-white">
+                        <div class="h-full w-full flex flex-col gap-4">
+                            <span class="text-[#A80011] dark:text-white text-2xl font-medium">Appointments</span>
+                            <table class="bg-[#A80011] dark:bg-neutral-700 w-full rounded-xl">
+                                <thead class="text-white ">
                                     <tr>
-                                        <th class="font-normal">Staff</th>
+                                        <th class="font-normal py-2">Staff</th>
                                         <th class="font-normal">Service</th>
                                         <th class="font-normal">Date</th>
                                         <th class="font-normal">Time</th>
                                         <th class="font-normal">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white text-center">
-                                    <?php 
-                                        foreach ($appointments as $appointment) : 
+                                <tbody class="bg-white dark:bg-neutral-400 text-center">
+                                    <?php
+                                    if (isset($appointments)) {
+                                        foreach ($appointments as $appointment):
                                             $dateTime = new DateTime($appointment['schedule']);
                                             $date = $dateTime->format('Y-m-d');
                                             $time = $dateTime->format('H:i A');
@@ -161,6 +158,8 @@ $appointments = array_slice(getAppointmentsByCustomer($_SESSION['user']['id']), 
                                                     $color = 'neutral';
                                                     break;
                                                 case 'confirmed':
+                                                    $color = 'sky';
+                                                    break;
                                                 case 'completed':
                                                     $color = 'green';
                                                     break;
@@ -175,28 +174,32 @@ $appointments = array_slice(getAppointmentsByCustomer($_SESSION['user']['id']), 
                                                     $color = 'neutral';
                                                     break;
                                             }
-                                                
-                                        ?>
-                                    <tr>
-                                        <td class="flex justify-center py-1">
-                                            <!-- <?php echo $appointment['stylist']; ?> -->
-                                            <img src="https://api.multiavatar.com/Vincent%20Plant.png" alt="staff"
-                                                class="size-8">
-                                        </td>
-                                        <td><?php echo $appointment['service']; ?></td>
-                                        <td><?php echo $date; ?></td>
-                                        <td><?php echo $time; ?></td>
-                                        <td class="px-4 w-36">
-                                            <div class="bg-<?php echo $color; ?>-500 rounded-full text-white py-1"><?php echo ucfirst($appointment['status']); ?></div>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
+
+                                            ?>
+                                            <tr>
+                                                <td class="flex justify-center py-2">
+                                                    <!-- <?php echo $appointment['stylist']; ?> -->
+                                                    <img src="./uploads/<?php echo $appointment['stylist_img']; ?>" alt="staff"
+                                                        class="size-8 rounded-full">
+                                                </td>
+                                                <td><?php echo $appointment['service']; ?></td>
+                                                <td><?php echo $date; ?></td>
+                                                <td><?php echo $time; ?></td>
+                                                <td class="px-4 w-36">
+                                                    <div class="bg-<?php echo $color; ?>-500 rounded-full text-white py-1">
+                                                        <?php echo ucfirst($appointment['status']); ?>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach;
+                                    } else
+                                        null; ?>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="h-1/2 w-full">
-                            <span class="text-[#A80011] text-2xl font-medium">Consultations</span>
-                        </div>
+                        <!-- <div class="h-1/2 w-full">
+                            <span class="text-[#A80011] dark:text-white text-2xl font-medium">Consultations</span>
+                        </div> -->
                     </div>
                 </div>
             </div>

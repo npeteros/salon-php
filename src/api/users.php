@@ -15,14 +15,18 @@ switch ($_SERVER['REQUEST_METHOD']) {
         return createUser($_POST['name'], $_POST['email'], $_POST['password']);
 
     case "PATCH":
-        if (!isset($_POST['id']) || !isset($_POST['name']) || !isset($_POST['email']) || !isset($_POST['password']))
-            return printJsonData(400, "Missing required fields");
-        return updateUser($_POST['id'], $_POST['name'], $_POST['email'], $_POST['password']);
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (isset($data['id']) && isset($data['name']) && isset($data['email']))
+            return updateUserProfile((int) $data['id'], $data['name'], $data['email']);
+        if (isset($data['id']) && isset($data['oldPassword']) && isset($data['newPassword']))
+            return updateUserPassword((int) $data['id'], $data['oldPassword'], $data['newPassword']);
+        return printJsonData(200, $data);
 
     case "DELETE":
-        if (!isset($_POST['id']))
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!isset($data['id']) && !isset($data['password']))
             return printJsonData(400, "Missing required fields");
-        return deleteUser($_POST['id']);
+        return deleteUser((int) $data['id'], $data['password']);
 
     default:
         return printJsonData(405, "Method not allowed");
