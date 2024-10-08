@@ -98,7 +98,7 @@ $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice
                     <span class="text-[#A80011] dark:text-white font-bold text-6xl w-3/4">Pamper yourself today!</span>
                     <button
                         class="bg-[#D01C27] hover:bg-[#A80011] dark:bg-red-600 dark:hover:bg-red-700 w-fit px-6 py-2 text-white rounded-full"
-                        onclick="window.location.href = './book-schedule.php'">Book an Appointment Now!</button>
+                        onclick="window.location.href = './consultation-hair.php'">Submit a Consultation Now!</button>
                 </div>
             </div>
 

@@ -21,7 +21,7 @@
         <span class="">Appointments</span>
     </button>
     <button
-        class="<?php echo str_contains($_SERVER['REQUEST_URI'], "consultations") ? 'bg-[#E53C37] text-white' : 'bg-white dark:bg-neutral-900 text-[#49454F] dark:text-white transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300 hover:bg-[#E53C37] hover:text-white'; ?>  w-full text-[#49454F] flex items-center gap-2 py-4 px-4 rounded-full">
+        class="<?php echo str_contains($_SERVER['REQUEST_URI'], "consultation") ? 'bg-[#E53C37] text-white' : 'bg-white dark:bg-neutral-900 text-[#49454F] dark:text-white transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300 hover:bg-[#E53C37] hover:text-white'; ?>  w-full text-[#49454F] flex items-center gap-2 py-4 px-4 rounded-full">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 d="M2 22V4C2 3.45 2.19583 2.97917 2.5875 2.5875C2.97917 2.19583 3.45 2 4 2H20C20.55 2 21.0208 2.19583 21.4125 2.5875C21.8042 2.97917 22 3.45 22 4V16C22 16.55 21.8042 17.0208 21.4125 17.4125C21.0208 17.8042 20.55 18 20 18H6L2 22ZM5.15 16H20V4H4V17.125L5.15 16Z"
