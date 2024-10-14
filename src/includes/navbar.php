@@ -6,21 +6,21 @@
                 <span class="text-[#A80011] font-extrabold text-2xl">LOGO</span>
             </button>
             <div class="hidden items-center gap-16 lg:flex">
-                <a href="/"
+                <a href="./#home"
                     class="text-black hover:font-medium hover:text-[#E53C37] uppercase group transition duration-300 border-b md:border-none">
                     Home
+                    <span
+                        class="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-[#E53C37]"></span>
+                </a>
+                <a href="./#services"
+                    class="text-black hover:font-medium hover:text-[#E53C37] uppercase group transition duration-300 border-b md:border-none">
+                    Our Services
                     <span
                         class="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-[#E53C37]"></span>
                 </a>
                 <a href="/team"
                     class="text-black hover:font-medium hover:text-[#E53C37] uppercase group transition duration-300 border-b md:border-none">
                     Our Team
-                    <span
-                        class="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-[#E53C37]"></span>
-                </a>
-                <a href="/services"
-                    class="text-black hover:font-medium hover:text-[#E53C37] uppercase group transition duration-300 border-b md:border-none">
-                    Our Services
                     <span
                         class="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-[#E53C37]"></span>
                 </a>
