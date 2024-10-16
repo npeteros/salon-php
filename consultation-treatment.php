@@ -1,270 +1,259 @@
-<?php
+<?php 
 if (!isset($_POST['texture']) || !isset($_POST['hair']) || !isset($_POST['scalp']))
     return header("Location: ./consultation-scalp.php");
+define("FILE_CSS", "src/styles/consultation-hair.css");
 include './src/includes/header.php';
 ?>
 
-<div class="min-h-lvh bg-[#D9D9D9] dark:bg-neutral-800">
+<div style="min-height: 100lvh; background: #D9D9D9;">
     <?php include './src/includes/dash_nav.php'; ?>
-    <div class="flex h-full gap-4">
+    <div style="display: flex; height: 100%; gap: 1rem;">
         <?php include './src/includes/side_nav.php'; ?>
 
-        <div class="w-full m-6">
-            <div class="bg-white dark:bg-neutral-700 flex flex-col w-full gap-4 p-4 rounded-2xl">
-                <ol class="items-center w-full justify-between space-y-4 sm:flex sm:space-y-0 rtl:space-x-reverse">
-                    <li
-                        class="flex items-center text-[#E53C37] dark:text-[#E53C37] space-x-2.5 rtl:space-x-reverse sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-2 xl:after:mx-10 dark:after:border-gray-200 w-full">
-                        <span class="flex items-center justify-center w-8 h-8 rounded-full shrink-0 bg-red-500">
-                            <svg width="20" height="20" fill="none" stroke="white" stroke-linecap="round"
-                                stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path d="m5 12 5 5L20 7"></path>
-                            </svg>
-                        </span>
-                        <span>
-                            <h3 class="font-medium leading-tight">Hair</h3>
-                        </span>
-                    </li>
-                    <li
-                        class="flex items-center text-[#E53C37] dark:text-[#E53C37] space-x-2.5 rtl:space-x-reverse sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-2 xl:after:mx-10 dark:after:border-gray-200 w-full">
-                        <span class="flex items-center justify-center w-8 h-8 rounded-full shrink-0 bg-red-500">
-                            <svg width="20" height="20" fill="none" stroke="white" stroke-linecap="round"
-                                stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path d="m5 12 5 5L20 7"></path>
-                            </svg>
-                        </span>
-                        <span>
-                            <h3 class="font-medium leading-tight">Scalp</h3>
-                        </span>
-                    </li>
-                    <li
-                        class="flex items-center text-[#E53C37] dark:text-[#E53C37] space-x-2.5 rtl:space-x-reverse sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-2 xl:after:mx-10 dark:after:border-gray-200 w-full">
+        <div style="width: 100%; margin: 1.5rem;;">
+            <div style="display: flex; padding: 1rem; flex-direction: column; gap: 1rem; border-radius: 1rem; background-color: #ffffff;">
+                <ol>
+                    <li class="next">
                         <span
-                            class="flex items-center justify-center w-8 h-8 rounded-full shrink-0 text-white bg-[#E53C37]">
+                            class="progress inactive">
+                            1
+                        </span>
+                        <span>
+                            <h3 style="font-weight: 500; line-height: 1.25;">Hair</h3>
+                        </span>
+                    </li>
+                    <li class="next">
+                        <span
+                            class="progress inactive">
+                            2
+                        </span>
+                        <span>
+                            <h3 style="font-weight: 500; line-height: 1.25;">Scalp</h3>
+                        </span>
+                    </li>
+                    <li class="next active">
+                        <span
+                            class="progress active">
                             3
                         </span>
                         <span>
-                            <h3 class="font-medium leading-tight">Treatment</h3>
+                            <h3 style="font-weight: 500; line-height: 1.25;">Treatment</h3>
                         </span>
                     </li>
-                    <li class="flex items-center text-gray-500 dark:text-gray-200 space-x-2.5 rtl:space-x-reverse">
+                    <li class="">
                         <span
-                            class="flex items-center justify-center w-8 h-8 border border-gray-500 rounded-full shrink-0 dark:border-gray-400">
+                            class="progress inactive">
                             4
                         </span>
                         <span>
-                            <h3 class="font-medium leading-tight">Confirm</h3>
+                            <h3 style="font-weight: 500; line-height: 1.25;">Confirm</h3>
                         </span>
                     </li>
                 </ol>
-                <div class="flex flex-col w-full px-4 pt-4 rounded-2xl">
-                    <form method="post" action="./consultation-confirm.php" class="flex flex-col gap-4 w-full">
-                        <div class="flex gap-4 w-full">
-                            <div class="flex flex-col gap-2 w-full">
-                                <div class="flex flex-col">
-                                    <label for="name" class="font-bold dark:text-gray-200">Previous Hair Chemical
-                                        Treatment</label>
-                                    <span class="text-xs dark:text-white italic">How long have you been using the
-                                        following:</span>
+                <div style="display: flex; padding-left: 1rem; padding-right: 1rem; flex-direction: column; border-radius: 1rem;">
+                    <form method="post" action="./consultation-confirm.php" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: flex; gap: 1rem;">
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                                <div style="display: flex; flex-direction: column;">
+                                    <label for="name" style="font-weight: 700;">Scalp Condition</label>
+                                    <span style="font-size: 0.75rem; line-height: 1rem; font-style: italic;">How long have you been using the following:</span>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4 w-full">
-                                    <div class="flex flex-col gap-1 w-full">
-                                        <span
-                                            class="w-full ms-2 text-sm font-medium text-neutral-900 dark:text-neutral-300">Straightening</span>
+                                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+                                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                        <span style="font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;">Straightening</span>
                                         <div
-                                            class="flex items-center ps-4 border border-neutral-200 rounded dark:border-neutral-500">
-                                            <div class="flex justify-between w-2/3 py-4">
-                                                <div class="flex h-full items-center">
+                                            style="display: flex; padding: 0rem 1rem; align-items: center; border-radius: 0.25rem; border: 1px solid rgb(229 229 229);">
+                                            <div style="display: flex; justify-content: space-between; width: 2/3; padding: 1rem 0rem;">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="straightening" type="radio" value="less" required
                                                         name="straightening"
                                                         <?php echo isset($_POST['straightening']) ? $_POST['straightening'] == "less" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="straightening-less"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">Less
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">Less
                                                         than 6 months</label>
                                                 </div>
-                                                <div class="flex h-full items-center">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="straightening" type="radio" value="more"
                                                         name="straightening"
                                                         <?php echo isset($_POST['straightening']) ? $_POST['straightening'] == "more" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="straightening-more"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">More
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">More
                                                         than 6 months</label>
                                                 </div>
-                                                <div class="flex h-full items-center">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="straightening" type="radio" value="none"
                                                         name="straightening"
                                                         <?php echo isset($_POST['straightening']) ? $_POST['straightening'] == "none" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="straightening-none"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">None</label>
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">None</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex flex-col gap-1 w-full">
+                                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                                         <span
-                                            class="w-full ms-2 text-sm font-medium text-neutral-900 dark:text-neutral-300">Perming</span>
+                                            style="font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;">Perming</span>
                                         <div
-                                            class="flex items-center ps-4 border border-neutral-200 rounded dark:border-neutral-500">
-                                            <div class="flex justify-between w-2/3 py-4">
-                                                <div class="flex h-full items-center">
+                                            style="display: flex; padding: 0rem 1rem; align-items: center; border-radius: 0.25rem; border: 1px solid rgb(229 229 229);">
+                                            <div style="display: flex; justify-content: space-between; width: 2/3; padding: 1rem 0rem;">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="perming" type="radio" value="less" required
                                                         name="perming"
                                                         <?php echo isset($_POST['perming']) ? $_POST['perming'] == "less" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="perming-less"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">Less
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">Less
                                                         than 6 months</label>
                                                 </div>
-                                                <div class="flex h-full items-center">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="perming" type="radio" value="more" name="perming"
                                                         <?php echo isset($_POST['perming']) ? $_POST['perming'] == "more" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="perming-more"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">More
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">More
                                                         than 6 months</label>
                                                 </div>
-                                                <div class="flex h-full items-center">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="perming" type="radio" value="none" name="perming"
                                                         <?php echo isset($_POST['perming']) ? $_POST['perming'] == "none" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="perming-none"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">None</label>
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">None</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex flex-col gap-1 w-full">
+                                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                                         <span
-                                            class="w-full ms-2 text-sm font-medium text-neutral-900 dark:text-neutral-300">Relax</span>
+                                            style="font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;">Relax</span>
                                         <div
-                                            class="flex items-center ps-4 border border-neutral-200 rounded dark:border-neutral-500">
-                                            <div class="flex justify-between w-2/3 py-4">
-                                                <div class="flex h-full items-center">
+                                            style="display: flex; padding: 0rem 1rem; align-items: center; border-radius: 0.25rem; border: 1px solid rgb(229 229 229);">
+                                            <div style="display: flex; justify-content: space-between; width: 2/3; padding: 1rem 0rem;">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="relax" type="radio" value="less" required name="relax"
                                                         <?php echo isset($_POST['relax']) ? $_POST['relax'] == "less" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="relax-less"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">Less
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">Less
                                                         than 6 months</label>
                                                 </div>
-                                                <div class="flex h-full items-center">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="relax" type="radio" value="more" name="relax"
                                                         <?php echo isset($_POST['relax']) ? $_POST['relax'] == "more" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="relax-more"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">More
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">More
                                                         than 6 months</label>
                                                 </div>
-                                                <div class="flex h-full items-center">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="relax" type="radio" value="none" name="relax"
                                                         <?php echo isset($_POST['relax']) ? $_POST['relax'] == "none" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="relax-none"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">None</label>
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">None</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex flex-col gap-1 w-full">
+                                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                                         <span
-                                            class="w-full ms-2 text-sm font-medium text-neutral-900 dark:text-neutral-300">Coloring</span>
+                                            style="font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;">Coloring</span>
                                         <div
-                                            class="flex items-center ps-4 border border-neutral-200 rounded dark:border-neutral-500">
-                                            <div class="flex justify-between w-2/3 py-4">
-                                                <div class="flex h-full items-center">
+                                            style="display: flex; padding: 0rem 1rem; align-items: center; border-radius: 0.25rem; border: 1px solid rgb(229 229 229);">
+                                            <div style="display: flex; justify-content: space-between; width: 2/3; padding: 1rem 0rem;">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="coloring" type="radio" value="less" required
                                                         name="coloring"
                                                         <?php echo isset($_POST['coloring']) ? $_POST['coloring'] == "less" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="coloring-less"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">Less
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">Less
                                                         than 6 months</label>
                                                 </div>
-                                                <div class="flex h-full items-center">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="coloring" type="radio" value="more" name="coloring"
                                                         <?php echo isset($_POST['coloring']) ? $_POST['coloring'] == "more" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="coloring-more"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">More
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">More
                                                         than 6 months</label>
                                                 </div>
-                                                <div class="flex h-full items-center">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="coloring" type="radio" value="none" name="coloring"
                                                         <?php echo isset($_POST['coloring']) ? $_POST['coloring'] == "none" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="coloring-none"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">None</label>
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">None</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex flex-col gap-1 w-full">
+                                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                                         <span
-                                            class="w-full ms-2 text-sm font-medium text-neutral-900 dark:text-neutral-300">Rebonding</span>
+                                            style="font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;">Rebonding</span>
                                         <div
-                                            class="flex items-center ps-4 border border-neutral-200 rounded dark:border-neutral-500">
-                                            <div class="flex justify-between w-2/3 py-4">
-                                                <div class="flex h-full items-center">
+                                            style="display: flex; padding: 0rem 1rem; align-items: center; border-radius: 0.25rem; border: 1px solid rgb(229 229 229);">
+                                            <div style="display: flex; justify-content: space-between; width: 2/3; padding: 1rem 0rem;">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="rebonding" type="radio" value="less" required
                                                         name="rebonding"
                                                         <?php echo isset($_POST['rebonding']) ? $_POST['rebonding'] == "less" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="rebonding-less"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">Less
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">Less
                                                         than 6 months</label>
                                                 </div>
-                                                <div class="flex h-full items-center">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="rebonding" type="radio" value="more" name="rebonding"
                                                         <?php echo isset($_POST['rebonding']) ? $_POST['rebonding'] == "more" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="rebonding-more"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">More
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">More
                                                         than 6 months</label>
                                                 </div>
-                                                <div class="flex h-full items-center">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="rebonding" type="radio" value="none" name="rebonding"
                                                         <?php echo isset($_POST['rebonding']) ? $_POST['rebonding'] == "none" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="rebonding-none"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">None</label>
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">None</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex flex-col gap-1 w-full">
+                                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                                         <span
-                                            class="w-full ms-2 text-sm font-medium text-neutral-900 dark:text-neutral-300">Hair
+                                            style="font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;">Hair
                                             Bleaching</span>
                                         <div
-                                            class="flex items-center ps-4 border border-neutral-200 rounded dark:border-neutral-500">
-                                            <div class="flex justify-between w-2/3 py-4">
-                                                <div class="flex h-full items-center">
+                                            style="display: flex; padding: 0rem 1rem; align-items: center; border-radius: 0.25rem; border: 1px solid rgb(229 229 229);">
+                                            <div style="display: flex; justify-content: space-between; width: 2/3; padding: 1rem 0rem;">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="bleaching" type="radio" value="less" required
                                                         name="bleaching"
                                                         <?php echo isset($_POST['bleaching']) ? $_POST['bleaching'] == "less" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="bleaching-less"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">Less
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">Less
                                                         than 6 months</label>
                                                 </div>
-                                                <div class="flex h-full items-center">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="bleaching" type="radio" value="more" name="bleaching"
                                                         <?php echo isset($_POST['bleaching']) ? $_POST['bleaching'] == "more" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="bleaching-more"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">More
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">More
                                                         than 6 months</label>
                                                 </div>
-                                                <div class="flex h-full items-center">
+                                                <div style="display: flex; height: full; align-items: center;">
                                                     <input id="bleaching" type="radio" value="none" name="bleaching"
                                                         <?php echo isset($_POST['bleaching']) ? $_POST['bleaching'] == "none" ? "checked" : "" : null; ?>
-                                                        class="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                                                        class="form-input"">
                                                     <label for="bleaching-none"
-                                                        class="w-full ms-2 text-sm text-neutral-900 dark:text-neutral-300">None</label>
+                                                        style="margin-left: 0.5rem; font-size: 0.875 rem; line-height: 1.25rem; color: rgb(23 23 23);">None</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -275,8 +264,7 @@ include './src/includes/header.php';
                                 <input type="hidden" name="scalp" value="<?php echo $_POST['scalp']; ?>">
                             </div>
                         </div>
-                        <button class="bg-[#E53C37] hover:bg-[#AD1C1C] text-white rounded-lg px-4 py-2 w-full"
-                            type="submit">Next</button>
+                        <button class="next-button" type="submit">Next</button>
                     </form>
                     <form action="./consultation-scalp.php" method="POST">
                         <input type="hidden" name="texture" value="<?php echo $_POST['texture']; ?>">
@@ -290,8 +278,7 @@ include './src/includes/header.php';
                                 <input type="hidden" name="rebonding" value="<?php echo $_POST['rebonding']; ?>">
                                 <input type="hidden" name="bleaching" value="<?php echo $_POST['bleaching']; ?>">
                         <?php } ?>
-                        <button class="bg-[#D9D9D9] text-gray-500 rounded-lg px-4 py-2 w-full"
-                            type="submit">Cancel</button>
+                        <button class="cancel-button" style="width: 100%;" type="submit">Back</button>
                     </form>
                 </div>
             </div>

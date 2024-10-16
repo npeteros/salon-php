@@ -1,20 +1,22 @@
 <?php
+define('FILE_CSS', 'src/styles/appointments.css');
 include 'src/includes/header.php';
+if (!isset($_SESSION['user']))
+    header('Location: ./login.php');
 include 'src/api/functions.php';
 $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice(getAppointmentsByCustomer($_SESSION['user']['id']), 0, 3) : null;
 ?>
 
-<div class="h-fit min-h-lvh bg-[#D9D9D9] dark:bg-neutral-800">
+<div style="height: fit-content; min-height: 100lvh; background: #D9D9D9">
     <?php include './src/includes/dash_nav.php'; ?>
-    <div class="flex h-fit md:h-lvh gap-4">
+    <div class="main-container">
         <?php include 'src/includes/side_nav.php'; ?>
-        <div class="w-full flex flex-col gap-4 m-6">
-            <div class="w-full flex flex-col">
+        <div style="display: flex; margin: 1.5rem; flex-direction: column; gap: 1rem; width: 100%;">
+            <div style="display: flex; flex-direction: column;">
                 <div>
-                    <label for="appointments-search"
-                        class="mb-2 text-sm font-medium text-neutral-900 sr-only dark:text-white">Search</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 end-5 flex items-center ps-3 pointer-events-none">
+                    <div style="position: relative;">
+                        <div
+                            style="position: absolute; display: flex; top: 0; bottom: 0; padding-left: 0.75rem; align-items: center; pointer-events: none;">
                             <svg class="w-4 h-4 text-gray-500 dark:text-neutral-400" aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -22,24 +24,25 @@ $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice
                             </svg>
                         </div>
                         <input type="text" id="appointments-search"
-                            class="block w-full p-4 ps-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-700 dark:border-neutral-600 dark:placeholder-neutral-400 dark:text-white dark:focus:ring-neutral-500 dark:focus:border-neutral-500"
+                            class="search-button"
                             placeholder="Search Appointments..." required />
                     </div>
                 </div>
             </div>
-            <div class="w-full flex flex-col gap-2">
-                <span class="text-[#A80011] dark:text-white text-2xl font-medium">Appointments</span>
-                <table class="bg-[#A80011] dark:bg-neutral-700 w-full rounded-xl">
-                    <thead class="text-white ">
+            <div style="display: flex; flex-direction: column; gap: 0.5rem">
+                <span style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Appointments</span>
+                <table style="width: 100%; background: #A80011;">
+                    <thead style="color: white;">
                         <tr>
-                            <th class="font-normal py-2">Staff</th>
-                            <th class="font-normal">Service</th>
-                            <th class="font-normal">Date</th>
-                            <th class="font-normal">Time</th>
-                            <th class="font-normal">Status</th>
+                            <th style="font-weight: 400; padding: 0.5rem 0rem;">Staff</th>
+                            <th style="font-weight: 400;">Service</th>
+                            <th style="font-weight: 400;">Date</th>
+                            <th style="font-weight: 400;">Time</th>
+                            <th style="font-weight: 400;">Status</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white dark:bg-neutral-400 text-center" id="appointmentsList" data-userid="<?php echo $_SESSION['user']['id']; ?>">
+                    <tbody style="background-color: white; text-align: center;" id="appointmentsList"
+                        data-userid="<?php echo $_SESSION['user']['id']; ?>">
                     </tbody>
                 </table>
             </div>

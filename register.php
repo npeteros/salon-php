@@ -1,49 +1,53 @@
 <?php
+define('FILE_CSS', 'src/styles/register.css');
 include 'src/includes/header.php';
 if (isset($_SESSION['user']))
     header('Location: index.php');
 ?>
 
-<div class="bg-[#DCDFE9] min-h-screen w-full flex justify-center">
-    <div class="bg-[#FFFFFF] rounded-2xl min-h-full w-full lg:w-5/6 flex lg:grid lg:grid-cols-2">
-        <div class="hidden lg:grid lg:bg-[#820000] rounded-tr-[14rem] rounded-br-[14rem] place-items-center">
-            <div class="flex flex-col items-center gap-6">
-                <h1 class="font-bold text-4xl text-white">
+<div class="parent-container">
+    <div class="register-container">
+        <div class="sign-in-container">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+                <h1 style="font-size: 2.25rem; line-height: 2.5rem; font-weight: 700; color: #ffffff;">
                     Sign In
                 </h1>
                 <a href="./login.php">
-                    <button
-                        class="bg-[#820000] rounded-md py-2  text-white px-14 font-sans uppercase outline outline-2 outline-offset-2 hover:bg-white hover:text-[#820000] hover:border-red-900">
+                    <button class="login-form-button">
                         LOGIN
                     </button>
                 </a>
             </div>
         </div>
-        <div class="flex flex-col gap-4 justify-center items-center px-4 md:px-0 w-full">
-            <h1 class="font-bold text-4xl">Create Account</h1>
-            <form class="flex flex-col gap-4" id="register-form">
-                <div class="flex flex-col w-full">
-                    <input type="text" placeholder="Name" class="bg-[#EEEEEE] rounded-xl p-2 w-96" id="name" name="name"
+        <div class="div-form-container">
+            <h1 style="font-size: 2.25rem; line-height: 2.5rem; font-weight: 700; text-align: center;">Create Account
+            </h1>
+            <form
+                style="display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center; width: 100%;"
+                id="register-form">
+                <div style="display: flex; flex-direction: column; width: 100%">
+                    <input type="text" placeholder="Name" class="input-form-container" id="name" name="name"
                         autoComplete="name" />
                 </div>
-                <div class="flex flex-col w-full">
-                    <input type="email" placeholder="Email" class="bg-[#EEEEEE] rounded-xl p-2 w-96" id="email"
+                <div style="display: flex; flex-direction: column; width: 100%">
+                    <input type="email" placeholder="Email" class="input-form-container" id="email"
                         name="email" autoComplete="username" />
                 </div>
-                <div class="flex flex-col w-full">
-                    <input type="password" placeholder="Password" class="bg-[#EEEEEE] rounded-xl p-2 w-96" id="password"
+                <div style="display: flex; flex-direction: column; width: 100%">
+                    <input type="password" placeholder="Password" class="input-form-container" id="password"
                         name="password" autoComplete="password" />
                 </div>
-                <div class="flex flex-col w-full">
-                    <input type="password" placeholder="Confirm Password" class="bg-[#EEEEEE] rounded-xl p-2 w-96"
+                <div style="display: flex; flex-direction: column; width: 100%">
+                    <input type="password" placeholder="Confirm Password" class="input-form-container"
                         id="confirm-password" name="confirm-password" autoComplete="confirm-password" />
                 </div>
-                <div class="flex flex-col w-full">
-                    <p class="text-sm text-red-600 dark:text-red-400" id="register-error"></p>
+                <div style="display: flex; flex-direction: column; width: 100%">
+                    <p style="font-size: 0.875rem; line-height: 1.25rem; color: #DC2626;" id="register-error"></p>
                 </div>
-                <button class="bg-[#D01C27] hover:bg-[#A80011] rounded-xl py-2  text-white px-14 font-sans uppercase">
+                <button class="sign-up-button">
                     Sign Up
                 </button>
+                <a href="./login.php" class="login-link">Already have an account?</a>
             </form>
         </div>
     </div>

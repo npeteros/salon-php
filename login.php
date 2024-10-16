@@ -1,47 +1,49 @@
 <?php
+define('FILE_CSS', 'src/styles/login.css');
 include 'src/includes/header.php';
 if (isset($_SESSION['user']))
     header('Location: index.php');
 ?>
 
-<div class="bg-[#DCDFE9] min-h-screen w-full flex justify-center">
-    <div class="bg-[#FFFFFF] rounded-2xl min-h-full w-full lg:w-5/6 flex lg:grid lg:grid-cols-2">
-        <div class="h-full flex flex-col w-full">
-            <button class="w-fit h-16 mx-4 flex items-center" onclick="window.location.href = './'">
+<div class="parent-container">
+    <div class="login-container">
+        <div style="height: 100%; width: 100%; display: flex; flex-direction: column;">
+            <button class="back-button" onclick="window.location.href = './'">
                 <svg width="20" height="20" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round"
                     stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="m15 6-6 6 6 6"></path>
                 </svg>
             </button>
-            <div class="flex flex-col gap-4 justify-center items-center px-4 md:px-24 h-full w-full">
-                <h1 class="font-bold text-4xl">Sign In</h1>
-                <form class="flex flex-col gap-4 justify-center items-center w-full" id="login-form">
-                    <div class="flex flex-col w-full">
+            <div class="div-form-container">
+                <h1 style="font-size: 2.25rem; line-height: 2.5rem; font-weight: 700; text-align: center;">Sign In</h1>
+                <form
+                    style="display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center; width: 100%;"
+                    id="login-form">
+                    <div style="display: flex; flex-direction: column; width: 100%">
                         <input type="email" placeholder="Email" name="email" id="email" autoComplete="username"
-                            isFocused={true} class="bg-[#EEEEEE] rounded-xl p-2 w-full" />
+                            isFocused={true} class="input-form-container" />
                     </div>
-                    <div class="flex flex-col w-full">
+                    <div style="display: flex; flex-direction: column; width: 100%">
                         <input type="password" placeholder="Password" id="password" name="password"
-                            autoComplete="current-password" class="bg-[#EEEEEE] rounded-xl p-2" />
+                            autoComplete="current-password" class="input-form-container" />
                     </div>
-                    <div class="flex flex-col w-full">
-                        <p class="text-sm text-red-600 dark:text-red-400" id="login-error"></p>
+                    <div style="display: flex; flex-direction: column; width: 100%">
+                        <p style="font-size: 0.875rem; line-height: 1.25rem; color: #DC2626;" id="login-error"></p>
                     </div>
-                    <button
-                        class="bg-[#D01C27] hover:bg-[#A80011] rounded-xl py-2 text-white px-14 font-sans uppercase">
+                    <button class="sign-in-button">
                         Sign In
                     </button>
+                    <a href="./register.php" class="register-link">Don't have an account yet?</a>
                 </form>
             </div>
         </div>
-        <div class="hidden lg:grid lg:bg-[#820000] rounded-tl-[14rem] rounded-bl-[14rem] place-items-center">
-            <div class="flex flex-col items-center gap-6">
-                <h1 class="font-bold text-4xl text-white">
+        <div class="sign-up-container">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+                <h1 style="font-size: 2.25rem; line-height: 2.5rem; font-weight: 700; color: #ffffff; ">
                     Sign Up
                 </h1>
                 <a href='./register.php'>
-                    <button
-                        class="bg-[#820000] rounded-md py-2  text-white px-14 font-sans uppercase outline outline-2 outline-offset-2 hover:bg-white hover:text-[#820000] hover:border-red-900">
+                    <button class="register-form-button">
                         REGISTER
                     </button>
                 </a>

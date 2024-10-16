@@ -1,27 +1,26 @@
-<?php include 'src/includes/header.php'; ?>
+<?php
+define('FILE_CSS', 'src/styles/index.css');
+include 'src/includes/header.php'; ?>
 
-<div class="min-h-screen bg-white">
+<div style="min-height: 100vh; background-color: #ffffff; ">
     <?php include 'src/includes/navbar.php'; ?>
-    <div class="w-full">
-        <div class="home-div"
-            id="home">
-            <div class="my-24 flex flex-col justify-center gap-7 md:my-0 md:w-1/2">
-                <span class="text-6xl font-extrabold uppercase text-[#A80011] md:text-9xl text-center md:text-left">
+    <div style="width: 100%;">
+        <div class="section-container" id="home">
+            <div class="subsection-container">
+                <span class="section-title">
                     Salon
                 </span>
-                <span class="text-2xl font-medium tracking-widest md:w-5/6 text-center lg:text-left">
+                <span class="section-subtitle">
                     Your Style, Your Time &ndash; Effortless Salon
                     Appointments at Your Fingertips!
                 </span>
-                <a href="<?php echo !isset($_SESSION['user']) ? './login.php' : './dashboard.php' ?>">
-                    <button
-                        class="w-full md:w-fit rounded-lg bg-[#D01C27] px-6 py-2 text-lg uppercase text-white hover:bg-[#A80011]">
-                        Book Now
-                    </button>
-                </a>
+                <button class="book-button"
+                    onclick="window.location.href='<?php echo !isset($_SESSION['user']) ? './login.php' : './dashboard.php' ?>'">
+                    Book Now
+                </button>
             </div>
             <svg width="1200" height="600" viewBox="0 0 1245 773" fill="none" xmlns="http://www.w3.org/2000/svg"
-                class="w-[400px] h-[200px] md:w-[1200px] md:h-[600px]">
+                class="svg-container">
                 <g clipPath="url(#clip0_9_260)">
                     <path opacity="0.1"
                         d="M1245 534.364C1245.09 503.152 1237.62 472.377 1223.22 444.634C1208.83 416.892 1187.93 392.996 1162.29 374.963C1163 368.22 1163.36 361.447 1163.38 354.667C1163.38 247.47 1077.14 160.569 970.752 160.569C937.991 160.534 905.781 168.93 877.257 184.941C801.959 135.721 703.654 105.932 596.109 105.932C421.124 105.932 270.603 184.811 203.825 297.912C200.114 297.695 196.381 297.576 192.616 297.576C86.2468 297.576 -0.0108445 384.478 -0.0108445 491.675C-0.0863858 529.548 10.9284 566.624 31.6909 598.386C31.6909 694.835 123.314 773.011 236.289 773.011H1055.9C1144.64 773.011 1216.57 711.627 1216.57 635.895C1235.24 605.281 1245.07 570.157 1245 534.364Z"
@@ -149,10 +148,9 @@
                 </defs>
             </svg>
         </div>
-        <div class="home-div"
-            id="home">
+        <div class="section-container" id="home">
             <svg width="1200" height="600" viewBox="0 0 1245 773" fill="none" xmlns="http://www.w3.org/2000/svg"
-                class="w-[400px] h-[200px] md:w-[1200px] md:h-[600px]">
+                class="svg-container">
                 <g clipPath="url(#clip0_9_260)">
                     <path opacity="0.1"
                         d="M1245 534.364C1245.09 503.152 1237.62 472.377 1223.22 444.634C1208.83 416.892 1187.93 392.996 1162.29 374.963C1163 368.22 1163.36 361.447 1163.38 354.667C1163.38 247.47 1077.14 160.569 970.752 160.569C937.991 160.534 905.781 168.93 877.257 184.941C801.959 135.721 703.654 105.932 596.109 105.932C421.124 105.932 270.603 184.811 203.825 297.912C200.114 297.695 196.381 297.576 192.616 297.576C86.2468 297.576 -0.0108445 384.478 -0.0108445 491.675C-0.0863858 529.548 10.9284 566.624 31.6909 598.386C31.6909 694.835 123.314 773.011 236.289 773.011H1055.9C1144.64 773.011 1216.57 711.627 1216.57 635.895C1235.24 605.281 1245.07 570.157 1245 534.364Z"
@@ -279,20 +277,14 @@
                     </clipPath>
                 </defs>
             </svg>
-            <div class="my-24 flex flex-col justify-center gap-7 md:my-0 md:w-1/2">
-                <span class="text-6xl font-extrabold uppercase text-[#A80011] md:text-9xl text-center md:text-left">
+            <div class="subsection-container">
+                <span class="section-title">
                     Salon
                 </span>
-                <span class="text-2xl font-medium tracking-widest md:w-5/6 text-center lg:text-left">
+                <span class="section-subtitle">
                     Your Style, Your Time &ndash; Effortless Salon
                     Appointments at Your Fingertips!
                 </span>
-                <a href="<?php echo !isset($_SESSION['user']) ? './login.php' : './dashboard.php' ?>">
-                    <button
-                        class="w-full md:w-fit rounded-lg bg-[#D01C27] px-6 py-2 text-lg uppercase text-white hover:bg-[#A80011]">
-                        Book Now
-                    </button>
-                </a>
             </div>
         </div>
     </div>
