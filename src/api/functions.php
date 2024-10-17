@@ -32,31 +32,18 @@ function formatTime($minutes): string
 function printStars($rating)
 {
     $fullStar =
-        '<svg width="16" height="16" fill="yellow" stroke="black" stroke-linecap="round"
-            stroke-linejoin="round" stroke-width="1" viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-                <path
-                    d="m12 17.748-6.172 3.245 1.179-6.873-5-4.867 6.9-1L11.993 2l3.086 6.253 6.9 1-5 4.867 1.179 6.873L12 17.748Z"
-                >
-                </path>
+        '<svg width="16" height="16" fill="yellow" stroke="black" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path>
         </svg>';
 
     $halfStar =
-        '<svg width="16" height="16" fill="yellow" stroke="black" stroke-linecap="round"
-            stroke-linejoin="round" stroke-width="1" viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg">
-                <path d="m12 17.748-6.172 3.245 1.179-6.873-5-4.867 6.9-1L11.993 2 12 17.748Z">
-                </path>
+        '<svg width="16" height="16" fill="yellow" stroke="black" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="m14.81 8.62 7.19.62-5.45 4.73L18.18 21 12 17.27 5.82 21l1.64-7.03L2 9.24l7.19-.61L12 2l2.81 6.62ZM12 6.1v9.3l3.77 2.28-1-4.28 3.32-2.88-4.38-.38L12 6.1Z" clip-rule="evenodd"></path>
         </svg>';    // Half star
 
     $emptyStar =
-        '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-linecap="round"
-            stroke-linejoin="round" stroke-width="1" viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="m12 17.748-6.172 3.245 1.179-6.873-5-4.867 6.9-1L11.993 2l3.086 6.253 6.9 1-5 4.867 1.179 6.873L12 17.748Z">
-                </path>
+        '<svg width="16" height="16" fill="yellow" stroke="black" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="m22 9.74-7.19-.62L12 2.5 9.19 9.13 2 9.74l5.46 4.73-1.64 7.03L12 17.77l6.18 3.73-1.63-7.03L22 9.74ZM12 15.9l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.6l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.9Z"></path>
         </svg>';   // Empty star
 
     $fullStars = floor($rating);
@@ -94,7 +81,23 @@ function getAppointmentById(int $id): array|null
 {
     global $conn;
     $appointment = null;
-    $query = "SELECT * FROM appointments WHERE id = {$id}";
+    $query =
+        "SELECT 
+        u.img_path AS customer_image,
+        u.name AS customer_name,
+        u.email AS customer_email,
+        st.img_path AS stylist_image,
+        st.name AS stylist_name,
+        st.email AS stylist_email,
+        s.name AS service_name,
+        s.price AS service_price,
+        a.status AS appointment_status,
+        a.scheduled_date AS appointment_date
+    FROM appointments a
+    JOIN users u ON a.customer_id = u.id
+    JOIN users st ON a.stylist_id = st.id
+    JOIN services s ON a.service_id = s.id
+    WHERE a.id = {$id};";
     if ($r = mysqli_query($conn, $query)) {
         $appointment = mysqli_fetch_assoc($r);
     }

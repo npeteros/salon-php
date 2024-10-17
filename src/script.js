@@ -90,7 +90,6 @@ $(document).ready(function () {
                 if (response.code == 200) {
                     $("#appointmentsList").empty();
                     const toShow = response.data.slice(0, 12);
-                    console.log(toShow);
 
                     toShow.forEach(appointment => {
                         let color = 'background-color: rgb(115 115 115);';
@@ -126,7 +125,7 @@ $(document).ready(function () {
                         let formattedTime = `${hours}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
 
                         $("#appointmentsList").append(`
-                        <tr>
+                        <tr onclick="window.location.href = 'view-appointment.php?id=${appointment.appointment_id}';" class="appointment-row">
                             <td style="display: flex; justify-content: center; padding: 0.5rem 0rem;">
                                 <img src="./uploads/${appointment.stylist_img}" alt="staff"
                                     style="width: 2rem; height: 2rem; border-radius: 9999px;">
@@ -199,7 +198,7 @@ $(document).ready(function () {
 
 
                             $("#appointmentsList").append(`
-                                <tr>
+                                <tr onclick="window.location.href = 'view-appointment.php?id=${appointment.appointment_id}';" class="appointment-row">
                                     <td style="display: flex; justify-content: center; padding: 0.5rem 0rem;">
                                         <img src="./uploads/${appointment.stylist_img}" alt="staff"
                                             style="width: 2rem; height: 2rem; border-radius: 9999px;">

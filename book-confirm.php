@@ -65,8 +65,7 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                                     <a
                                         style="color: #3B82F6; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;">Edit</a>
                                 </div>
-                                <hr
-                                    style="margin: 0.5rem 0rem; border-width: 1px; background-color: #E5E7B;" />
+                                <hr style="margin: 0.5rem 0rem; border-width: 1px; background-color: #E5E7B;" />
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                                 <span style="font-weight: 700;"><?php echo $_SESSION['user']['name']; ?></span>
@@ -82,8 +81,7 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                                     <a
                                         style="color: #3B82F6; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;">Edit</a>
                                 </div>
-                                <hr
-                                    style="margin: 0.5rem 0rem; border-width: 1px; background-color: #E5E7B;" />
+                                <hr style="margin: 0.5rem 0rem; border-width: 1px; background-color: #E5E7B;" />
                             </div>
                             <div style="display: flex; flex-direction: column;">
                                 <span style="display: flex; justify-content: space-between; align-items: center;">
@@ -91,9 +89,9 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                                     <p
                                         style="display: flex; align-items: center; font-size: 0.75rem; line-height: 1rem; gap: 0.25rem;">
                                         <span
-                                            style="display: flex; align-items: center;"><?php echo printStars($stylistReviewSummary['average_rating']) ?></span>
+                                            style="display: flex; align-items: center;"><?php echo printStars(isset($stylistReviewSummary) ? $stylistReviewSummary['average_rating'] : 0) ?></span>
                                         <a
-                                            style="color: #3B82F6; text-decoration: underline;">(<?php echo $stylistReviewSummary['total_appointments']; ?>)</a>
+                                            style="color: #3B82F6; text-decoration: underline;">(<?php echo isset($stylistReviewSummary) ? $stylistReviewSummary['total_appointments'] : 0; ?>)</a>
                                     </p>
                                 </span>
                                 <span
@@ -109,8 +107,7 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                                     <a
                                         style="color: #3B82F6; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;">Edit</a>
                                 </div>
-                                <hr
-                                    style="margin: 0.5rem 0rem; border-width: 1px; background-color: #E5E7B;" />
+                                <hr style="margin: 0.5rem 0rem; border-width: 1px; background-color: #E5E7B;" />
                             </div>
                             <div style="display: flex; flex-direction: column;  gap: 0.25rem;">
                                 <span style="font-weight: 700;"><?php echo $formattedDate; ?></span>
@@ -121,12 +118,12 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                         <div style="display: flex; flex-direction: column; gap: 0.5rem">
                             <div style="display: flex; flex-direction: column;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 1.25rem; line-height: 1.75rem; font-weight: 700;">Service Details</span>
+                                    <span style="font-size: 1.25rem; line-height: 1.75rem; font-weight: 700;">Service
+                                        Details</span>
                                     <a
                                         style="color: #3B82F6; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;">Edit</a>
                                 </div>
-                                <hr
-                                    style="margin: 0.5rem 0rem; border-width: 1px; background-color: #E5E7B;" />
+                                <hr style="margin: 0.5rem 0rem; border-width: 1px; background-color: #E5E7B;" />
                             </div>
                             <div style="display: flex; flex-direction: column;  gap: 0.25rem;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">

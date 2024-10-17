@@ -128,7 +128,7 @@ $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice
                                                 style="font-size: 0.875rem; line-height: 1.25rem;"><?php echo strlen($service['description'] > 70) ? substr($service['description'], 0, 70) . "..." : $service['description']; ?></span>
                                         </div>
                                     </div>
-                                    <span style="color: #49454F;">&#x20B1;<?php echo $service['price']; ?></span>
+                                    <span style="color: #49454F;">  <?php echo $service['price']; ?></span>
                                 </div>
                             </div>
                         <?php endforeach; else
@@ -182,7 +182,7 @@ $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice
                                             }
 
                                             ?>
-                                            <tr>
+                                            <tr onclick="window.location.href = 'view-appointment.php?id=<?php echo $appointment['appointment_id']; ?>';" class="appointment-row">
                                                 <td
                                                     style="display: flex; justify-content: center; padding: 0.5rem 0;">
                                                     <!-- <?php echo $appointment['stylist']; ?> -->
