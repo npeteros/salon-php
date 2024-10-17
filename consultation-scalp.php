@@ -1,5 +1,5 @@
 <?php 
-if(!isset($_POST['texture']) || !isset($_POST['hair'])) return header("Location: ./consultation-hair.php");
+if(!isset($_POST['type']) || !isset($_POST['texture']) || !isset($_POST['hair'])) return header("Location: ./consultation-hair.php");
 define("FILE_CSS", "src/styles/consultation-hair.css");
 include './src/includes/header.php';
 ?>
@@ -74,6 +74,7 @@ include './src/includes/header.php';
                                         <label for="dry">Dry</label>
                                     </div>
                                 </div>
+                                <input type="hidden" name="type" value="<?php echo $_POST['type']; ?>">
                                 <input type="hidden" name="texture" value="<?php echo $_POST['texture']; ?>">
                                 <input type="hidden" name="hair" value="<?php echo $_POST['hair']; ?>">
                                 <?php if(isset($_POST['straightening'])) { ?>
@@ -89,6 +90,7 @@ include './src/includes/header.php';
                         <button class="next-button" type="submit">Next</button>
                     </form>
                     <form action="./consultation-hair.php" method="POST">
+                        <input type="hidden" name="type" value="<?php echo $_POST['type']; ?>">
                         <input type="hidden" name="texture" value="<?php echo $_POST['texture']; ?>">
                         <input type="hidden" name="hair" value="<?php echo $_POST['hair']; ?>">
                         <?php if(isset($_POST['scalp'])) { ?>

@@ -27,7 +27,7 @@ if(!isset($_SESSION['user'])) header('Location: ./login.php');
                             2
                         </span>
                         <span>
-                            <h3 style="font-weight: 500; line-height: 1.25;">Scalp</h3>
+                            <h3 style="font-weight: 500; line-height: 1.25;">Treatment</h3>
                         </span>
                     </li>
                     <li class="next">
@@ -36,7 +36,7 @@ if(!isset($_SESSION['user'])) header('Location: ./login.php');
                             3
                         </span>
                         <span>
-                            <h3 style="font-weight: 500; line-height: 1.25;">Treatment</h3>
+                            <h3 style="font-weight: 500; line-height: 1.25;">Confirm</h3>
                         </span>
                     </li>
                     <li class="">
@@ -45,13 +45,42 @@ if(!isset($_SESSION['user'])) header('Location: ./login.php');
                             4
                         </span>
                         <span>
-                            <h3 style="font-weight: 500; line-height: 1.25;">Confirm</h3>
+                            <h3 style="font-weight: 500; line-height: 1.25;">Recommendation</h3>
                         </span>
                     </li>
                 </ol>
                 <div style="display: flex; padding-left: 1rem; padding-right: 1rem; flex-direction: column; border-radius: 1rem;">
-                    <form method="post" action="./consultation-scalp.php" style="display: flex; flex-direction: column; gap: 1rem;">
-                        <div style="display: flex; gap: 1rem;">
+                    <form method="post" action="./consultation-treatment.php" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem;">
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 50%;">
+                                <label for="name" style="font-weight: 700;">Hair Type</label>
+                                <div style="display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); grid-auto-flow: column; height: 100%;">
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="radio" name="type" id="ty-straight" value="Straight" 
+                                            <?php echo isset($_POST['type']) ? $_POST['type'] == "Straight" ? "checked" : "" : null; ?>
+                                            class="form-input" required />
+                                        <label for="straight">Straight</label>
+                                    </div>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="radio" name="type" id="ty-wavy" value="Wavy"
+                                            <?php echo isset($_POST['type']) ? $_POST['type'] == "Wavy" ? "checked" : "" : null; ?>
+                                            class="form-input" />
+                                        <label for="wavy">Wavy</label>
+                                    </div>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="radio" name="type" id="ty-curly" value="Curly"
+                                            <?php echo isset($_POST['type']) ? $_POST['type'] == "Curly" ? "checked" : "" : null; ?>
+                                            class="form-input" />
+                                        <label for="curly">Curly</label>
+                                    </div>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="radio" name="type" id="ty-kinky" value="Kinky"
+                                            <?php echo isset($_POST['type']) ? $_POST['type'] == "Kinky" ? "checked" : "" : null; ?>
+                                            class="form-input" />
+                                        <label for="kinky">Kinky</label>
+                                    </div>
+                                </div>
+                            </div>
                             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 50%;">
                                 <label for="name" style="font-weight: 700;">Hair Texture</label>
                                 <div style="display: flex; gap: 0.5rem; align-items: center;">
@@ -73,9 +102,9 @@ if(!isset($_SESSION['user'])) header('Location: ./login.php');
                                     <label for="thick">Thick</label>
                                 </div>
                             </div>
-                            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 50%;">
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                 <label for="name" style="font-weight: 700;">Hair Condition</label>
-                                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));">
+                                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); height: 100%;">
                                     <div style="display: flex; gap: 0.5rem; align-items: center;">
                                         <input type="radio" name="hair" id="h-damaged" value="Damaged"
                                         <?php echo isset($_POST['hair']) ? $_POST['hair'] == "Damaged" ? "checked" : "" : null; ?>
@@ -112,14 +141,14 @@ if(!isset($_SESSION['user'])) header('Location: ./login.php');
                         <?php if(isset($_POST['scalp'])) { ?>
                             <input type="hidden" name="scalp" value="<?php echo $_POST['scalp']; ?>">
                         <?php } ?>
-                        <?php if(isset($_POST['straightening'])) { ?>
-                                <input type="hidden" name="straightening" value="<?php echo $_POST['straightening']; ?>">
-                                <input type="hidden" name="perming" value="<?php echo $_POST['perming']; ?>">
-                                <input type="hidden" name="relax" value="<?php echo $_POST['relax']; ?>">
-                                <input type="hidden" name="coloring" value="<?php echo $_POST['coloring']; ?>">
-                                <input type="hidden" name="rebonding" value="<?php echo $_POST['rebonding']; ?>">
-                                <input type="hidden" name="bleaching" value="<?php echo $_POST['bleaching']; ?>">
-                        <?php } ?>
+                        <?php if (isset($_POST['perming'])): ?> <input type="hidden" name="perming"
+                                    value="<?php echo $_POST['perming']; ?>"> <?php endif; ?>
+                            <?php if (isset($_POST['relax'])): ?> <input type="hidden" name="relax"
+                                    value="<?php echo $_POST['relax']; ?>"> <?php endif; ?>
+                            <?php if (isset($_POST['rebonding'])): ?> <input type="hidden" name="rebonding"
+                                    value="<?php echo $_POST['rebonding']; ?>"> <?php endif; ?>
+                            <?php if (isset($_POST['bleaching'])): ?> <input type="hidden" name="bleaching"
+                                    value="<?php echo $_POST['bleaching']; ?>"> <?php endif; ?>
                         <button class="next-button"
                             type="submit">Next</button>
                     </form>

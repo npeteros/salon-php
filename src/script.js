@@ -390,7 +390,7 @@ $(document).ready(function () {
                 try {
                     response = JSON.parse(response);
                     console.log(response);
-                    
+
 
                     if (response.code != 200) {
                         $("#password-saved").css("display", "block");
@@ -443,7 +443,7 @@ $(document).ready(function () {
                         $("#delete-confirm").css("display", "block");
                         $("#delete-confirm").css("color", "#059669");
                         $("#delete-confirm").html("");
-                        $("#delete-confirm").html("Saved");
+                        $("#delete-confirm").html("Deleted");
                         setTimeout(() => {
                             window.location.href = "./logout.php";
                         }, 3000);
@@ -455,7 +455,29 @@ $(document).ready(function () {
                 }
             },
         });
-    })
+    });
+
+
+    $('#none').change(function () {
+        (this.checked) ? $('input[type="radio"]').prop('checked', false).prop('disabled', true) : $('input[type="radio"]').not(this).prop('checked', false).prop('disabled', false);
+    });
+
+    $('input[name="bleaching"]').change(function () {
+        if (this.checked)
+            $('input[type="radio"]').not(this).prop('checked', false);
+    });
+
+    $('input[name="perming"], input[name="rebonding"], input[name="relax"]').change(function () {
+        if (this.checked) {
+            if ($('input[name="bleaching"]').is(':checked')) {
+                $('input[name="perming"], input[name="rebonding"], input[name="relax"]').not(this).prop('disabled', true);
+                $('input[name="bleaching"]').prop('disabled', false);
+            }
+        }
+        else {
+            $('input[name="perming"], input[name="rebonding"], input[name="relax"]').not(this).prop('disabled', false); 
+        }
+    });
 
     $("#menu-button").click(function () {
         if (!menuDisplayed) {

@@ -1,6 +1,5 @@
 <?php
 define('FILE_CSS', 'src/styles/profile.css');
-print_r(sha1(trim('test')));
 include 'src/includes/header.php';
 if (!isset($_SESSION['user']))
     header('Location: ./login.php');
@@ -44,7 +43,7 @@ $_SESSION['user'] = getUser($_SESSION['user']['id']);
 
                     <div style="display: flex; align-items: center; gap: 1rem;">
                         <button
-                            style="display: inline-flex; align-items: center; padding-left: 1rem; padding-right: 1rem; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #1f2937; color: white; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 0.375rem; transition: background-color 150ms ease-in-out;">Save</button>
+                            style="cursor: pointer; display: inline-flex; align-items: center; padding-left: 1rem; padding-right: 1rem; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #1f2937; color: white; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 0.375rem; transition: background-color 150ms ease-in-out;">Save</button>
                         <span style="font-size: 0.875rem; color: #16a34a; display: none;"
                             id="profile-saved">Saved.</span>
                     </div>
@@ -95,7 +94,7 @@ $_SESSION['user'] = getUser($_SESSION['user']['id']);
 
                     <div style="display: flex; align-items: center; gap: 1rem;">
                         <button
-                            style="display: inline-flex; align-items: center; padding-left: 1rem; padding-right: 1rem; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #1f2937; color: white; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 0.375rem; transition: background-color 150ms ease-in-out;">Save</button>
+                            style="cursor: pointer; display: inline-flex; align-items: center; padding-left: 1rem; padding-right: 1rem; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #1f2937; color: white; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 0.375rem; transition: background-color 150ms ease-in-out;">Save</button>
                         <span style="font-size: 0.875rem; color: #16a34a; display: none;"
                             id="password-saved">Saved.</span>
                     </div>
@@ -129,7 +128,7 @@ $_SESSION['user'] = getUser($_SESSION['user']['id']);
 
                     <div style="display: flex; align-items: center; gap: 1rem;">
                         <button
-                            style="display: inline-flex; padding-top: 0.5rem; padding-bottom: 0.5rem; padding-left: 1rem; padding-right: 1rem; align-items: center; border-radius: 0.375rem; border-width: 1px; border-color: transparent; font-size: 0.75rem; line-height: 1rem; font-weight: 600; letter-spacing: 0.1em; color: #ffffff; text-transform: uppercase; background-color: #DC2626; transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-duration: 150ms; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); width: fit-content;">DELETE
+                            style="cursor: pointer; display: inline-flex; padding-top: 0.5rem; padding-bottom: 0.5rem; padding-left: 1rem; padding-right: 1rem; align-items: center; border-radius: 0.375rem; border-width: 1px; border-color: transparent; font-size: 0.75rem; line-height: 1rem; font-weight: 600; letter-spacing: 0.1em; color: #ffffff; text-transform: uppercase; background-color: #DC2626; transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-duration: 150ms; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); width: fit-content;">DELETE
                             ACCOUNT</button>
                         <span style="display: none; font-size: 0.875rem; line-height: 1.25rem; color: #059669;"
                             id="delete-confirm">Saved.</span>
