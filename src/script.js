@@ -280,6 +280,38 @@ $(document).ready(function () {
 
             },
         });
+    });
+    
+    $("#admin-login-form").submit(function (e) {
+        e.preventDefault();
+        $("#admin-login-error").hide();
+        const formData = new FormData($("#admin-login-form")[0]);
+        const userData = {
+            loginEmail: formData.get("email"),
+            password: formData.get("password"),
+            admin: true
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "src/api/users.php",
+            data: userData,
+            success: function (response) {                
+                try {
+                    response = JSON.parse(response);   
+                    console.log(response);
+                    $("#admin-login-error").css("display", "block");
+                    response.code != 200 ? $("#admin-login-error").html(response.data) : window.location.href = "./admin-dashboard.php";
+                } catch (error) {
+                    $("#admin-login-error").css("display", "block");
+                    $("#admin-login-error").html("Something went wrong.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+
+            },
+        });
     })
 
     $("#confirm-booking").submit(function (event) {
@@ -475,7 +507,7 @@ $(document).ready(function () {
             }
         }
         else {
-            $('input[name="perming"], input[name="rebonding"], input[name="relax"]').not(this).prop('disabled', false); 
+            $('input[name="perming"], input[name="rebonding"], input[name="relax"]').not(this).prop('disabled', false);
         }
     });
 

@@ -725,7 +725,21 @@ function loginUser(string $email, string $password)
 {
     global $conn;
     $hashedPassword = sha1(trim($password));
-    $query = "SELECT * FROM users WHERE email = '{$email}' AND password = '{$hashedPassword}'";
+    $query = "SELECT * FROM users WHERE email = '{$email}' AND password = '{$hashedPassword}' AND (role != 'manager' AND role != 'owner')";
+    if ($r = mysqli_query($conn, $query)) {
+        if (mysqli_num_rows($r) > 0) {
+            $user = mysqli_fetch_assoc($r);
+            $_SESSION['user'] = $user;
+            return printJsonData(200, "Login successful");
+        }
+    }
+    return printJsonData(401, "Invalid email or password");
+}
+function loginAdmin(string $email, string $password)
+{
+    global $conn;
+    $hashedPassword = sha1(trim($password));
+    $query = "SELECT * FROM users WHERE email = '{$email}' AND password = '{$hashedPassword}' AND (role = 'manager' OR role = 'owner')";
     if ($r = mysqli_query($conn, $query)) {
         if (mysqli_num_rows($r) > 0) {
             $user = mysqli_fetch_assoc($r);

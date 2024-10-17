@@ -15,7 +15,7 @@ include 'src/includes/header.php'; ?>
                     Appointments at Your Fingertips!
                 </span>
                 <button class="book-button"
-                    onclick="window.location.href='<?php echo !isset($_SESSION['user']) ? './login.php' : './dashboard.php' ?>'">
+                    onclick="window.location.href='<?php echo isset($_SESSION['user']) ? ($_SESSION['user']['role'] == 'owner' || $_SESSION['user']['role'] == 'manager') ? './admin-dashboard.php' : './dashboard.php' : './login.php'; ?>'">
                     Book Now
                 </button>
             </div>

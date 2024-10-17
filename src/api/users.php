@@ -9,7 +9,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
     case "POST":
         if (isset($_POST['loginEmail']) && isset($_POST['password']))
-            return loginUser($_POST['loginEmail'], $_POST['password']);
+            if(isset($_POST['admin'])) return loginAdmin($_POST['loginEmail'], $_POST['password']);
+            else return loginUser($_POST['loginEmail'], $_POST['password']);
         if (!isset($_POST['name']) || !isset($_POST['email']) || !isset($_POST['password']))
             return printJsonData(400, "Missing required fields");
         return createUser($_POST['name'], $_POST['email'], $_POST['password']);
