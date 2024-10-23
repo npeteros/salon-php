@@ -1,5 +1,5 @@
 <?php
-define('FILE_CSS', 'src/styles/book-appointment.css');
+define('FILE_CSS', 'src/styles/reserve-appointment.css');
 include './src/includes/header.php';
 if(!isset($_SESSION['user'])) header('Location: ./login.php');
 date_default_timezone_set('Asia/Manila');
@@ -48,7 +48,7 @@ date_default_timezone_set('Asia/Manila');
                     </li>
                 </ol>
                 <div style="display: flex; padding-left: 1rem; padding-right: 1rem; flex-direction: column; border-radius: 1rem;">
-                    <form method="post" action="./book-service.php" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <form method="post" action="./reserve-service.php" style="display: flex; flex-direction: column; gap: 1rem;">
                         <div style="display: flex; gap: 1rem;">
                             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 50%;">
                                 <label for="name" style="font-weight: 700;">Confirm Date</label>

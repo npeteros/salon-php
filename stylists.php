@@ -22,16 +22,14 @@ if (!isset($_SESSION['user']))
                                     stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                         </div>
-                        <input type="text" id="services-search" class="search-button" placeholder="Search Services..."
+                        <input type="text" id="stylists-search" class="search-button" placeholder="Search Stylists..."
                             required />
                     </div>
                 </div>
             </div>
             <div style="display: flex; flex-direction: column; gap: 0.5rem">
-                <span
-                    style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Services</span>
-                <div
-                    id="servicesList">
+                <span style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Stylists</span>
+                <div class="stylists-container" id="stylistsList">
                 </div>
             </div>
         </div>

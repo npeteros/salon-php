@@ -3,6 +3,7 @@ if (!isset($_POST['type']) || !isset($_POST['texture']) || !isset($_POST['hair']
     return header("Location: ./consultation-treatment.php");
 define("FILE_CSS", "src/styles/consultation-hair.css");
 include './src/includes/header.php';
+// print_r($_POST[''])
 $hair_treatment = [
     'perming' => isset($_POST['perming']) ? $_POST['perming'] : "none",
     'relax' => isset($_POST['relax']) ? $_POST['relax'] : "none",
@@ -113,7 +114,9 @@ $hair_treatment = [
                                         case 'more':
                                             $formattedValue = "More than 6 months";
                                             break;
-
+                                        case 'yes':
+                                            $formattedValue = "Applicable";
+                                            break;
                                         default:
                                             break;
                                     }
@@ -144,7 +147,7 @@ $hair_treatment = [
                             <?php if (isset($_POST['bleaching'])): ?> <input type="hidden" name="bleaching"
                                     value="<?php echo $_POST['bleaching']; ?>"> <?php endif; ?>
                             <span style="text-align: center; color: #DC2626; font-size: 0.875rem; line-height: 1.25rem;"
-                                id="booking-error"></span>
+                                id="reservation-error"></span>
                             <button class="next-button" type="submit">Submit</button>
                         </form>
                         <form action="./consultation-treatment.php" method="POST">

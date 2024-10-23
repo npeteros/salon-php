@@ -4,7 +4,8 @@
             'side-nav-active-link' :
             'side-nav-inactive-link';
         ?>
-        side-nav-link" onclick="window.location.href='./dashboard.php'">
+        side-nav-link"
+        onclick="window.location.href='./admin-dashboard.php'">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 18V16H21V18H3ZM3 13V11H21V13H3ZM3 8V6H21V8H3Z" fill="currentColor" />
         </svg>
@@ -12,7 +13,7 @@
     </button>
     <button
         class="<?php echo str_contains($_SERVER['REQUEST_URI'], "appointment") || str_contains($_SERVER['REQUEST_URI'], "reserve") ? 'side-nav-active-link' : 'side-nav-inactive-link'; ?>  side-nav-link"
-        onclick="window.location.href='./appointments.php'">
+        onclick="window.location.href='./admin-appointments.php'">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 d="M11 17H13V13H17V11H13V7H11V11H7V13H11V17ZM12 22C10.6167 22 9.31667 21.7417 8.1 21.225C6.88333 20.6917 5.825 19.975 4.925 19.075C4.025 18.175 3.30833 17.1167 2.775 15.9C2.25833 14.6833 2 13.3833 2 12C2 10.6167 2.25833 9.31667 2.775 8.1C3.30833 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.31667 8.1 2.8C9.31667 2.26667 10.6167 2 12 2C13.3833 2 14.6833 2.26667 15.9 2.8C17.1167 3.31667 18.175 4.025 19.075 4.925C19.975 5.825 20.6833 6.88333 21.2 8.1C21.7333 9.31667 22 10.6167 22 12C22 13.3833 21.7333 14.6833 21.2 15.9C20.6833 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6917 15.9 21.225C14.6833 21.7417 13.3833 22 12 22ZM12 20C14.2333 20 16.125 19.225 17.675 17.675C19.225 16.125 20 14.2333 20 12C20 9.76667 19.225 7.875 17.675 6.325C16.125 4.775 14.2333 4 12 4C9.76667 4 7.875 4.775 6.325 6.325C4.775 7.875 4 9.76667 4 12C4 14.2333 4.775 16.125 6.325 17.675C7.875 19.225 9.76667 20 12 20Z"
@@ -20,20 +21,11 @@
         </svg>
         <span class="">Appointments</span>
     </button>
-    <button
-        class="<?php echo (str_contains($_SERVER['REQUEST_URI'], "consultation") || str_contains($_SERVER['REQUEST_URI'], "recommendation")) ? 'side-nav-active-link' : 'side-nav-inactive-link'; ?>  side-nav-link"
-        onclick="window.location.href='./consultations.php'">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="M2 22V4C2 3.45 2.19583 2.97917 2.5875 2.5875C2.97917 2.19583 3.45 2 4 2H20C20.55 2 21.0208 2.19583 21.4125 2.5875C21.8042 2.97917 22 3.45 22 4V16C22 16.55 21.8042 17.0208 21.4125 17.4125C21.0208 17.8042 20.55 18 20 18H6L2 22ZM5.15 16H20V4H4V17.125L5.15 16Z"
-                fill="currentColor" />
-        </svg>
-        <span class="">Consultations</span>
-    </button>
     <div class="side-nav-divider"></div>
+    <?php if($_SESSION['user']['role'] == 'owner') { ?>
     <button
-        class="<?php echo str_contains($_SERVER['REQUEST_URI'], "services") ? 'side-nav-active-link' : 'side-nav-inactive-link'; ?>  side-nav-link"
-        onclick="window.location.href = './services.php'">
+        class="<?php echo str_contains($_SERVER['REQUEST_URI'], "service") ? 'side-nav-active-link' : 'side-nav-inactive-link'; ?>  side-nav-link"
+        onclick="window.location.href = './admin-services.php'">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 d="M7 9V7H21V9H7ZM7 13V11H21V13H7ZM7 17V15H21V17H7ZM4 9C3.71667 9 3.47917 8.90417 3.2875 8.7125C3.09583 8.52083 3 8.28333 3 8C3 7.71667 3.09583 7.47917 3.2875 7.2875C3.47917 7.09583 3.71667 7 4 7C4.28333 7 4.52083 7.09583 4.7125 7.2875C4.90417 7.47917 5 7.71667 5 8C5 8.28333 4.90417 8.52083 4.7125 8.7125C4.52083 8.90417 4.28333 9 4 9ZM4 13C3.71667 13 3.47917 12.9042 3.2875 12.7125C3.09583 12.5208 3 12.2833 3 12C3 11.7167 3.09583 11.4792 3.2875 11.2875C3.47917 11.0958 3.71667 11 4 11C4.28333 11 4.52083 11.0958 4.7125 11.2875C4.90417 11.4792 5 11.7167 5 12C5 12.2833 4.90417 12.5208 4.7125 12.7125C4.52083 12.9042 4.28333 13 4 13ZM4 17C3.71667 17 3.47917 16.9042 3.2875 16.7125C3.09583 16.5208 3 16.2833 3 16C3 15.7167 3.09583 15.4792 3.2875 15.2875C3.47917 15.0958 3.71667 15 4 15C4.28333 15 4.52083 15.0958 4.7125 15.2875C4.90417 15.4792 5 15.7167 5 16C5 16.2833 4.90417 16.5208 4.7125 16.7125C4.52083 16.9042 4.28333 17 4 17Z"
@@ -42,15 +34,16 @@
 
         <span class="">Services</span>
     </button>
+    <?php } ?>
     <button
-        class="<?php echo (str_contains($_SERVER['REQUEST_URI'], "stylist") && !str_contains($_SERVER['REQUEST_URI'], 'reserve')) ? 'side-nav-active-link' : 'side-nav-inactive-link'; ?>  side-nav-link"
-        onclick="window.location.href = './stylists.php'">
+        class="<?php echo str_contains($_SERVER['REQUEST_URI'], "user") ? 'side-nav-active-link' : 'side-nav-inactive-link'; ?>  side-nav-link"
+        onclick="window.location.href = './users.php'">
         <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path
                 d="M9 13.75c-2.34 0-7 1.17-7 3.5V19h14v-1.75c0-2.33-4.66-3.5-7-3.5ZM4.34 17c.84-.58 2.87-1.25 4.66-1.25s3.82.67 4.66 1.25H4.34ZM9 12c1.93 0 3.5-1.57 3.5-3.5S10.93 5 9 5 5.5 6.57 5.5 8.5 7.07 12 9 12Zm0-5c.83 0 1.5.67 1.5 1.5S9.83 10 9 10s-1.5-.67-1.5-1.5S8.17 7 9 7Zm7.04 6.81c1.16.84 1.96 1.96 1.96 3.44V19h4v-1.75c0-2.02-3.5-3.17-5.96-3.44ZM15 12c1.93 0 3.5-1.57 3.5-3.5S16.93 5 15 5c-.54 0-1.04.13-1.5.35.63.89 1 1.98 1 3.15s-.37 2.26-1 3.15c.46.22.96.35 1.5.35Z">
             </path>
         </svg>
-        <span class="">Stylists</span>
+        <span class="">Users</span>
     </button>
     <div class="side-nav-divider"></div>
     <button

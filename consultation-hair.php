@@ -2,6 +2,11 @@
 define("FILE_CSS", "src/styles/consultation-hair.css");
 include 'src/includes/header.php';
 if(!isset($_SESSION['user'])) header('Location: ./login.php');
+
+include 'src/api/functions.php';
+
+$consultation = getConsultationByCustomer($_SESSION['user']['id']);
+if($consultation) header('Location: ./consultations.php');
 ?>
 
 <div style="min-height: 100lvh; background: #D9D9D9;">

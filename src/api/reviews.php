@@ -17,7 +17,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case "POST":
         if (!isset($_POST['customer_id']) || !isset($_POST['appointment_id']) || !isset($_POST['rating']) || !isset($_POST['review']))
             return printJsonData(400, "Missing required fields");
-        return createReview($_POST['customer_id'], $_POST['appointment_id'], $_POST['rating'], $_POST['review']) == -1 ? printJsonData(500, "Failed to create review") : printJsonData(200, "Review created successfully");
+        return createReview((int) $_POST['customer_id'], (int) $_POST['appointment_id'], (int) $_POST['rating'], $_POST['review']) == -1 ? printJsonData(500, "Failed to create review") : printJsonData(200, "Review created successfully");
     case "PATCH":
         if (!isset($_POST['id']) || !isset($_POST['customer_id']) || !isset($_POST['appointment_id']) || !isset($_POST['rating']) || !isset($_POST['review']))
             return printJsonData(400, "Missing required fields");

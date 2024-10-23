@@ -1,7 +1,7 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] != "POST" || !isset($_POST['date']) || !isset($_POST['time']) || !isset($_POST['service']) || !isset($_POST['stylist']))
-    header("Location: ./book-service.php");
-define('FILE_CSS', 'src/styles/book-appointment.css');
+    header("Location: ./reserve-service.php");
+define('FILE_CSS', 'src/styles/reserve-appointment.css');
 include './src/includes/header.php';
 include './src/api/functions.php';
 $service = getServiceById($_POST['service']);
@@ -138,7 +138,7 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                         </div>
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <form id="confirm-booking" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <form id="confirm-reservation" style="display: flex; flex-direction: column; gap: 1rem;">
                             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                 <input type="hidden" name="customer" id="customer"
                                     value="<?php echo $_SESSION['user']['id']; ?>">
@@ -150,10 +150,10 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                                     value="<?php echo $_POST['stylist']; ?>" />
                             </div>
                             <span style="font-size: 0.875rem; line-height: 1.25rem; text-align: center; color: #DC2626;"
-                                id="booking-error"></span>
+                                id="reservation-error"></span>
                             <button class="next-button" type="submit">Submit</button>
                         </form>
-                        <form method="post" action="./book-stylist.php">
+                        <form method="post" action="./reserve-stylist.php">
                             <input type="hidden" name="date" id="date" value="<?php echo $_POST['date'] ?>" />
                             <input type="hidden" name="time" id="time" value="<?php echo $_POST['time'] ?>" />
                             <input type="hidden" name="service" id="service" value="<?php echo $_POST['service'] ?>">

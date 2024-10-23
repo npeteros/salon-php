@@ -3,15 +3,16 @@ define('FILE_CSS', 'src/styles/appointments.css');
 include 'src/includes/header.php';
 if (!isset($_SESSION['user']))
     header('Location: ./login.php');
-include 'src/api/functions.php';
-$appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice(getAppointmentsByCustomer($_SESSION['user']['id']), 0, 3) : null;
+if ($_SESSION['user']['role'] !== 'owner' && $_SESSION['user']['role'] !== 'manager')
+    header('Location: ./index.php');
 ?>
 
 <div style="height: fit-content; min-height: 100lvh; background: #D9D9D9">
     <?php include './src/includes/dash_nav.php'; ?>
     <div class="main-container">
-        <?php include 'src/includes/side_nav.php'; ?>
-        <div style="display: flex; margin: 1.5rem; flex-direction: column; gap: 1rem; width: 100%;">
+        <?php include 'src/includes/admin_side_nav.php'; ?>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%; margin: 1.5rem;">
             <div style="display: flex; flex-direction: column;">
                 <div>
                     <div style="position: relative;">
@@ -23,33 +24,21 @@ $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice
                                     stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                         </div>
-                        <input type="text" id="appointments-search" class="search-button"
-                            placeholder="Search Appointments..." required />
+                        <input type="text" id="services-search" class="search-button" placeholder="Search Services..."
+                            required />
                     </div>
                 </div>
             </div>
             <div style="display: flex; flex-direction: column; gap: 0.5rem">
                 <div style="display: flex; justify-content: space-between;">
                     <span
-                        style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Appointments</span>
+                        style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Services</span>
                     <button
                         style="background-color: #A80011; border: 0px; color: white; padding: 0rem 2rem; border-radius: 0.5rem; cursor: pointer;"
-                        onclick="window.location.href = './reserve-schedule.php'">Reserve Appointment</button>
+                        onclick="window.location.href = './add-service.php'">Add a Service</button>
                 </div>
-                <table style="width: 100%; background: #A80011;">
-                    <thead style="color: white;">
-                        <tr>
-                            <th style="font-weight: 400; padding: 0.5rem 0rem;">Staff</th>
-                            <th style="font-weight: 400;">Service</th>
-                            <th style="font-weight: 400;">Date</th>
-                            <th style="font-weight: 400;">Time</th>
-                            <th style="font-weight: 400;">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody style="background-color: white; text-align: center;" id="appointmentsList"
-                        data-userid="<?php echo $_SESSION['user']['id']; ?>">
-                    </tbody>
-                </table>
+                <div id="servicesList" data-userid="<?php echo $_SESSION['user']['id']; ?>">
+                </div>
             </div>
         </div>
     </div>

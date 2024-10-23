@@ -6,22 +6,26 @@ if ($_SERVER['REQUEST_METHOD']) {
         case "GET":
             if (isset($_GET['name']))
                 return printJsonData(200, getServicesByName($_GET['name']));
-            if(isset($_GET['popular']))
-                if(isset($_GET['search']) && strlen($_GET['search'])) return printJsonData(200, getPopularServicesBySearch( $_GET['search']));
-                else return printJsonData(200, getPopularServices());
+            if (isset($_GET['popular']))
+                if (isset($_GET['search']) && strlen($_GET['search']))
+                    return printJsonData(200, getPopularServicesBySearch($_GET['search']));
+                else
+                    return printJsonData(200, getPopularServices());
             return printJsonData(200, getAllServices());
         case "POST":
-            if (!isset($_POST['name']) || !isset($_POST['price']) || !isset($_POST['duration']) || !isset($_POST['followup_duration']))
-                return printJsonData(400, "Missing required fields");
-            return createService($_POST['name'], $_POST['price'], $_POST['duration'], $_POST['followup_duration']) == -1 ? printJsonData(500, "Failed to create service") : printJsonData(200, "Service created successfully");
+            if (!isset($_POST['name']) || !isset($_POST['price']) || !isset($_POST['duration']) || !isset($_POST['followup_duration']) || !isset($_POST['description']))
+                return printJsonData(400, $_POST['duration']);
+            return createService($_POST['name'], (float) $_POST['price'], (int) $_POST['duration'], (int) $_POST['followup_duration'], $_POST['description']) == -1 ? printJsonData(500, "Failed to create service") : printJsonData(200, "Service created successfully");
         case "PATCH":
-            if (!isset($_POST['id']) || !isset($_POST['name']) || !isset($_POST['price']) || !isset($_POST['duration']) || !isset($_POST['followup_duration']))
+            $data = json_decode(file_get_contents("php://input"), true);
+            if (!isset($data['id']) || !isset($data['name']) || !isset($data['price']) || !isset($data['duration']) || !isset($data['followup_duration']) || !isset($data['description']))
                 return printJsonData(400, "Missing required fields");
-            return updateService($_POST['id'], $_POST['name'], $_POST['price'], $_POST['duration'], $_POST['followup_duration']) == -1 ? printJsonData(500, "Failed to update service") : printJsonData(200, "Service updated successfully");
+            return updateService((int) $data['id'], $data['name'], (float) $data['price'], (int) $data['duration'], (int) $data['followup_duration'], $data['description']) == -1 ? printJsonData(500, "Failed to update service") : printJsonData(200, "Service updated successfully");
         case "DELETE":
-            if (!isset($_POST['id']))
+            $data = json_decode(file_get_contents("php://input"), true);
+            if (!isset($data['id']))
                 return printJsonData(400, "Missing required fields");
-            return deleteService($_POST['id']) == -1 ? printJsonData(500, "Failed to delete service") : printJsonData(200, "Service deleted successfully");
+            return deleteService((int) $data['id']) == -1 ? printJsonData(500, "Failed to delete service") : printJsonData(200, "Service deleted successfully");
 
         default:
             return printJsonData(405, "Method not allowed");

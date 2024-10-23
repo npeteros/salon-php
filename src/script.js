@@ -2,6 +2,217 @@ $(document).ready(function () {
 
     let menuDisplayed = false;
 
+    function printStars(rating) {
+        let fullStar = '<svg width="16" height="16" fill="yellow" stroke="black" viewBox="0 0 24 24"\
+                        xmlns="http://www.w3.org/2000/svg">\
+                        <path\
+                            d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z">\
+                        </path>\
+                    </svg>';
+
+        let halfStar = '<svg width="16" height="16" fill="yellow" stroke="black" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill - rule="evenodd" d = "m14.81 8.62 7.19.62-5.45 4.73L18.18 21 12 17.27 5.82 21l1.64-7.03L2 9.24l7.19-.61L12 2l2.81 6.62ZM12 6.1v9.3l3.77 2.28-1-4.28 3.32-2.88-4.38-.38L12 6.1Z" clip - rule="evenodd" ></path></svg> ';    // Half star
+
+        let emptyStar = '<svg width="16" height="16" fill="yellow" stroke="black" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d = "m22 9.74-7.19-.62L12 2.5 9.19 9.13 2 9.74l5.46 4.73-1.64 7.03L12 17.77l6.18 3.73-1.63-7.03L22 9.74ZM12 15.9l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.6l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.9Z" ></path></svg >';   // Empty star
+
+        let fullStars = Math.floor(rating);
+        let halfStars = (rating - fullStars >= 0.5) ? 1 : 0;
+        let emptyStars = 5 - (fullStars + halfStars);
+
+        let i, str = '';
+        for (i = 0; i < fullStars; i++) {
+            str += fullStar;
+        }
+
+        if (halfStars) {
+            str += halfStar;
+        }
+
+        for (i = 0; i < emptyStars; i++) {
+            str += emptyStar;
+        }
+
+        return str;
+    }
+
+    function capitalizeFirst(string) { return string.charAt(0).toUpperCase() + string.slice(1); }
+
+    let changingRoles = false;
+
+    $("#change-role").click(function () {
+        if (!changingRoles) {
+            $("#change-role").html("Save");
+            $("#role").css("display", "none");
+            $("#change-role-select").css("display", "block");
+        } else {
+            $("#change-role").html("Change role");
+            $("#role").css("display", "block");
+            $("#change-role-select").css("display", "none");
+
+            $("#change-role-error").html("");
+
+            console.log($("#change-role-select").val())
+
+            $.ajax({
+                type: "PATCH",
+                url: "src/api/users.php",
+                data: JSON.stringify({
+                    id: $("#role").attr("data-id"),
+                    role: $("#change-role-select").val(),
+                }),
+                success: function (response) {
+                    console.log(response)
+                    response = JSON.parse(response);
+                    if (response.code != 200) {
+                        $("#change-role-error").html(response.data)
+                    } else {
+                        $("#change-role-error").css("color", "#059669");
+                        $("#change-role-error").html("User role has been updated. Redirecting...");
+                        setTimeout(() => {
+                            window.location.href = "./view-user.php?id=" + $("#role").attr("data-id");
+                        }, 3000);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        changingRoles = !changingRoles;
+    })
+
+    if ($("#usersList").length) {
+        $.ajax({
+            type: "GET",
+            url: "src/api/users.php",
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response.code == 200) {
+                    $("#usersList").empty();
+                    const toShow = response.data.slice(0, 12);
+                    console.log(toShow);
+                    toShow.forEach(user => {
+                        $("#usersList").append(
+                            `<div
+                                style="background-color: white; display: flex; flex-direction: column; padding: 1rem; border-radius: 0.875rem; cursor: pointer;" onclick="window.location.href = './view-user.php?id=${user.id}';">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="display: flex; gap: 1rem; width: 3rem; height: 3rem;">
+                                        <img src="./uploads/${user.img_path}" alt="user" style="width: 100%; border-radius: 9999px;">
+                                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                            <span>${user.name}</span>
+                                            <span style="opacity: 50%;">${user.email}</span>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center;">${capitalizeFirst(user.role)}</div>
+                                </div>
+                            </div>`
+                        );
+                    });
+                }
+            }
+        });
+
+        $("#users-search").on("input", function () {
+            const search = $("#users-search");
+            $.ajax({
+                type: "GET",
+                data: {
+                    search: search.val()
+                },
+                url: "src/api/users.php",
+                success: function (response) {
+                    response = JSON.parse(response);
+                    if (response.code == 200) {
+                        $("#usersList").empty();
+                        const toShow = response.data.slice(0, 12);
+                        console.log(toShow);
+
+                        toShow.forEach(user => {
+                            $("#usersList").append(
+                                `<div
+                                style="background-color: white; display: flex; flex-direction: column; padding: 1rem; border-radius: 0.875rem; cursor: pointer;" onclick="window.location.href = './view-user.php?id=${user.id}';">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="display: flex; gap: 1rem; width: 3rem; height: 3rem;">
+                                        <img src="./uploads/${user.img_path}" alt="user" style="width: 100%; border-radius: 9999px;">
+                                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                            <span>${user.name}</span>
+                                            <span style="opacity: 50%;">${user.email}</span>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center;">${capitalizeFirst(user.role)}</div>
+                                </div>
+                            </div>`
+                            );
+                        });
+                    }
+                }
+            });
+        });
+    }
+
+    if ($("#stylistsList").length) {
+        $.ajax({
+            type: "GET",
+            url: "src/api/stylists.php",
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response.code == 200) {
+                    $("#stylistsList").empty();
+                    const toShow = response.data.slice(0, 12);
+                    toShow.forEach(stylist => {
+                        const stars = printStars(stylist.average_rating);
+                        $("#stylistsList").append(`
+                        <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: white; cursor: pointer;" onclick="window.location.href = './view-stylist.php?id=${stylist.stylist_id}';">
+                                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                                    <img src="./uploads/${stylist.stylist_img}" alt="stylist" width="48" height="48" style="border-radius: 9999px;">
+                                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                        <span style="font-size: 1.125rem; line-height: 1.75rem;">${stylist.stylist_name}</span>
+                                        <span style="font-size: 0.875rem; line-height: 1.25rem; opacity: 75%;">${stylist.stylist_email}</span>
+                                    </div>
+                                </div>
+                                <span>${stars}</span>
+                        </div>`
+                        );
+                    });
+                }
+            }
+        });
+
+        $("#stylists-search").on("input", function () {
+            const search = $("#stylists-search");
+            $.ajax({
+                type: "GET",
+                data: {
+                    search: search.val()
+                },
+                url: "src/api/stylists.php",
+                success: function (response) {
+                    response = JSON.parse(response);
+                    if (response.code == 200) {
+                        $("#stylistsList").empty();
+                        const toShow = response.data.slice(0, 12);
+
+                        toShow.forEach(stylist => {
+                            const stars = printStars(stylist.average_rating);
+                            $("#stylistsList").append(`
+                            <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: white; cursor: pointer;" onclick="window.location.href = './view-stylist.php?id=${stylist.stylist_id}';">
+                                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                                    <img src="./uploads/${stylist.stylist_img}" alt="stylist" width="48" height="48" style="border-radius: 9999px;">
+                                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                        <span style="font-size: 1.125rem; line-height: 1.75rem;">${stylist.stylist_name}</span>
+                                        <span style="font-size: 0.875rem; line-height: 1.25rem; opacity: 75%;">${stylist.stylist_email}</span>
+                                    </div>
+                                </div>
+                                <span>${stars}</span>
+                            </div>`
+                            );
+                        });
+                    }
+                }
+            });
+        });
+    }
+
     if ($("#servicesList").length) {
         $.ajax({
             type: "GET",
@@ -15,8 +226,10 @@ $(document).ready(function () {
                     $("#servicesList").empty();
                     const toShow = response.data.slice(0, 12);
                     toShow.forEach(service => {
+
+                        const link = $("#servicesList").attr("data-userid") ? 'admin-view-service.php' : 'view-service.php';
                         $("#servicesList").append(`
-                        <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: white;">
+                        <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: white; cursor: pointer;" onclick="window.location.href = './${link}?id=${service.id}';">
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <svg width="48" height="48" viewBox="0 0 32 32" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -53,8 +266,10 @@ $(document).ready(function () {
                         const toShow = response.data.slice(0, 12);
 
                         toShow.forEach(service => {
+
+                            const link = $("#servicesList").attr("data-userid") ? 'admin-view-service.php' : 'view-service.php';
                             $("#servicesList").append(`
-                            <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: white;">
+                            <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: white; cursor: pointer;" onclick="window.location.href = './${link}?id=${service.id}';">
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <svg width="48" height="48" viewBox="0 0 32 32" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -108,7 +323,7 @@ $(document).ready(function () {
                                 color = 'background-color: rgb(234 179 8);';
                                 break;
                             case 'cancelled':
-                            case 'no show':
+                            case 'noshow':
                                 color = 'background-color: rgb(239 68 68);';
                                 break;
                             default:
@@ -124,18 +339,20 @@ $(document).ready(function () {
                         let ampm = hours >= 12 ? 'PM' : 'AM';
                         let formattedTime = `${hours}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
 
+                        const link = $("#appointmentsList").attr("data-userid") ? 'view-appointment.php' : 'admin-view-appointment.php';
+
                         $("#appointmentsList").append(`
-                        <tr onclick="window.location.href = 'view-appointment.php?id=${appointment.appointment_id}';" class="appointment-row">
+                        <tr onclick="window.location.href = '${link}?id=${appointment.appointment_id}';" class="appointment-row">
                             <td style="display: flex; justify-content: center; padding: 0.5rem 0rem;">
-                                <img src="./uploads/${appointment.stylist_img}" alt="staff"
-                                    style="width: 2rem; height: 2rem; border-radius: 9999px;">
+                                ${appointment.stylist}
                             </td>
+                            ${!$("#appointmentsList").attr("data-userid") && `<td>${appointment.customer}</td>`}
                             <td>${appointment.service}</td>
                             <td>${date}</td>
                             <td>${formattedTime}</td>
                             <td style="padding-left: 1rem; padding-right: 1rem; width: 9rem; ">
                                 <div style="${color} border-radius: 9999px; color: white; padding-top: 0.25rem; padding-bottom: 0.25rem;">
-                                    ${appointment.status.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                                    ${appointment.status == "noshow" ? "No show" : appointment.status.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                                 </div>
                             </td>
                         </tr>`
@@ -157,7 +374,6 @@ $(document).ready(function () {
                 url: "src/api/appointments.php",
                 success: function (response) {
                     response = JSON.parse(response);
-                    console.log(response);
 
                     if (response.code == 200) {
                         $("#appointmentsList").empty();
@@ -180,7 +396,7 @@ $(document).ready(function () {
                                     color = 'background-color: rgb(234 179 8);';
                                     break;
                                 case 'cancelled':
-                                case 'no show':
+                                case 'noshow':
                                     color = 'background-color: rgb(239 68 68);';
                                     break;
                                 default:
@@ -196,19 +412,20 @@ $(document).ready(function () {
                             let ampm = hours >= 12 ? 'PM' : 'AM';
                             let formattedTime = `${hours}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
 
+                            const link = $("#appointmentsList").attr("data-userid") ? 'view-appointment.php' : 'admin-view-appointment.php';
 
                             $("#appointmentsList").append(`
-                                <tr onclick="window.location.href = 'view-appointment.php?id=${appointment.appointment_id}';" class="appointment-row">
+                                <tr onclick="window.location.href = '${link}?id=${appointment.appointment_id}';" class="appointment-row">
                                     <td style="display: flex; justify-content: center; padding: 0.5rem 0rem;">
-                                        <img src="./uploads/${appointment.stylist_img}" alt="staff"
-                                            style="width: 2rem; height: 2rem; border-radius: 9999px;">
+                                        ${appointment.stylist}
                                     </td>
+                                    ${!$("#appointmentsList").attr("data-userid") && `<td>${appointment.customer}</td>`}
                                     <td>${appointment.service}</td>
                                     <td>${date}</td>
                                     <td>${formattedTime}</td>
                                     <td style="padding-left: 1rem; padding-right: 1rem; width: 9rem; ">
                                         <div style="${color} border-radius: 9999px; color: white; padding-top: 0.25rem; padding-bottom: 0.25rem;">
-                                            ${appointment.status.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                                            ${appointment.status == "noshow" ? "No show" : appointment.status.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                                         </div>
                                     </td>
                                 </tr>`
@@ -220,12 +437,58 @@ $(document).ready(function () {
         });
     }
 
+    let isRescheduling = false;
+
+    $("#reschedule-appointment").submit(function (event) {
+        event.preventDefault();
+        $("#reschedule-error").html("");
+
+        if (!isRescheduling) {
+            $("#formattedDate").hide();
+            $("#rescheduled_date").attr("type", "datetime-local");
+        } else {
+
+            const formData = new FormData($("#reschedule-appointment")[0]);
+
+            const rescheduleData = {
+                id: formData.get("id"),
+                customer_id: formData.get("customer_id"),
+                stylist_id: formData.get("stylist_id"),
+                status: formData.get("status") ? formData.get("status") : "Rescheduled",
+                scheduled_date: $("#rescheduled_date").val()
+            }
+
+
+            const link = formData.get("status") ? 'admin-view-appointment.php' : 'view-appointment.php';
+
+            $.ajax({
+                type: "PATCH",
+                url: "src/api/appointments.php",
+                data: JSON.stringify(rescheduleData),
+                success: function (response) {
+                    console.log(response);
+                    response = JSON.parse(response);
+                    if (response.code != 200) {
+                        $("#reschedule-error").html(response.data)
+                    } else {
+                        $("#reschedule-error").css("color", "#059669");
+                        $("#reschedule-error").html(`Your appointment has been ${formData.get("status") ? "edited" : "rescheduled"}. Redirecting...`);
+                        setTimeout(() => {
+                            window.location.href = `./${link}?id=` + rescheduleData.id;
+                        }, 3000);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                }
+            })
+        }
+        isRescheduling = !isRescheduling;
+    });
+
     $("#register-form").submit(function (e) {
         e.preventDefault();
         $("#register-error").html("");
-
-        console.log(e);
-
 
         const formData = new FormData($("#register-form")[0]);
 
@@ -242,8 +505,7 @@ $(document).ready(function () {
             url: "src/api/users.php",
             data: userData,
             success: function (response) {
-                console.log("RES: ", response);
-
+                console.log(response);
                 response = JSON.parse(response);
                 response.code != 200 ? $("#register-error").html(response.data) : window.location.href = "./login.php";
             },
@@ -280,7 +542,7 @@ $(document).ready(function () {
             },
         });
     });
-    
+
     $("#admin-login-form").submit(function (e) {
         e.preventDefault();
         $("#admin-login-error").hide();
@@ -295,10 +557,9 @@ $(document).ready(function () {
             type: "POST",
             url: "src/api/users.php",
             data: userData,
-            success: function (response) {                
+            success: function (response) {
                 try {
-                    response = JSON.parse(response);   
-                    console.log(response);
+                    response = JSON.parse(response);
                     $("#admin-login-error").css("display", "block");
                     response.code != 200 ? $("#admin-login-error").html(response.data) : window.location.href = "./admin-dashboard.php";
                 } catch (error) {
@@ -313,12 +574,129 @@ $(document).ready(function () {
         });
     })
 
-    $("#confirm-booking").submit(function (event) {
+    $("#edit-service").submit(function (event) {
         event.preventDefault();
 
-        $("#booking-error").html("");
-        const formData = new FormData($("#confirm-booking")[0]);
-        const bookingData = {
+        const formData = new FormData($("#edit-service")[0]);
+        const serviceData = {
+            id: formData.get("id"),
+            name: formData.get("name"),
+            price: formData.get("price"),
+            duration: formData.get("duration"),
+            followup_duration: formData.get("followup_duration"),
+            description: formData.get("description"),
+        };
+
+        $.ajax({
+            type: "PATCH",
+            url: "src/api/services.php",
+            data: JSON.stringify(serviceData),
+            success: function (response) {
+                console.log(response);
+                response = JSON.parse(response);
+                if (response.code != 200) {
+                    $("#service-error").html(response.data)
+                } else {
+                    $("#service-error").css("color", "#059669");
+                    $("#service-error").html("The service has been updated. Redirecting...");
+                    setTimeout(() => {
+                        window.location.href = `./admin-view-service.php?id=${serviceData.id}`;
+                    }, 3000);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+            },
+        });
+    })
+
+    $("#add-service").submit(function (event) {
+        event.preventDefault();
+
+        $("#service-error").html("");
+        const formData = new FormData($("#add-service")[0]);
+        const serviceData = {
+            name: formData.get("name"),
+            price: formData.get("price"),
+            duration: formData.get("duration    "),
+            followup_duration: formData.get("followup_duration"),
+            description: formData.get("description"),
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "src/api/services.php",
+            data: serviceData,
+            success: function (response) {
+                try {
+                    console.log(response);
+                    response = JSON.parse(response);
+                    if (response.code != 200) {
+                        $("#service-error").html(response.data)
+                    } else {
+                        $("#service-error").css("color", "#059669");
+                        $("#service-error").html("Your service has been added. Redirecting...");
+                        setTimeout(() => {
+                            window.location.href = "./admin-services.php";
+                        }, 3000);
+                    }
+                } catch (error) {
+                    $("#service-error").html("Something went wrong.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+            },
+        });
+    })
+
+    $("#add-review").submit(function (event) {
+        event.preventDefault();
+
+        $("#review-error").html("");
+        const formData = new FormData($("#add-review")[0]);
+        const reviewData = {
+            customer_id: formData.get("customer_id"),
+            appointment_id: formData.get("appointment_id"),
+            rating: formData.get("rating"),
+            review: formData.get("review"),
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "src/api/reviews.php",
+            data: reviewData,
+            success: function (response) {
+                try {
+                    console.log(response);
+                    response = JSON.parse(response);
+                    if (response.code != 200) {
+                        $("#review-error").html(response.data)
+                    } else {
+                        $("#review-error").css("color", "#059669");
+                        $("#review-error").html("Your review has been added. Redirecting...");
+                        setTimeout(() => {
+                            window.location.href = "./view-appointment.php?id=" + reviewData.appointment_id;
+                        }, 3000);
+                    }
+                } catch (error) {
+                    $("#review-error").html("Something went wrong.");
+                    console.log(error);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+            },
+        });
+    });
+
+
+    $("#confirm-reservation").submit(function (event) {
+        event.preventDefault();
+
+        $("#reservation-error").html("");
+        const formData = new FormData($("#confirm-reservation")[0]);
+        const reservationData = {
             customer_id: formData.get("customer"),
             stylist_id: formData.get("stylist"),
             service_id: formData.get("service"),
@@ -329,21 +707,21 @@ $(document).ready(function () {
         $.ajax({
             type: "POST",
             url: "src/api/appointments.php",
-            data: bookingData,
+            data: reservationData,
             success: function (response) {
                 try {
                     response = JSON.parse(response);
                     if (response.code != 200) {
-                        $("#booking-error").html(response.data)
+                        $("#reservation-error").html(response.data)
                     } else {
-                        $("#booking-error").css("color", "#059669");
-                        $("#booking-error").html("Your booking has been confirmed. Redirecting...");
+                        $("#reservation-error").css("color", "#059669");
+                        $("#reservation-error").html("Your reservation has been confirmed. Redirecting...");
                         setTimeout(() => {
                             window.location.href = "./dashboard.php";
                         }, 3000);
                     }
                 } catch (error) {
-                    $("#booking-error").html("Something went wrong.");
+                    $("#reservation-error").html("Something went wrong.");
                 }
             },
             error: function (xhr, status, error) {
@@ -351,6 +729,133 @@ $(document).ready(function () {
             },
         });
     })
+
+    $("#submit-consultation").submit(function (event) {
+        event.preventDefault();
+
+        $("#consultation-error").html("");
+        const formData = new FormData($("#submit-consultation")[0]);
+        const reservationData = {
+            customer_id: formData.get("customer"),
+            type: formData.get("type"),
+            texture: formData.get("texture"),
+            hair: formData.get("hair"),
+            perming: formData.get("perming"),
+            relax: formData.get("relax"),
+            rebonding: formData.get("rebonding"),
+            bleaching: formData.get("bleaching"),
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "src/api/consultations.php",
+            data: reservationData,
+            success: function (response) {
+                try {
+                    response = JSON.parse(response);
+                    if (response.code != 200) {
+                        $("#consultation-error").html(response.data)
+                    } else {
+                        $("#consultation-error").css("color", "#059669");
+                        $("#consultation-error").html("Your consultation has been submitted. Redirecting...");
+                        setTimeout(() => {
+                            window.location.href = "./dashboard.php";
+                        }, 3000);
+                    }
+                } catch (error) {
+                    $("#consultation-error").html("Something went wrong.");
+                    console.log(error)
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+            },
+        });
+    });
+
+    let confirmDeletion = false;
+
+    $("#delete-service").click(function () {
+        if (!confirmDeletion) {
+            confirmDeletion = true;
+            $("#delete-service").html("Confirm");
+            $("#service-error").css("font-weight", 900);
+            return $("#service-error").html("Are you sure you want to delete this service?");
+        }
+
+        const serviceData = {
+            id: $("#delete-service").attr("data-id"),
+        };
+
+        $.ajax({
+            type: "DELETE",
+            url: "src/api/services.php",
+            data: JSON.stringify(serviceData),
+            success: function (response) {
+                try {
+                    response = JSON.parse(response);
+                    if (response.code != 200) {
+                        $("#service-error").html(response.data)
+                    } else {
+                        $("#service-error").css("color", "#059669");
+                        $("#service-error").html("Your service has been deleted. Redirecting...");
+                        setTimeout(() => {
+                            window.location.href = "./admin-services.php";
+                        }, 3000);
+                    }
+                } catch (error) {
+                    $("#service-error").html("Something went wrong.");
+                    console.log(error)
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+            },
+        });
+    })
+
+    $("#delete-consultation").submit(function (event) {
+        event.preventDefault();
+
+        if (!confirmDeletion) {
+            confirmDeletion = true;
+            $("#delete-consultation-button").html("Confirm");
+            $("#consultation-error").css("font-weight", 900);
+            $("#consultation-error").css("text-transform", "uppercase");
+            return $("#consultation-error").html("Are you sure you want to delete your consultation data?");
+        }
+
+        const formData = new FormData($("#delete-consultation")[0]);
+        const reservationData = {
+            id: formData.get("id"),
+        };
+
+        $.ajax({
+            type: "DELETE",
+            url: "src/api/consultations.php",
+            data: JSON.stringify(reservationData),
+            success: function (response) {
+                try {
+                    response = JSON.parse(response);
+                    if (response.code != 200) {
+                        $("#consultation-error").html(response.data)
+                    } else {
+                        $("#consultation-error").css("color", "#059669");
+                        $("#consultation-error").html("Your consultation has been deleted. Redirecting...");
+                        setTimeout(() => {
+                            window.location.href = "./dashboard.php";
+                        }, 3000);
+                    }
+                } catch (error) {
+                    $("#consultation-error").html("Something went wrong.");
+                    console.log(error)
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+            }
+        })
+    });
 
     $("#profile-information").submit(function (event) {
         event.preventDefault();
@@ -368,9 +873,7 @@ $(document).ready(function () {
             data: JSON.stringify(profileData),
             success: function (response) {
                 try {
-                    console.log(response);
                     response = JSON.parse(response);
-                    console.log(response);
 
                     if (response.code != 200) {
                         $("#profile-saved").css("display", "block");
@@ -420,8 +923,6 @@ $(document).ready(function () {
             success: function (response) {
                 try {
                     response = JSON.parse(response);
-                    console.log(response);
-
 
                     if (response.code != 200) {
                         $("#password-saved").css("display", "block");
@@ -461,9 +962,7 @@ $(document).ready(function () {
             data: JSON.stringify(passwordData),
             success: function (response) {
                 try {
-                    console.log(response);
                     response = JSON.parse(response);
-                    console.log('safaf', response);
 
                     if (response.code != 200) {
                         $("#delete-confirm").css("display", "block");

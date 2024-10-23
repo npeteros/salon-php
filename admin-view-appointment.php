@@ -4,11 +4,14 @@ include 'src/includes/header.php';
 if (!isset($_SESSION['user']))
     header('Location: ./login.php');
 if (!isset($_GET['id']))
-    header('Location: ./appointments.php');
+    header('Location: ./admin-appointments.php');
 include 'src/api/functions.php';
+if ($_SESSION['user']['role'] !== 'owner' && $_SESSION['user']['role'] !== 'manager')
+    header('Location: ./index.php');
 
 $appointment = getAppointmentById($_GET['id']);
-if(!$appointment || $appointment['customer_id'] != $_SESSION['user']['id']) return header('Location: ./appointments.php');
+if (!$appointment)
+    return header('Location: ./admin-appointments.php');
 $date = new DateTime($appointment['appointment_date']);
 
 $formattedDate = $date->format('d M Y, g:i A');
@@ -41,7 +44,7 @@ switch ($appointment['appointment_status']) {
 <div style="height: fit-content; min-height: 100lvh; background: #D9D9D9;">
     <?php include './src/includes/dash_nav.php'; ?>
     <div class="confirmation-container">
-        <?php include './src/includes/side_nav.php'; ?>
+        <?php include './src/includes/admin_side_nav.php'; ?>
 
         <div style="width: 100%; margin: 1.5rem;;">
             <div
@@ -118,13 +121,9 @@ switch ($appointment['appointment_status']) {
                                     style="display: flex; justify-content: space-between; padding: 0.5rem 1.5rem; border-radius: 9999px; color: white; height: fit-content; width: fit-content; <?php echo $color; ?>">
                                     <?php echo $appointment['appointment_status'] == "noshow" ? "No show" : ucfirst($appointment['appointment_status']); ?>
                                 </div>
-                                <?php if ($appointment['appointment_status'] == "noshow") { ?>
-                                    <a href="reschedule-appointment.php?appointment_id=<?php echo $appointment['appointment_id']; ?>"
-                                        style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;">Reschedule</a>
-                                <?php } ?>
-                                <a href="add-review.php?appointment_id=<?php echo $appointment['appointment_id']; ?>"
-                                    style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;">Add
-                                    a review?</a>
+                                <a href="admin-reschedule-appointment.php?appointment_id=<?php echo $appointment['appointment_id']; ?>"
+                                    style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;">Manage
+                                    Appointment</a>
                             </div>
                         </div>
                     </div>

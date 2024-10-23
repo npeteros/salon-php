@@ -7,6 +7,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case "GET":
         if (isset($_GET['scheduled_date']))
             return printJsonData(200, getAppointmentsByScheduledDate($_GET['scheduled_date']));
+        if(isset($_GET['search']) && !isset($_GET['customer_id']))
+            return printJsonData(200, getAppointmentsBySearch($_GET['search']));
         if (isset($_GET['customer_id']))
             if (isset($_GET['search']))
                 return printJsonData(200, getAppointmentsByCustomerAndSearch((int) $_GET['customer_id'], $_GET['search']));
@@ -24,9 +26,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
             return printJsonData(400, "Missing required fields");
         return createAppointment((int) $_POST['customer_id'], (int) $_POST['stylist_id'], (int) $_POST['service_id'], $_POST['status'], $_POST['scheduled_date']) == -1 ? printJsonData(500, "Error creating appointment") : printJsonData(200, "Appointment created successfully");
     case "PATCH":
-        if (!isset($_POST['customer_id']) || !isset($_POST['stylist_id']) || !isset($_POST['status']) || !isset($_POST['scheduled_date']))
-            return printJsonData(400, "Missing required fields");
-        return updateAppointment($_POST['id'], $_POST['customer_id'], $_POST['stylist_id'], $_POST['status'], $_POST['scheduled_date']) == -1 ? printJsonData(500, "Error updating appointment") : printJsonData(200, "Appointment updated successfully");
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!isset($data['id']) || !isset($data['customer_id']) || !isset($data['stylist_id']) || !isset($data['status']) || !isset($data['scheduled_date']))
+            return printJsonData(400, $data['id']);
+        return updateAppointment((int) $data['id'], (int) $data['customer_id'], (int) $data['stylist_id'], $data['status'], $data['scheduled_date']) == -1 ? printJsonData(500, "Error updating appointment") : printJsonData(200, "Appointment updated successfully");
     case "DELETE":
         if (!isset($_POST['id']))
             return printJsonData(400, "Missing required fields");

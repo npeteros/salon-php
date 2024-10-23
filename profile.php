@@ -14,6 +14,96 @@ $_SESSION['user'] = getUser($_SESSION['user']['id']);
             style="padding: 2rem; background-color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border-radius: 0.5rem;">
             <section style="max-width: 36rem;">
                 <header>
+                    <h2 style="font-size: 1.125rem; line-height: 1.75rem; font-weight: 500; color: #1f2937;">User Avatar
+                    </h2>
+                    <p style="margin-top: 0.25rem; font-size: 0.875rem; line-height: 1.25rem; color: #4b5563;">Update
+                        your user avatar</p>
+                </header>
+
+                <form style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;"
+                    action="profile.php" method="POST" enctype="multipart/form-data">
+                    <div>
+                        <img src="./uploads/<?php echo $_SESSION['user']['img_path']; ?>" alt="user avatar" width="50%"
+                            style="border-radius: 9999px;" />
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: fit-content;">
+                        <input type="file" name="image" accept="image/*">
+                        <input type="submit" value="Upload Image" name="submit">
+                    </div>
+                    <?php
+                    if (isset($_POST['submit'])) {
+                        $target_dir = "uploads/";
+
+                        $target_file = $target_dir . basename($_FILES["image"]["name"]);
+
+                        $check = getimagesize($_FILES["image"]["tmp_name"]);
+                        if ($check === false) {
+                            echo "<span style='color: #EF4444;'>File is not an image.</span>";
+                            echo '<script type="text/javascript">
+                                    setTimeout(function() {
+                                        window.location.href = "./profile.php";
+                                    }, 2000); // 2000 milliseconds = 2 seconds
+                                </script>';
+                            exit();
+                        }
+
+                        if (file_exists($target_file)) {
+                            echo "<span style='color: #EF4444;'>File name already exists.</span>";
+                            echo '<script type="text/javascript">
+                                    setTimeout(function() {
+                                        window.location.href = "./profile.php";
+                                    }, 2000); // 2000 milliseconds = 2 seconds
+                                </script>';
+                            exit();
+                        }
+
+                        if ($_FILES["image"]["size"] > 2000000) {
+                            echo "<span style='color: #EF4444;'>File is too large.</span>";
+                            echo '<script type="text/javascript">
+                                    setTimeout(function() {
+                                        window.location.href = "./profile.php";
+                                    }, 2000); // 2000 milliseconds = 2 seconds
+                                </script>';
+                            exit();
+                        }
+
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                        if (!in_array($imageFileType, ['jpg', 'png', 'jpeg', 'gif'])) {
+                            echo "<span style='color: #EF4444;'>Only JPG, JPEG, PNG & GIF files are allowed.</span>";
+                            echo '<script type="text/javascript">
+                                    setTimeout(function() {
+                                        window.location.href = "./profile.php";
+                                    }, 2000); // 2000 milliseconds = 2 seconds
+                                </script>';
+                            exit();
+                        }
+
+                        if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                            echo "<span style='color: #10B981;'>The file " . htmlspecialchars(basename($_FILES["image"]["name"])) . " has been uploaded.</span>";
+                            updateUserPicture($_SESSION['user']['id'], $_FILES["image"]["name"]);
+                            echo '<script type="text/javascript">
+                                    setTimeout(function() {
+                                        window.location.href = "./profile.php";
+                                    }, 2000); // 2000 milliseconds = 2 seconds
+                                </script>';
+
+                        } else {
+                            echo "<span style='color: #EF4444;'>Sorry, there was an error uploading your file.</span>";
+                            echo '<script type="text/javascript">
+                                    setTimeout(function() {
+                                        window.location.href = "./profile.php";
+                                    }, 2000); // 2000 milliseconds = 2 seconds
+                                </script>';
+                        }
+                    }
+                    ?>
+                </form>
+            </section>
+        </div>
+        <div
+            style="padding: 2rem; background-color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border-radius: 0.5rem;">
+            <section style="max-width: 36rem;">
+                <header>
                     <h2 style="font-size: 1.125rem; line-height: 1.75rem; font-weight: 500; color: #1f2937;">Profile
                         Information</h2>
                     <p style="margin-top: 0.25rem; font-size: 0.875rem; line-height: 1.25rem; color: #4b5563;">Update

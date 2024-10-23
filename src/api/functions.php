@@ -63,12 +63,96 @@ function printStars($rating)
     }
 }
 
+/* CONSULTATION APIs */
+
+function getConsultationByCustomer(int $customerId)
+{
+    global $conn;
+    $consultation = null;
+    $query = "SELECT * FROM consultations WHERE customer_id = {$customerId}";
+    if ($r = mysqli_query($conn, $query)) {
+        if (mysqli_num_rows($r) > 0) {
+            while ($row = mysqli_fetch_assoc($r)) {
+                $consultation = $row;
+            }
+        }
+        return $consultation;
+    }
+}
+
+function createConsultation(int $customerId, string $type, string $texture, string $hair, string $perming, string $relax, string $rebonding, string $bleaching): int
+{
+    global $conn;
+
+    $query = "SELECT customer_id from consultations WHERE customer_id = {$customerId}";
+    if ($r = mysqli_query($conn, $query)) {
+        if (mysqli_num_rows($r) > 0) {
+            return -2;
+        }
+    }
+
+    $columns = 'customer_id, type, texture, hair';
+    $values = $customerId . ', "' . $type . '", "' . $texture . '", "' . $hair . '"';
+
+    if (strlen($perming) > 0) {
+        $columns .= ', perming';
+        $values .= ', "' . $perming . '"';
+    }
+    if (strlen($relax) > 0) {
+        $columns .= ', relax';
+        $values .= ', "' . $relax . '"';
+    }
+    if (strlen($rebonding) > 0) {
+        $columns .= ', rebonding';
+        $values .= ', "' . $rebonding . '"';
+    }
+    if (strlen($bleaching) > 0) {
+        $columns .= ', bleaching';
+        $values .= ', "' . $bleaching . '"';
+    }
+
+    $query = 'INSERT INTO consultations (' . $columns . ') VALUES (' . $values . ')';
+    if (mysqli_query($conn, $query)) {
+        $id = mysqli_insert_id($conn);
+        return $id;
+    }
+    return -1;
+}
+
+function deleteConsultation(int $id)
+{
+    global $conn;
+    $query = "DELETE FROM consultations WHERE id = {$id}";
+    if (mysqli_query($conn, $query)) {
+        return 1;
+    }
+    return -1;
+}
+
 /* APPOINTMENT APIs */
 function getAllAppointments(): array|null
 {
     global $conn;
     $appointments = null;
-    $query = 'SELECT * FROM appointments';
+    $query =
+        "SELECT 
+            a.id as appointment_id,
+            c.name as customer,
+            u.name as stylist, 
+            s.name as service, 
+            a.status as status,
+            a.scheduled_date as schedule
+        FROM 
+            appointments a 
+        JOIN 
+            services s ON s.id = a.service_id 
+        JOIN 
+            users u ON u.id = a.stylist_id
+        JOIN
+            users c ON c.id = a.customer_id
+        ORDER BY
+            a.scheduled_date DESC;";
+
     if ($r = mysqli_query($conn, $query)) {
         while ($row = mysqli_fetch_assoc($r)) {
             $appointments[] = $row;
@@ -83,14 +167,18 @@ function getAppointmentById(int $id): array|null
     $appointment = null;
     $query =
         "SELECT 
+        u.id AS customer_id,
         u.img_path AS customer_image,
         u.name AS customer_name,
         u.email AS customer_email,
+        st.id AS stylist_id,
         st.img_path AS stylist_image,
         st.name AS stylist_name,
         st.email AS stylist_email,
         s.name AS service_name,
         s.price AS service_price,
+        s.duration AS service_duration,
+        a.id AS appointment_id,
         a.status AS appointment_status,
         a.scheduled_date AS appointment_date
     FROM appointments a
@@ -109,6 +197,40 @@ function getAppointmentsByScheduledDate(string $scheduledDate): array|null
     global $conn;
     $appointments = null;
     $query = "SELECT * FROM appointments WHERE scheduled_date = '{$scheduledDate}'";
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $appointments[] = $row;
+        }
+    }
+    return $appointments;
+}
+
+function getAppointmentsBySearch(string $search): array|null
+{
+    global $conn;
+    $appointments = null;
+    $query =
+        "SELECT 
+            a.id as appointment_id,
+            u.name as stylist, 
+            c.name as customer,
+            s.name as service, 
+            a.status as status,
+            a.scheduled_date as schedule
+        FROM 
+            appointments a 
+        JOIN 
+            services s ON s.id = a.service_id 
+        JOIN 
+            users u ON u.id = a.stylist_id
+        JOIN
+            users c ON c.id = a.customer_id
+        WHERE (s.name LIKE '%{$search}%'
+            OR a.status LIKE '%{$search}%'
+            OR a.scheduled_date LIKE '%{$search}%'
+            OR u.name LIKE '%{$search}%'
+            OR s.name LIKE '%{$search}%');";
+
     if ($r = mysqli_query($conn, $query)) {
         while ($row = mysqli_fetch_assoc($r)) {
             $appointments[] = $row;
@@ -338,6 +460,32 @@ function getAllReviews(): array|null
     return $reviews;
 }
 
+function getReviewsByStylistId(int $stylistId): array|null
+{
+    global $conn;
+    $reviews = null;
+    $query =
+        "SELECT 
+            u.name AS customer_name,
+            u.email AS customer_email,
+            u.img_path AS customer_image,
+            r.rating,
+            r.review,
+            r.created_at,
+            a.id AS appointment_id
+        FROM reviews r
+        JOIN appointments a ON r.appointment_id = a.id
+        JOIN users u ON r.customer_id = u.id
+        WHERE a.stylist_id = {$stylistId}";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $reviews[] = $row;
+        }
+    }
+    return $reviews;
+}
+
 function getReviewById(int $id): array|null
 {
     global $conn;
@@ -388,10 +536,10 @@ function getReviewsByReview(string $review): array|null
     return $reviews;
 }
 
-function createReview(int $customerId, int $appointmentId, string $rating, string $review): int
+function createReview(int $customerId, int $appointmentId, int $rating, string $review): int
 {
     global $conn;
-    $query = "INSERT INTO reviews (customer_id, appointment_id, rating, review) VALUES ({$customerId}, {$appointmentId}, '{$rating}', '{$review}')";
+    $query = "INSERT INTO reviews (customer_id, appointment_id, rating, review) VALUES ({$customerId}, {$appointmentId}, {$rating}, '{$review}')";
     if (mysqli_query($conn, $query)) {
         $id = mysqli_insert_id($conn);
         return $id;
@@ -521,10 +669,40 @@ function getPopularServices(): array|null
     return $services;
 }
 
-function createService(string $name, float $price, int $duration, int $followup_duration): int
+function getPopularServiceById(int $id): array|null
 {
     global $conn;
-    $query = "INSERT INTO services (name, price, duration, followup_duration) VALUES ('{$name}', {$price}, {$duration}, {$followup_duration})";
+    $services = null;
+    $query =
+        "SELECT
+            s.id as id,
+            s.name as name,
+            s.description as description,
+            s.price as price,
+            s.duration as duration,
+            s.followup_duration as followup_duration,
+            COUNT(a.id) as appointment_count
+        FROM
+            services s
+        LEFT JOIN
+            appointments a ON s.id = a.service_id
+        WHERE
+            s.id = {$id}
+        GROUP BY
+            s.id, s.name
+        ORDER BY
+            appointment_count DESC";
+
+    if ($r = mysqli_query($conn, $query)) {
+        $services = mysqli_fetch_assoc($r);
+    }
+    return $services;
+}
+
+function createService(string $name, float $price, int $duration, int $followup_duration, string $description): int
+{
+    global $conn;
+    $query = "INSERT INTO services (name, price, description, duration, followup_duration) VALUES ('{$name}', {$price}, '{$description}', {$duration}, {$followup_duration})";
     if (mysqli_query($conn, $query)) {
         $id = mysqli_insert_id($conn);
         return $id;
@@ -532,10 +710,10 @@ function createService(string $name, float $price, int $duration, int $followup_
     return -1;
 }
 
-function updateService(int $id, string $name, float $price, int $duration, int $followup_duration): int
+function updateService(int $id, string $name, float $price, int $duration, int $followup_duration, string $description): int
 {
     global $conn;
-    $query = "UPDATE services SET name = '{$name}', price = {$price}, duration = {$duration}, followup_duration = {$followup_duration}, updated_at = CURRENT_TIMESTAMP WHERE id = {$id}";
+    $query = "UPDATE services SET name = '{$name}', price = {$price}, description = '{$description}', duration = {$duration}, followup_duration = {$followup_duration}, updated_at = CURRENT_TIMESTAMP WHERE id = {$id}";
     if (mysqli_query($conn, $query)) {
         $id = mysqli_insert_id($conn);
         return $id;
@@ -574,7 +752,14 @@ function getStylistSpecialtiesByStylistId(int $stylistId): array|null
 {
     global $conn;
     $specialties = null;
-    $query = "SELECT * FROM stylist_specialties WHERE stylist_id = {$stylistId}";
+    $query = "SELECT 
+                    ss.id AS specailty_id,
+                    ss.stylist_id AS stylist_id,
+                    ss.service_id AS service_id,
+                    s.name AS service_name
+                FROM stylist_specialties ss
+                JOIN services s ON ss.service_id = s.id
+                WHERE ss.stylist_id = {$stylistId};";
     if ($r = mysqli_query($conn, $query)) {
         while ($row = mysqli_fetch_assoc($r)) {
             $specialties[] = $row;
@@ -646,14 +831,104 @@ function deleteStylistSpecialty(int $id): int
 function getAllStylists(): array|null
 {
     global $conn;
-    $stylists = null;
-    $query = 'SELECT * FROM users WHERE role="stylist"';
+    $reviewSummary = null;
+    $query =
+        "SELECT 
+            u.id AS stylist_id,
+            u.name AS stylist_name, 
+            u.img_path AS stylist_img,
+            u.email AS stylist_email,
+            COUNT(r.id) AS total_appointments,  -- Number of appointments with reviews
+            AVG(r.rating) AS average_rating
+        FROM 
+            users u
+        LEFT JOIN 
+            appointments a ON u.id = a.stylist_id
+        LEFT JOIN 
+            reviews r ON a.id = r.appointment_id
+        WHERE 
+            u.role = 'stylist'  -- Ensure you're only retrieving stylists
+        GROUP BY 
+            u.id, u.name, u.img_path, u.email
+        ORDER BY 
+            average_rating DESC;
+        ";
     if ($r = mysqli_query($conn, $query)) {
         while ($row = mysqli_fetch_assoc($r)) {
-            $stylists[] = $row;
+            $reviewSummary[] = $row;
         }
     }
-    return $stylists;
+    return $reviewSummary;
+}
+
+function getStylistById(int $stylistId): array|null
+{
+    global $conn;
+    $reviewSummary = null;
+    $query =
+        "SELECT 
+            u.id AS stylist_id,
+            u.name AS stylist_name, 
+            u.img_path AS stylist_img,
+            u.email AS stylist_email,
+            COUNT(r.id) AS total_appointments,  -- Number of appointments with reviews
+            AVG(r.rating) AS average_rating
+        FROM 
+            users u
+        LEFT JOIN 
+            appointments a ON u.id = a.stylist_id
+        LEFT JOIN 
+            reviews r ON a.id = r.appointment_id
+        WHERE 
+            u.role = 'stylist'  -- Ensure you're only retrieving stylists
+            AND u.id = {$stylistId}
+        GROUP BY 
+            u.id, u.name, u.img_path, u.email
+        ORDER BY 
+            average_rating DESC; 
+        ";
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $reviewSummary = $row;
+        }
+    }
+    return $reviewSummary;
+}
+
+function getStylistsBySearch(string $search): array|null
+{
+    global $conn;
+    $reviewSummary = null;
+    $query =
+        "SELECT 
+            u.id AS stylist_id,
+            u.name AS stylist_name, 
+            u.img_path AS stylist_img,
+            u.email AS stylist_email,
+            COUNT(r.id) AS total_appointments,  -- Number of appointments with reviews
+            AVG(r.rating) AS average_rating
+        FROM 
+            users u
+        LEFT JOIN 
+            appointments a ON u.id = a.stylist_id
+        LEFT JOIN 
+            reviews r ON a.id = r.appointment_id
+        WHERE 
+            u.role = 'stylist'  -- Ensure you're only retrieving stylists
+            AND 
+            (u.name LIKE '%{$search}%'
+            OR u.email LIKE '%{$search}%')
+        GROUP BY 
+            u.id, u.name, u.img_path, u.email
+        ORDER BY 
+            average_rating DESC;  -- Optionally, order by average rating
+        ";
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $reviewSummary[] = $row;
+        }
+    }
+    return $reviewSummary;
 }
 
 function getStylistsBySpecialties(int $specialtyId): array|null
@@ -724,6 +999,23 @@ function getUser(int $id): array|null
     return $users;
 }
 
+function getUserBySearch(string $search): array|null
+{
+    global $conn;
+    $users = null;
+    $query = "SELECT * 
+                FROM users 
+                WHERE name LIKE '%{$search}%' 
+                OR email LIKE '%{$search}%' 
+                OR role LIKE '%{$search}%';";
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $users[] = $row;
+        }
+    }
+    return $users;
+}
+
 function loginUser(string $email, string $password)
 {
     global $conn;
@@ -769,6 +1061,13 @@ function createUser(string $name, string $email, string $rawPassword)
     return printJsonData(500, "Failed to create user");
 }
 
+function updateUserPicture(int $id, string $img_path)
+{
+    global $conn;
+    $query = "UPDATE users SET img_path = '{$img_path}', updated_at = CURRENT_TIMESTAMP WHERE id = {$id}";
+    mysqli_query($conn, $query);
+}
+
 function updateUserProfile(int $id, string $newName, string $newEmail)
 {
     global $conn;
@@ -801,6 +1100,16 @@ function updateUserPassword(int $id, string $oldPassword, string $rawNewPassword
         return printJsonData(200, "Password updated successfully");
     }
     return printJsonData(500, "Failed to update password");
+}
+
+function updateUserRole(int $id, string $role)
+{
+    global $conn;
+    $query = "UPDATE users SET role = '{$role}', updated_at = CURRENT_TIMESTAMP WHERE id = {$id}";
+    if (mysqli_query($conn, $query)) {
+        return printJsonData(200, "Role updated successfully");
+    }
+    return printJsonData(500, "Failed to update role");
 }
 
 function updateUser(int $id, string $name, string $email, string $rawNewPassword)

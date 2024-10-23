@@ -114,7 +114,7 @@ $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice
                         foreach ($popularServices as $service): ?>
                             <div
                                 style="display: flex; padding: 1rem; justify-content: space-between; border-radius: 1rem; background-color: #ffffff;">
-                                <div style="display: flex; justify-content: space-between; width: 100%; ">
+                                <div style="display: flex; justify-content: space-between; width: 100%; cursor: pointer;" onclick="window.location.href = './view-service.php?id=<?php echo $service['id']; ?>';">
                                     <div style="display: flex; gap: 1rem; align-items: center; color: #000000;">
                                         <svg width="48" height="48" viewBox="0 0 32 32" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -173,7 +173,7 @@ $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice
                                                     $color = 'background-color: rgb(234 179 8);';
                                                     break;
                                                 case 'cancelled':
-                                                case 'no show':
+                                                case 'noshow':
                                                     $color = 'background-color: rgb(239 68 68);';
                                                     break;
                                                 default:
@@ -195,7 +195,7 @@ $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice
                                                 <td style="padding-left: 1rem; padding-right: 1rem; width: 9rem; ">
                                                     <div
                                                         style="<?php echo $color; ?> border-radius: 9999px; color: white; padding-top: 0.25rem; padding-bottom: 0.25rem;">
-                                                        <?php echo ucfirst($appointment['status']); ?>
+                                                        <?php echo $appointment['status'] == "noshow" ? "No show" : ucfirst($appointment['status']); ?>
                                                     </div>
                                                 </td>
                                             </tr>
