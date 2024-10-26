@@ -4,7 +4,7 @@ include 'src/includes/header.php';
 if(!isset($_SESSION['user'])) header('Location: ./login.php');
 include 'src/api/functions.php';
 
-$popularServices = array_slice(getPopularServices(), 0, 3);
+$popularServices = getPopularServices() ? array_slice(getPopularServices(), 0, 3) : [];
 $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice(getAppointmentsByCustomer($_SESSION['user']['id']), 0, 3) : null;
 ?>
 
