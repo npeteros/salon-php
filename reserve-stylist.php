@@ -4,7 +4,8 @@ if (($_SERVER['REQUEST_METHOD'] != "POST" || !isset($_POST['date']) || !isset($_
 define('FILE_CSS', 'src/styles/reserve-appointment.css');
 include './src/includes/header.php';
 include './src/api/functions.php';
-$stylists = getStylistsBySpecialties($_POST['service']);
+$stylists = getAllStylists();
+// $stylists = getStylistsBySpecialties($_POST['service']);
 ?>
 
 <div style="min-height: 100lvh; background: #D9D9D9">
@@ -60,7 +61,7 @@ $stylists = getStylistsBySpecialties($_POST['service']);
                                 style="padding: 0.5rem 1rem; border-radius: 0.5rem; border-width: 1px;" required>
                                 <?php
                                 foreach ($stylists as $stylist) {
-                                    echo '<option value="' . $stylist['id'] . '" ' . ($stylist['id'] == $_POST['stylist'] ? 'selected' : '') . '>' . $stylist['name'] . '</option>';
+                                    echo '<option value="' . $stylist['stylist_id'] . '" ' . ($stylist['stylist_id'] == $_POST['stylist'] ? 'selected' : '') . '>' . $stylist['stylist_name'] . '</option>';
                                 }
                                 ?>
                             </select>

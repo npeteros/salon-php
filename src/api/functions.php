@@ -619,6 +619,7 @@ function getPopularServicesBySearch(string $search): array|null
             s.name as name,
             s.description as description,
             s.price as price,
+            s.img_path as img_path,
             COUNT(a.id) as appointment_count
         FROM
             services s
@@ -651,6 +652,7 @@ function getPopularServices(): array|null
             s.name as name,
             s.description as description,
             s.price as price,
+            s.img_path as img_path,
             COUNT(a.id) as appointment_count
         FROM
             services s
@@ -681,6 +683,7 @@ function getPopularServiceById(int $id): array|null
             s.price as price,
             s.duration as duration,
             s.followup_duration as followup_duration,
+            s.img_path as img_path,
             COUNT(a.id) as appointment_count
         FROM
             services s
@@ -697,6 +700,38 @@ function getPopularServiceById(int $id): array|null
         $services = mysqli_fetch_assoc($r);
     }
     return $services;
+}
+
+function createServiceWithPicture(string $name, float $price, int $duration, int $followup_duration, string $description, array $image): int
+{
+    global $conn;
+    $query = "INSERT INTO services (name, price, description, duration, followup_duration) VALUES ('{$name}', {$price}, '{$description}', {$duration}, {$followup_duration})";
+    if (mysqli_query($conn, $query)) {
+        $id = mysqli_insert_id($conn);
+        if ($image['error'] === UPLOAD_ERR_OK) {
+
+            $fileTmpPath = $image['tmp_name'];
+            $fileName = $image['name'];
+            $uploadDir = '../../uploads/services/';
+
+            // Ensure the upload directory exists
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            $destPath = $uploadDir . $fileName;
+
+            // Move the file to the specified directory
+            if (move_uploaded_file($fileTmpPath, $destPath)) {
+                $query = "UPDATE services SET img_path = '{$fileName}', updated_at = CURRENT_TIMESTAMP WHERE id = {$id}";
+                if (mysqli_query($conn, $query)) {
+                    return $id;
+                }
+            } else
+                return -1;
+        }
+    }
+    return -1;
 }
 
 function createService(string $name, float $price, int $duration, int $followup_duration, string $description): int
@@ -1045,6 +1080,46 @@ function loginAdmin(string $email, string $password)
     return printJsonData(401, "Invalid email or password");
 }
 
+function createUserByAdmin(string $name, string $email, string $rawPassword, string $role, array $image = null)
+{
+    global $conn;
+    $password = sha1(trim($rawPassword));
+    $query = "SELECT email FROM users WHERE email = '{$email}'";
+    if ($r = mysqli_query($conn, $query)) {
+        if (mysqli_num_rows($r) > 0)
+            return printJsonData(500, "Email already exists");
+    }
+    $query = "INSERT INTO users (name, email, password, role) VALUES ('{$name}', '{$email}', '{$password}', '{$role}')";
+    if (mysqli_query($conn, $query)) {
+        if (isset($image)) {
+            if ($image['error'] === UPLOAD_ERR_OK) {
+
+                $fileTmpPath = $image['tmp_name'];
+                $fileName = $image['name'];
+                $uploadDir = '../../uploads/';
+
+                // Ensure the upload directory exists
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+
+                $destPath = $uploadDir . $fileName;
+
+                // Move the file to the specified directory
+                if (move_uploaded_file($fileTmpPath, $destPath)) {
+
+                    $last_id = mysqli_insert_id($conn);
+                    $query = "UPDATE users SET img_path = '{$fileName}', updated_at = CURRENT_TIMESTAMP WHERE id = {$last_id}";
+                    if (mysqli_query($conn, $query)) {
+                        return printJsonData(200, "User created successfully");
+                    }
+                }
+            }
+        }
+    }
+    return printJsonData(500, "Failed to create user");
+}
+
 function createUser(string $name, string $email, string $rawPassword)
 {
     global $conn;
@@ -1066,6 +1141,16 @@ function updateUserPicture(int $id, string $img_path)
     global $conn;
     $query = "UPDATE users SET img_path = '{$img_path}', updated_at = CURRENT_TIMESTAMP WHERE id = {$id}";
     mysqli_query($conn, $query);
+}
+
+function updateUserByAdmin(int $id, string $newName, string $newEmail, string $rawNewPassword) {
+    global $conn;
+    $password = sha1(trim($rawNewPassword));
+    $query = "UPDATE users SET name = '{$newName}', email = '{$newEmail}', password = '{$password}', updated_at = CURRENT_TIMESTAMP WHERE id = {$id}";
+    if (mysqli_query($conn, $query)) {
+        return printJsonData(200, "User updated successfully");
+    }
+    return printJsonData(500, "Failed to update user");
 }
 
 function updateUserProfile(int $id, string $newName, string $newEmail)
@@ -1122,6 +1207,15 @@ function updateUser(int $id, string $name, string $email, string $rawNewPassword
         return printJsonData(200, "User updated successfully");
     }
     return printJsonData(500, "Failed to update user");
+}
+
+function deleteUserByAdmin(int $id) {
+    global $conn;
+    $query = "DELETE FROM users WHERE id = {$id}";
+    mysqli_query($conn, $query);
+    if (mysqli_affected_rows($conn) > 0)
+        return printJsonData(200, "Account deleted successfully");
+    return printJsonData(500, "Failed to delete account");
 }
 
 function deleteUser(int $id, string $password)

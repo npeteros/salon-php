@@ -30,7 +30,12 @@ if ($_SESSION['user']['role'] !== 'owner' && $_SESSION['user']['role'] !== 'mana
                 </div>
             </div>
             <div style="display: flex; flex-direction: column; gap: 0.5rem">
-                <span style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Users</span>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Users</span>
+                    <button
+                        style="background-color: #A80011; border: 0px; color: white; padding: 0rem 2rem; border-radius: 0.5rem; cursor: pointer;"
+                        onclick="window.location.href = './add-user.php'">Add a User</button>
+                </div>
                 <div class="stylists-container" id="usersList">
                 </div>
             </div>

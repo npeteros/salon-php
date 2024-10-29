@@ -248,7 +248,10 @@ if (isset($_POST['rebonding']) && $_POST['rebonding'] == 'less') {
                                     value="<?php echo $_POST['bleaching']; ?>"> <?php endif; ?>
                             <span style="text-align: center; color: #DC2626; font-size: 0.875rem; line-height: 1.25rem;"
                                 id="reservation-error"></span>
-                            <button class="next-button" type="submit">Submit</button>
+                            <button class="next-button" type="button" id="redirect-appointment" style="display: none;" onclick="window.location.href='./reserve-schedule.php'">Reserve an
+                                Appointment</button>
+                            <button class="cancel-button" type="button" id="back-dashboard" style="display: none;" onclick="window.location.href='./dashboard.php'">Back to Dashboard</button>
+                            <button class="next-button" type="submit" id="submit-consultation-btn">Submit</button>
                         </form>
                         <form action="./consultation-confirm.php" method="POST">
                             <input type="hidden" name="type" value="<?php echo $_POST['type']; ?>">
@@ -262,7 +265,7 @@ if (isset($_POST['rebonding']) && $_POST['rebonding'] == 'less') {
                                     value="<?php echo $_POST['rebonding']; ?>"> <?php endif; ?>
                             <?php if (isset($_POST['bleaching'])): ?> <input type="hidden" name="bleaching"
                                     value="<?php echo $_POST['bleaching']; ?>"> <?php endif; ?>
-                            <button class="cancel-button" style="width: 100%;" type="submit">Back</button>
+                            <button class="cancel-button" style="width: 100%;" type="submit" id="back-consultation-btn">Back</button>
                         </form>
                     </div>
                 </div>

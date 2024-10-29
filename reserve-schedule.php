@@ -1,7 +1,12 @@
 <?php
 define('FILE_CSS', 'src/styles/reserve-appointment.css');
 include './src/includes/header.php';
+include './src/api/functions.php';
 if(!isset($_SESSION['user'])) header('Location: ./login.php');
+
+$consultation = getConsultationByCustomer($_SESSION['user']['id']);
+if(!$consultation) header('Location: ./consultation-hair.php');
+
 date_default_timezone_set('Asia/Manila');
 ?>
 

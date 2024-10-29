@@ -220,7 +220,8 @@ if (isset($consultation)) {
                                             <option value="manager" <?php echo $user['role'] == "manager" ? "selected" : null; ?>>Manager</option>
                                         <?php } ?>
                                         <option value="stylist" <?php echo $user['role'] == "stylist" ? "selected" : null; ?>>Stylist</option>
-                                        <option value="user" <?php echo $user['role'] == "user" ? "selected" : null; ?>>Customer</option>
+                                        <option value="user" <?php echo $user['role'] == "user" ? "selected" : null; ?>>
+                                            Customer</option>
                                     </select>
                                     <span
                                         style="font-size: 0.875rem; text-decoration: underline; cursor: pointer; opacity: 50%;"
@@ -233,14 +234,17 @@ if (isset($consultation)) {
                         </div>
                     </div>
 
-                    <div style="display: flex; gap: 0.5rem; background-color: #E53C37; border: 1px solid #E53C37; border-radius: 0.5rem; height: fit-content; padding: 0.5rem 1rem; align-items: center; cursor: pointer;"
-                        onclick="window.location.href = 'mailto:<?php echo $user['email']; ?>';">
-                        <svg width="16" height="16" fill="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6Zm-2 0-8 5-8-5h16Zm0 12H4V8l8 5 8-5v10Z">
-                            </path>
-                        </svg>
-                        <span style="color: white;">Send Email</span>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem">
+                        <button
+                            style="padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 1.25rem; padding-right: 1.25rem; margin-bottom: 0.5rem; border-radius: 0.5rem; font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; color: #ffffff; height: fit-content; background-color: #E53C37; border: none; cursor: pointer;"
+                            onclick="window.location.href = './edit-user.php?id=<?php echo $user['id']; ?>'">Edit
+                            User</button>
+                        <button
+                            style="padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 1.25rem; padding-right: 1.25rem; margin-bottom: 0.5rem; border-radius: 0.5rem; font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; color: #E53C37; height: fit-content; background-color: white; border: 1px solid #E53C37; cursor: pointer;"
+                            id="delete-user" data-id="<?php echo $user['id']; ?>">Delete
+                            User</button>
+                        <span style="text-align: center; color: #DC2626; font-size: 0.875rem; line-height: 1.25rem;"
+                            id="user-error"></span>
                     </div>
                 </div>
             </div>

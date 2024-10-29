@@ -33,9 +33,9 @@ if ($_SESSION['user']['role'] !== 'owner' && $_SESSION['user']['role'] !== 'mana
                 <div style="display: flex; justify-content: space-between;">
                     <span
                         style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Services</span>
-                    <button
-                        style="background-color: #A80011; border: 0px; color: white; padding: 0rem 2rem; border-radius: 0.5rem; cursor: pointer;"
-                        onclick="window.location.href = './add-service.php'">Add a Service</button>
+                        <button
+                            style="background-color: #A80011; border: 0px; color: white; padding: 0rem 2rem; border-radius: 0.5rem; cursor: pointer;"
+                            onclick="window.location.href = './add-service.php'">Add a Service</button>
                 </div>
                 <div id="servicesList" data-userid="<?php echo $_SESSION['user']['id']; ?>">
                 </div>

@@ -22,7 +22,6 @@
         <span class="">Appointments</span>
     </button>
     <div class="side-nav-divider"></div>
-    <?php if($_SESSION['user']['role'] == 'owner') { ?>
     <button
         class="<?php echo str_contains($_SERVER['REQUEST_URI'], "service") ? 'side-nav-active-link' : 'side-nav-inactive-link'; ?>  side-nav-link"
         onclick="window.location.href = './admin-services.php'">
@@ -34,7 +33,6 @@
 
         <span class="">Services</span>
     </button>
-    <?php } ?>
     <button
         class="<?php echo str_contains($_SERVER['REQUEST_URI'], "user") ? 'side-nav-active-link' : 'side-nav-inactive-link'; ?>  side-nav-link"
         onclick="window.location.href = './users.php'">
