@@ -87,6 +87,7 @@ CREATE TABLE `services` (
   `description` varchar(255) NOT NULL,
   `duration` int(11) NOT NULL,
   `followup_duration` int(11) NOT NULL,
+  `img_path` varchar(255) NOT NULL DEFAULT 'default.svg',
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
