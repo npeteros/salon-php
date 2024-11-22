@@ -8,7 +8,8 @@ if (!isset($_GET['id']))
 include 'src/api/functions.php';
 
 $appointment = getAppointmentById($_GET['id']);
-if(!$appointment || $appointment['customer_id'] != $_SESSION['user']['id']) return header('Location: ./appointments.php');
+if (!$appointment || $appointment['customer_id'] != $_SESSION['user']['id'])
+    return header('Location: ./appointments.php');
 $date = new DateTime($appointment['appointment_date']);
 
 $formattedDate = $date->format('d M Y, g:i A');
@@ -72,11 +73,16 @@ switch ($appointment['appointment_status']) {
                                         style="display: flex; justify-content: space-between; padding: 0.5rem 1.5rem; border-radius: 9999px; color: white; height: fit-content; width: fit-content; <?php echo $color; ?>">
                                         <?php echo $appointment['appointment_status'] == "noshow" ? "No show" : ucfirst($appointment['appointment_status']); ?>
                                     </div>
-                                    <a href="reschedule-appointment.php?appointment_id=<?php echo $appointment['appointment_id']; ?>"
-                                        style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;">Reschedule</a>
-                                    <a href="add-review.php?appointment_id=<?php echo $appointment['appointment_id']; ?>"
-                                        style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;">Add
-                                        a review?</a>
+
+                                    <?php if ($appointment['appointment_status'] == "noshow") { ?>
+                                        <a href="reschedule-appointment.php?appointment_id=<?php echo $appointment['appointment_id']; ?>"
+                                            style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;">Reschedule</a>
+                                    <?php } ?>
+                                    <?php if ($appointment['appointment_status'] == "completed") { ?>
+                                        <a href="add-review.php?appointment_id=<?php echo $appointment['appointment_id']; ?>"
+                                            style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;">Add
+                                            a review?</a>
+                                    <?php } ?>
                                 </div>
                             </div>
                         </div>
@@ -122,9 +128,12 @@ switch ($appointment['appointment_status']) {
                                     <a href="reschedule-appointment.php?appointment_id=<?php echo $appointment['appointment_id']; ?>"
                                         style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;">Reschedule</a>
                                 <?php } ?>
-                                <a href="add-review.php?appointment_id=<?php echo $appointment['appointment_id']; ?>"
-                                    style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;">Add
-                                    a review?</a>
+
+                                <?php if ($appointment['appointment_status'] == "completed") { ?>
+                                    <a href="add-review.php?appointment_id=<?php echo $appointment['appointment_id']; ?>"
+                                        style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;">Add
+                                        a review?</a>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>

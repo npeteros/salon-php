@@ -23,10 +23,23 @@ if (isset($_SESSION['user']))
                         <input type="email" placeholder="Email" name="email" id="email" autoComplete="username"
                             isFocused={true} class="input-form-container" />
                     </div>
-                    <div style="display: flex; flex-direction: column; width: 100%">
-                        <input type="password" placeholder="Password" id="password" name="password"
-                            autoComplete="current-password" class="input-form-container" />
+                <div style="display: flex; flex-direction: column; width: 100%">
+                    <div style="position: relative;">
+                        <div
+                            style="display: flex; position: absolute; top: 0; bottom: 0; right: 1rem; align-items: center;">
+                            <svg style="width: 1rem; height: 1rem; color: #6B7280; cursor: pointer;"
+                                class="show-password" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M12 6.5a9.77 9.77 0 0 1 8.82 5.5A9.76 9.76 0 0 1 12 17.5 9.76 9.76 0 0 1 3.18 12 9.77 9.77 0 0 1 12 6.5Zm0-2C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Zm0 5a2.5 2.5 0 0 1 0 5 2.5 2.5 0 0 1 0-5Zm0-2c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5Z">
+                                </path>
+                            </svg>
+                        </div>
+                        <input type="password" placeholder="Password"
+                            class="input-form-container password-input" style="width: 100%;" id="password"
+                            name="password" autoComplete="current-password" />
                     </div>
+                </div>
                     <div style="display: flex; flex-direction: column; width: 100%">
                         <p style="font-size: 0.875rem; line-height: 1.25rem; color: #DC2626;" id="login-error"></p>
                     </div>

@@ -8,6 +8,9 @@ if (!isset($_GET['appointment_id']))
 include 'src/api/functions.php';
 
 $appointment = getAppointmentById($_GET['appointment_id']);
+if($appointment['appointment_status'] !== 'completed') {
+    header('Location: ./view-appointment.php?id=' . $_GET['appointment_id']);
+}
 $date = new DateTime($appointment['appointment_date']);
 
 $formattedDate = $date->format('d M Y, g:i A');

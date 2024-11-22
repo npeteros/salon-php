@@ -38,6 +38,32 @@ $(document).ready(function () {
 
     let changingRoles = false;
 
+    let shownPassword = false;
+
+    $(document).on('click', function (event) {
+        if ($(event.target).is('#filterModal')) {
+            $('#filterModal').css('display', 'none');
+        }
+    });
+
+    $(".filter-button").click(function () {
+        $("#filterModal").css("display", "flex");
+    })
+
+    $("#closeModal").click(function () {
+        $("#filterModal").css("display", "none");
+    })
+
+    $(".show-password").click(function () {
+        if (shownPassword) {
+            $(".password-input").attr("type", "password");
+            shownPassword = false;
+        } else {
+            $(".password-input").attr("type", "text");
+            shownPassword = true;
+        }
+    })
+
     $("#change-role").click(function () {
         if (!changingRoles) {
             $("#change-role").html("Save");
@@ -49,8 +75,6 @@ $(document).ready(function () {
             $("#change-role-select").css("display", "none");
 
             $("#change-role-error").html("");
-
-            console.log($("#change-role-select").val())
 
             $.ajax({
                 type: "PATCH",
@@ -80,75 +104,6 @@ $(document).ready(function () {
 
         changingRoles = !changingRoles;
     })
-
-    if ($("#usersList").length) {
-        $.ajax({
-            type: "GET",
-            url: "src/api/users.php",
-            success: function (response) {
-                response = JSON.parse(response);
-                if (response.code == 200) {
-                    $("#usersList").empty();
-                    const toShow = response.data.slice(0, 12);
-                    console.log(toShow);
-                    toShow.forEach(user => {
-                        $("#usersList").append(
-                            `<div
-                                style="background-color: white; display: flex; flex-direction: column; padding: 1rem; border-radius: 0.875rem; cursor: pointer;" onclick="window.location.href = './view-user.php?id=${user.id}';">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <div style="display: flex; gap: 1rem; width: 3rem; height: 3rem;">
-                                        <img src="./uploads/${user.img_path}" alt="user" style="width: 100%; border-radius: 9999px;">
-                                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                            <span>${user.name}</span>
-                                            <span style="opacity: 50%;">${user.email}</span>
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; align-items: center;">${capitalizeFirst(user.role)}</div>
-                                </div>
-                            </div>`
-                        );
-                    });
-                }
-            }
-        });
-
-        $("#users-search").on("input", function () {
-            const search = $("#users-search");
-            $.ajax({
-                type: "GET",
-                data: {
-                    search: search.val()
-                },
-                url: "src/api/users.php",
-                success: function (response) {
-                    response = JSON.parse(response);
-                    if (response.code == 200) {
-                        $("#usersList").empty();
-                        const toShow = response.data.slice(0, 12);
-                        console.log(toShow);
-
-                        toShow.forEach(user => {
-                            $("#usersList").append(
-                                `<div
-                                style="background-color: white; display: flex; flex-direction: column; padding: 1rem; border-radius: 0.875rem; cursor: pointer;" onclick="window.location.href = './view-user.php?id=${user.id}';">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <div style="display: flex; gap: 1rem; width: 3rem; height: 3rem;">
-                                        <img src="./uploads/${user.img_path}" alt="user" style="width: 100%; border-radius: 9999px;">
-                                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                            <span>${user.name}</span>
-                                            <span style="opacity: 50%;">${user.email}</span>
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; align-items: center;">${capitalizeFirst(user.role)}</div>
-                                </div>
-                            </div>`
-                            );
-                        });
-                    }
-                }
-            });
-        });
-    }
 
     if ($("#stylistsList").length) {
         $.ajax({
@@ -213,22 +168,75 @@ $(document).ready(function () {
         });
     }
 
-    if ($("#servicesList").length) {
-        $.ajax({
-            type: "GET",
-            data: {
-                popular: 12
-            },
-            url: "src/api/services.php",
-            success: function (response) {
-                response = JSON.parse(response);
-                if (response.code == 200) {
-                    $("#servicesList").empty();
-                    const toShow = response.data.slice(0, 12);
-                    toShow.forEach(service => {
+    let appointments = [];
+    let services = [];
+    let users = [];
 
-                        const link = $("#servicesList").attr("data-userid") ? 'admin-view-service.php' : 'view-service.php';
-                        $("#servicesList").append(`
+    function displayAppointments(appointmentArray = appointments) {
+        $("#appointmentsList").empty();
+        const toShow = appointmentArray.slice(0, 12);
+
+        toShow.forEach(appointment => {
+            let color = 'background-color: rgb(115 115 115);';
+
+            switch (appointment.status) {
+                case 'pending':
+                    color = 'background-color: rgb(115 115 115);';
+                    break;
+                case 'confirmed':
+                    color = 'background-color: rgb(14 165 233);';
+                    break;
+                case 'completed':
+                    color = 'background-color: rgb(34 197 94);';
+                    break;
+                case 'rescheduled':
+                    color = 'background-color: rgb(234 179 8);';
+                    break;
+                case 'cancelled':
+                case 'noshow':
+                    color = 'background-color: rgb(239 68 68);';
+                    break;
+                default:
+                    color = 'background-color: rgb(115 115 115);';
+                    break;
+            }
+
+            const date = appointment.schedule.split(" ")[0];
+
+            let dateObj = new Date(appointment.schedule);
+            let hours = dateObj.getHours();
+            let minutes = dateObj.getMinutes();
+            let ampm = hours >= 12 ? 'PM' : 'AM';
+            let formattedTime = `${hours}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
+
+            const link = $("#appointmentsList").attr("data-userid") ? 'view-appointment.php' : 'admin-view-appointment.php';
+
+            $("#appointmentsList").append(`
+            <tr onclick="window.location.href = '${link}?id=${appointment.appointment_id}';" class="appointment-row">
+                <td style="display: flex; justify-content: center; padding: 0.5rem 0rem;">
+                    ${appointment.stylist}
+                </td>
+                ${!$("#appointmentsList").attr("data-userid") && `<td>${appointment.customer}</td>`}
+                <td>${appointment.service}</td>
+                <td>${date}</td>
+                <td>${formattedTime}</td>
+                <td style="padding-left: 1rem; padding-right: 1rem; width: 9rem; ">
+                    <div style="${color} border-radius: 9999px; color: white; padding-top: 0.25rem; padding-bottom: 0.25rem;">
+                        ${appointment.status == "noshow" ? "No show" : appointment.status.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                    </div>
+                </td>
+            </tr>`
+            );
+        });
+    }
+
+    function displayServices(servicesArray = services) {
+        $("#servicesList").empty();
+        const toShow = servicesArray.slice(0, 12);
+        toShow.forEach(service => {
+
+            const link = $("#servicesList").attr("data-userid") ? 'admin-view-service.php' : 'view-service.php';
+            $("#servicesList").append(`
                         <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: white; cursor: pointer;" onclick="window.location.href = './${link}?id=${service.id}';">
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <img src="./uploads/services/${service.img_path}" alt="Image" style="width: 3rem; height: 3rem; border-radius: 9999px;">
@@ -239,8 +247,158 @@ $(document).ready(function () {
                                 </div>
                                 <span style="color: #49454F;">&#x20B1; ${service.price}</span>
                         </div>`
-                        );
-                    });
+            );
+        });
+    }
+
+    function displayUsers(usersArray = users) {
+        $("#usersList").empty();
+        const toShow = usersArray.slice(0, 12);
+        toShow.forEach(user => {
+            $("#usersList").append(
+                `<div
+                    style="background-color: white; display: flex; flex-direction: column; padding: 1rem; border-radius: 0.875rem; cursor: pointer;" onclick="window.location.href = './view-user.php?id=${user.id}';">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div style="display: flex; gap: 1rem; width: 3rem; height: 3rem;">
+                            <img src="./uploads/${user.img_path}" alt="user" style="width: 100%; border-radius: 9999px;">
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <span>${user.name}</span>
+                                <span style="color: rgb(115, 115, 115")>${user.email}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center;">${capitalizeFirst(user.role)}</div>
+                    </div>
+                </div>`
+            );
+        });
+    }
+
+    $(".clear-filters").click(function () {
+        $("#staff").val("");
+        $("#customer").val("");
+        $("#service").val("");
+        $("#date").val("");
+        $("#time").val("");
+        $("#status").val("");
+
+        $("#name").val("");
+        $("#description").val("");
+        $("#price").val("");
+
+        $("#name").val("");
+        $("#email").val("");
+        $("#role").val("");
+
+        displayAppointments();
+        displayServices();
+        displayUsers();
+        $('#filterModal').css('display', 'none');
+    });
+
+    $("#filterAppointments").submit(function (event) {
+        event.preventDefault();
+        const staff = $("#staff").val().toLowerCase();
+        const customer = $("#customer").val().toLowerCase();
+        const service = $("#service").val().toLowerCase();
+        const date = $("#date").val();
+        const time = $("#time").val();
+        const status = $("#status").val().toLowerCase();
+
+        const filteredAppointments = appointments.filter(appointment => {
+            return (
+                (staff === "" || appointment.stylist.toLowerCase().includes(staff)) &&
+                (customer === "" || appointment.customer.toLowerCase().includes(customer)) &&
+                (service === "" || appointment.service.toLowerCase().includes(service)) &&
+                (date === "" || appointment.schedule.includes(date)) &&
+                (time === "" || appointment.schedule.includes(time)) &&
+                (status === "" || appointment.status.toLowerCase() === status)
+            );
+        });
+
+        displayAppointments(filteredAppointments);
+        $('#filterModal').css('display', 'none');
+    })
+
+    $("#filterServices").submit(function (event) {
+        event.preventDefault();
+        const name = $("#name").val().toLowerCase();
+        const description = $("#description").val().toLowerCase();
+        const price = $("#price").val();
+
+        const filteredServices = services.filter(service => {
+            return (
+                (name === "" || service.name.toLowerCase().includes(name)) &&
+                (description === "" || service.description.toLowerCase().includes(description)) &&
+                (price == "" || service.price == price || Math.floor(service.price) == price)
+            );
+        });
+
+        displayServices(filteredServices);
+        $('#filterModal').css('display', 'none');
+    })
+
+    $("#filterUsers").submit(function (event) {
+        event.preventDefault();
+        const name = $("#name").val().toLowerCase();
+        const email = $("#email").val().toLowerCase();
+        const role = $("#role").val();
+
+        const filteredUsers = users.filter(user => {
+            return (
+                (name === "" || user.name.toLowerCase().includes(name)) &&
+                (email === "" || user.email.toLowerCase().includes(email)) &&
+                (role === "" || user.role.includes(role))
+            );
+        });
+
+        displayUsers(filteredUsers);
+        $('#filterModal').css('display', 'none');
+    })
+
+    if ($("#usersList").length) {
+        $.ajax({
+            type: "GET",
+            url: "src/api/users.php",
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response.code == 200) {
+                    users = response.data;
+                    displayUsers();
+                }
+            }
+        });
+
+        $("#users-search").on("input", function () {
+            const search = $("#users-search");
+            $.ajax({
+                type: "GET",
+                data: {
+                    search: search.val()
+                },
+                url: "src/api/users.php",
+                success: function (response) {
+                    response = JSON.parse(response);
+                    if (response.code == 200) {
+                        users = response.data;
+                        displayUsers();
+                    }
+                }
+            });
+        });
+    }
+
+    if ($("#servicesList").length) {
+        $.ajax({
+            type: "GET",
+            data: {
+                popular: 12
+            },
+            url: "src/api/services.php",
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response.code == 200) {
+                    services = response.data;
+                    displayServices();
                 }
             }
         });
@@ -257,25 +415,8 @@ $(document).ready(function () {
                 success: function (response) {
                     response = JSON.parse(response);
                     if (response.code == 200) {
-                        $("#servicesList").empty();
-                        const toShow = response.data.slice(0, 12);
-
-                        toShow.forEach(service => {
-
-                            const link = $("#servicesList").attr("data-userid") ? 'admin-view-service.php' : 'view-service.php';
-                            $("#servicesList").append(`
-                            <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: white; cursor: pointer;" onclick="window.location.href = './${link}?id=${service.id}';">
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <img src="./uploads/services/${service.img_path}" alt="Image" style="width: 3rem; height: 3rem; border-radius: 9999px;">
-                                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                                        <span style="font-size: 1.125rem; line-height: 1.75rem;">${service.name}</span>
-                                        <span style="font-size: 0.875rem; line-height: 1.25rem;">${service.description.length > 35 ? service.description.substring(0, 35) + '...' : service.description}</span>
-                                    </div>
-                                </div>
-                                <span style="color: #49454F;">&#x20B1; ${service.price}</span>
-                            </div>`
-                            );
-                        });
+                        services = response.data;
+                        displayServices();
                     }
                 }
             });
@@ -290,64 +431,10 @@ $(document).ready(function () {
             },
             url: "src/api/appointments.php",
             success: function (response) {
-
                 response = JSON.parse(response);
                 if (response.code == 200) {
-                    $("#appointmentsList").empty();
-                    const toShow = response.data.slice(0, 12);
-
-                    toShow.forEach(appointment => {
-                        let color = 'background-color: rgb(115 115 115);';
-
-                        switch (appointment.status) {
-                            case 'pending':
-                                color = 'background-color: rgb(115 115 115);';
-                                break;
-                            case 'confirmed':
-                                color = 'background-color: rgb(14 165 233);';
-                                break;
-                            case 'completed':
-                                color = 'background-color: rgb(34 197 94);';
-                                break;
-                            case 'rescheduled':
-                                color = 'background-color: rgb(234 179 8);';
-                                break;
-                            case 'cancelled':
-                            case 'noshow':
-                                color = 'background-color: rgb(239 68 68);';
-                                break;
-                            default:
-                                color = 'background-color: rgb(115 115 115);';
-                                break;
-                        }
-
-                        const date = appointment.schedule.split(" ")[0];
-
-                        let dateObj = new Date(appointment.schedule);
-                        let hours = dateObj.getHours();
-                        let minutes = dateObj.getMinutes();
-                        let ampm = hours >= 12 ? 'PM' : 'AM';
-                        let formattedTime = `${hours}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
-
-                        const link = $("#appointmentsList").attr("data-userid") ? 'view-appointment.php' : 'admin-view-appointment.php';
-
-                        $("#appointmentsList").append(`
-                        <tr onclick="window.location.href = '${link}?id=${appointment.appointment_id}';" class="appointment-row">
-                            <td style="display: flex; justify-content: center; padding: 0.5rem 0rem;">
-                                ${appointment.stylist}
-                            </td>
-                            ${!$("#appointmentsList").attr("data-userid") && `<td>${appointment.customer}</td>`}
-                            <td>${appointment.service}</td>
-                            <td>${date}</td>
-                            <td>${formattedTime}</td>
-                            <td style="padding-left: 1rem; padding-right: 1rem; width: 9rem; ">
-                                <div style="${color} border-radius: 9999px; color: white; padding-top: 0.25rem; padding-bottom: 0.25rem;">
-                                    ${appointment.status == "noshow" ? "No show" : appointment.status.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                                </div>
-                            </td>
-                        </tr>`
-                        );
-                    });
+                    appointments = response.data;
+                    displayAppointments();
                 }
             }
         });
@@ -364,63 +451,9 @@ $(document).ready(function () {
                 url: "src/api/appointments.php",
                 success: function (response) {
                     response = JSON.parse(response);
-
                     if (response.code == 200) {
-                        $("#appointmentsList").empty();
-                        const toShow = response.data.slice(0, 12);
-
-                        toShow.forEach(appointment => {
-                            let color = 'background-color: rgb(115 115 115);';
-
-                            switch (appointment.status) {
-                                case 'pending':
-                                    color = 'background-color: rgb(115 115 115);';
-                                    break;
-                                case 'confirmed':
-                                    color = 'background-color: rgb(14 165 233);';
-                                    break;
-                                case 'completed':
-                                    color = 'background-color: rgb(34 197 94);';
-                                    break;
-                                case 'rescheduled':
-                                    color = 'background-color: rgb(234 179 8);';
-                                    break;
-                                case 'cancelled':
-                                case 'noshow':
-                                    color = 'background-color: rgb(239 68 68);';
-                                    break;
-                                default:
-                                    color = 'background-color: rgb(115 115 115);';
-                                    break;
-                            }
-
-                            const date = appointment.schedule.split(" ")[0];
-
-                            let dateObj = new Date(appointment.schedule);
-                            let hours = dateObj.getHours();
-                            let minutes = dateObj.getMinutes();
-                            let ampm = hours >= 12 ? 'PM' : 'AM';
-                            let formattedTime = `${hours}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
-
-                            const link = $("#appointmentsList").attr("data-userid") ? 'view-appointment.php' : 'admin-view-appointment.php';
-
-                            $("#appointmentsList").append(`
-                                <tr onclick="window.location.href = '${link}?id=${appointment.appointment_id}';" class="appointment-row">
-                                    <td style="display: flex; justify-content: center; padding: 0.5rem 0rem;">
-                                        ${appointment.stylist}
-                                    </td>
-                                    ${!$("#appointmentsList").attr("data-userid") && `<td>${appointment.customer}</td>`}
-                                    <td>${appointment.service}</td>
-                                    <td>${date}</td>
-                                    <td>${formattedTime}</td>
-                                    <td style="padding-left: 1rem; padding-right: 1rem; width: 9rem; ">
-                                        <div style="${color} border-radius: 9999px; color: white; padding-top: 0.25rem; padding-bottom: 0.25rem;">
-                                            ${appointment.status == "noshow" ? "No show" : appointment.status.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                                        </div>
-                                    </td>
-                                </tr>`
-                            );
-                        });
+                        appointments = response.data;
+                        displayAppointments();
                     }
                 }
             });
@@ -563,87 +596,6 @@ $(document).ready(function () {
             },
         });
     })
-
-    // $("#edit-user").submit(function (event) {
-    //     event.preventDefault();
-
-    //     $("#user-error").html("");
-    //     const formData = new FormData($("#edit-user")[0]);
-
-    //     if (formData.get('password') !== formData.get('confirm-password')) return $("#user-error").html("Passwords do not match");
-
-    //     const userData = {
-    //         id: formData.get('id'),
-    //         name: formData.get('name'),
-    //         email: formData.get('email'),
-    //         password: formData.get('password') ? formData.get('password') : undefined,
-    //     }
-
-    //     $.ajax({
-    //         type: "PATCH",
-    //         url: "src/api/users.php",
-    //         data: JSON.stringify(userData),
-    //         processData: false, // Required for FormData
-    //         contentType: false, // Required for FormData
-    //         success: function (response) {
-    //             try {
-    //                 console.log(response);
-    //                 response = JSON.parse(response);
-    //                 console.log(response);
-    //                 if (response.code != 200) {
-    //                     $("#user-error").html(response.data)
-    //                 } else {
-    //                     $("#user-error").css("color", "#059669");
-    //                     $("#user-error").html("User has been edited succesfully. Redirecting...");
-    //                     setTimeout(() => {
-    //                         window.location.href = "./users.php";
-    //                     }, 3000);
-    //                 }
-    //             } catch (error) {
-    //                 $("#user-error").html("Something went wrong.");
-    //             }
-    //         },
-    //         error: function (xhr, status, error) {
-    //             console.log(xhr.responseText);
-    //         },
-    //     });
-    // })
-
-    // $("#edit-service").submit(function (event) {
-    //     event.preventDefault();
-
-    //     const formData = new FormData($("#edit-service")[0]);
-    //     const serviceData = {
-    //         id: formData.get("id"),
-    //         name: formData.get("name"),
-    //         price: formData.get("price"),
-    //         duration: formData.get("duration"),
-    //         followup_duration: formData.get("followup_duration"),
-    //         description: formData.get("description"),
-    //     };
-
-    //     $.ajax({
-    //         type: "PATCH",
-    //         url: "src/api/services.php",
-    //         data: JSON.stringify(serviceData),
-    //         success: function (response) {
-    //             console.log(response);
-    //             response = JSON.parse(response);
-    //             if (response.code != 200) {
-    //                 $("#service-error").html(response.data)
-    //             } else {
-    //                 $("#service-error").css("color", "#059669");
-    //                 $("#service-error").html("The service has been updated. Redirecting...");
-    //                 setTimeout(() => {
-    //                     window.location.href = `./admin-view-service.php?id=${serviceData.id}`;
-    //                 }, 3000);
-    //             }
-    //         },
-    //         error: function (xhr, status, error) {
-    //             console.log(xhr.responseText);
-    //         },
-    //     });
-    // })
 
     $("#add-user").submit(function (event) {
         event.preventDefault();

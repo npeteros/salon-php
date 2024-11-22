@@ -4,7 +4,8 @@ include './src/includes/header.php';
 include 'src/api/functions.php';
 
 $consultation = getConsultationByCustomer($_SESSION['user']['id']);
-if(!$consultation) header('Location: ./consultation-hair.php');
+if (!$consultation)
+    header('Location: ./consultation-hair.php');
 
 $recommendedTreatments = [];
 
@@ -228,14 +229,17 @@ if (isset($consultation['rebonding']) && $consultation['rebonding'] == 'less') {
                     </div>
                     <span style="font-size: 0.875rem; line-height: 1.25rem; text-align: center; color: #DC2626;"
                         id="consultation-error"></span>
+                    <span
+                        style="color: rgb(153 27 27); font-weight: 900; font-size: 1.15rem; text-decoration: underline; text-align: center;">Disclaimer:
+                        Recommendations are based on your input and are not a substitute for professional assessment.
+                        Please consult our salon experts for accurate treatment.</span>
                     <?php echo isset($consultation['bleaching']) ? '<span
-                        style="color: rgb(153 27 27); font-weight: 900; font-size: 1.15rem; text-decoration: underline; text-align: center;">Note:
-                        Your hair
-                        is bleached, best to visit the salon for a face-to-face hair assessment.</span>' : null; ?>
+                        style="color: rgb(153 27 27); font-weight: 900; font-size: 1.15rem; text-decoration: underline; text-align: center;">Note: Your hair is bleached, best to visit the salon for a face-to-face hair assessment.</span>' : null; ?>
                     <div style="display: flex; flex-direction: column; margin-top: -1rem;">
-                        <form id="delete-consultation">
+                        <form id="delete-consultation" style="width: 100%; display: flex; justify-content: center;">
                             <input type="hidden" name="id" value="<?php echo $consultation['id']; ?>">
-                            <button class="next-button" style="width: 100%;" type="submit" id="delete-consultation-button">Delete</button>
+                            <button class="next-button" style="padding-left: 2rem; padding-right: 2rem;" type="submit"
+                                id="delete-consultation-button">Resubmit</button>
                         </form>
                     </div>
                 </div>

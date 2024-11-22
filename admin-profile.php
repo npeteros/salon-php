@@ -9,7 +9,7 @@ $_SESSION['user'] = getUser($_SESSION['user']['id']);
 
 <?php include './src/includes/dash_nav.php'; ?>
 <div style="display: flex; height: 100%; gap: 1rem;">
-    <?php include 'src/includes/side_nav.php'; ?>
+    <?php include 'src/includes/admin_side_nav.php'; ?>
 
     <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%; margin: 1.5rem;">
         <div

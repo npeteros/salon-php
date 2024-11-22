@@ -69,7 +69,7 @@ function getConsultationByCustomer(int $customerId)
 {
     global $conn;
     $consultation = null;
-    $query = "SELECT * FROM consultations WHERE customer_id = {$customerId}";
+    $query = "SELECT * FROM consultations WHERE customer_id = {$customerId} AND removed = 0";
     if ($r = mysqli_query($conn, $query)) {
         if (mysqli_num_rows($r) > 0) {
             while ($row = mysqli_fetch_assoc($r)) {
@@ -84,7 +84,7 @@ function createConsultation(int $customerId, string $type, string $texture, stri
 {
     global $conn;
 
-    $query = "SELECT customer_id from consultations WHERE customer_id = {$customerId}";
+    $query = "SELECT customer_id from consultations WHERE customer_id = {$customerId} AND removed = 0";
     if ($r = mysqli_query($conn, $query)) {
         if (mysqli_num_rows($r) > 0) {
             return -2;
@@ -122,7 +122,8 @@ function createConsultation(int $customerId, string $type, string $texture, stri
 function deleteConsultation(int $id)
 {
     global $conn;
-    $query = "DELETE FROM consultations WHERE id = {$id}";
+    $query = "UPDATE consultations SET removed = 1 WHERE id = {$id}";
+    // $query = "DELETE FROM consultations WHERE id = {$id}";
     if (mysqli_query($conn, $query)) {
         return 1;
     }
@@ -229,7 +230,7 @@ function getAppointmentsBySearch(string $search): array|null
             OR a.status LIKE '%{$search}%'
             OR a.scheduled_date LIKE '%{$search}%'
             OR u.name LIKE '%{$search}%'
-            OR s.name LIKE '%{$search}%');";
+            OR c.name LIKE '%{$search}%');";
 
     if ($r = mysqli_query($conn, $query)) {
         while ($row = mysqli_fetch_assoc($r)) {
@@ -264,6 +265,25 @@ function getAppointmentsByCustomerAndSearch(int $customerId, string $search): ar
             OR a.scheduled_date LIKE '%{$search}%'
             OR u.name LIKE '%{$search}%'
             OR s.name LIKE '%{$search}%');";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $appointments[] = $row;
+        }
+    }
+    return $appointments;
+}
+
+function getPendingAppointment(int $customerId): array|null
+{
+    global $conn;
+    $appointments = null;
+    $query =
+        "SELECT *
+        FROM appointments
+        WHERE (customer_id = {$customerId})
+            AND
+            (status = 'pending' OR status = 'confirmed')";
 
     if ($r = mysqli_query($conn, $query)) {
         while ($row = mysqli_fetch_assoc($r)) {
@@ -1115,6 +1135,8 @@ function createUserByAdmin(string $name, string $email, string $rawPassword, str
                     }
                 }
             }
+        } else {
+            return printJsonData(200, "User created successfully");
         }
     }
     return printJsonData(500, "Failed to create user");
@@ -1143,7 +1165,8 @@ function updateUserPicture(int $id, string $img_path)
     mysqli_query($conn, $query);
 }
 
-function updateUserByAdmin(int $id, string $newName, string $newEmail, string $rawNewPassword) {
+function updateUserByAdmin(int $id, string $newName, string $newEmail, string $rawNewPassword)
+{
     global $conn;
     $password = sha1(trim($rawNewPassword));
     $query = "UPDATE users SET name = '{$newName}', email = '{$newEmail}', password = '{$password}', updated_at = CURRENT_TIMESTAMP WHERE id = {$id}";
@@ -1209,7 +1232,8 @@ function updateUser(int $id, string $name, string $email, string $rawNewPassword
     return printJsonData(500, "Failed to update user");
 }
 
-function deleteUserByAdmin(int $id) {
+function deleteUserByAdmin(int $id)
+{
     global $conn;
     $query = "DELETE FROM users WHERE id = {$id}";
     mysqli_query($conn, $query);

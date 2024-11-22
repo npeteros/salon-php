@@ -54,9 +54,11 @@ include 'src/api/functions.php';
                                         required>
                                         <option value="user">User</option>
                                         <option value="stylist">Stylist</option>
-                                        <?php if ($_SESSION['role'] == 'owner') { ?>
+                                        <?php if ($_SESSION['user']['role'] == 'manager' || $_SESSION['user']['role'] == 'owner') { ?>
                                             <option value="manager">Manager</option>
-                                            <option value="owner">Owner</option>
+                                            <?php if ($_SESSION['user']['role'] == 'owner') { ?>
+                                                <option value="owner">Owner</option>
+                                            <?php } ?>
                                         <?php } ?>
                                     </select>
                                 </div>

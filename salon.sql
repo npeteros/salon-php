@@ -54,6 +54,7 @@ CREATE TABLE `consultations` (
   `relax` varchar(32) DEFAULT NULL,
   `rebonding` varchar(32) DEFAULT NULL,
   `bleaching` varchar(32) DEFAULT NULL,
+  `removed` tinyint(1) NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -141,7 +142,6 @@ ALTER TABLE `appointments`
 --
 ALTER TABLE `consultations`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `customer_id` (`customer_id`),
   ADD KEY `consultations_customer_id_foreign` (`customer_id`);
 
 --
