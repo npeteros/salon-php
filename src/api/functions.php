@@ -1258,3 +1258,264 @@ function deleteUser(int $id, string $password)
         return printJsonData(200, "Account deleted successfully");
     return printJsonData(500, "Failed to delete account");
 }
+
+function getAllTreatments(): array|null
+{
+    global $conn;
+    $treatments = null;
+    $query = "SELECT 
+                t.id AS treatment_id,
+                t.service_id,
+                s.*
+            FROM 
+                treatments t
+            INNER JOIN 
+                services s ON t.service_id = s.id
+            ORDER BY 
+                s.name ASC;";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $treatments[] = $row;
+        }
+    }
+
+    return $treatments;
+}
+
+function getAllTreatmentBySearch(string $search): array|null
+{
+    global $conn;
+    $treatments = null;
+    $query = "SELECT 
+                t.id AS treatment_id,
+                t.service_id,
+                s.*
+            FROM 
+                treatments t
+            INNER JOIN 
+                services s ON t.service_id = s.id
+            WHERE 
+                s.name LIKE '%{$search}%'
+            ORDER BY 
+                s.name ASC;";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $treatments[] = $row;
+        }
+    }
+
+    return $treatments;
+}
+
+function getTreatmentEditInfo(int $id): array|null
+{
+    global $conn;
+    $treatment = null;
+
+    $query = "SELECT *
+            FROM 
+                treatments
+            WHERE 
+                id = {$id}";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $treatment = $row;
+        }
+    }
+
+    return $treatment;
+}
+
+function getPreviousTreatmentsById(int $id): array|null
+{
+    global $conn;
+    $treatments = null;
+    $query = "SELECT * FROM previous_treatments WHERE treatment_id = {$id}";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $treatments[] = $row;
+        }
+    }
+
+    return $treatments;
+}
+
+function checkSuitability(int $treatmentId, int $prevTreatmentId, int $months): bool
+{
+    global $conn;
+    $query = "
+            SELECT 
+                pt.treatment_id, 
+                pt.prev_treatment_id, 
+                pt.min_time_months, 
+                CASE 
+                    WHEN {$months} < pt.min_time_months THEN 0
+                    ELSE 1
+                END AS suitability
+            FROM previous_treatments pt
+            WHERE pt.treatment_id = {$treatmentId} AND pt.prev_treatment_id = {$prevTreatmentId};";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            if ($row['suitability'] == 1)
+                return true;
+        }
+    }
+
+    return false;
+}
+
+function getAlternativeTreatmentById(int $id): array|null
+{
+    global $conn;
+    $treatment = null;
+    $query = "SELECT 
+                t.id AS treatment_id,
+                a.id AS alternative_id,
+                t.service_id AS treatment_service_id,
+                a.alternative_service_id AS alternative_service_id,
+                pt.min_time_months,
+                a.reason,
+                s.id AS service_id
+            FROM 
+                treatments t
+            INNER JOIN 
+                services s ON t.service_id = s.id
+            INNER JOIN
+            	alternative_treatments a ON t.service_id = a.treatment_service_id
+            INNER JOIN
+                previous_treatments pt ON t.id = pt.treatment_id
+            WHERE 
+                t.id = {$id}
+            ORDER BY 
+                s.name ASC;";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $treatment = $row;
+        }
+    }
+
+    return $treatment;
+}
+
+function getAlternativeTreatments(int $serviceId): array
+{
+    global $conn;
+    $alternativeTreatments = [];
+    $query = "SELECT 
+            s.* ,
+            alt.reason
+        FROM 
+            alternative_treatments alt
+        INNER JOIN 
+            services s
+        ON 
+            alt.alternative_service_id = s.id
+        WHERE 
+            alt.treatment_service_id = {$serviceId};";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $alternativeTreatments[] = $row;
+        }
+    }
+
+    return $alternativeTreatments;
+}
+
+function getTreatmentById(int $id): array|null
+{
+    global $conn;
+    $treatment = null;
+    $query = "SELECT 
+                t.id AS treatment_id,
+                t.service_id,
+                s.*
+            FROM 
+                treatments t
+            INNER JOIN 
+                services s ON t.service_id = s.id
+            WHERE 
+                t.id = {$id}
+            ORDER BY 
+                s.name ASC;";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $treatment = $row;
+        }
+    }
+
+    return $treatment;
+}
+
+function createTreatment(int $serviceId, array $minTime=[], int $alternativeId, string $reason): int|string
+{
+    global $conn;
+
+    $treatmentQuery = "SELECT 
+                service_id
+            FROM 
+                treatments
+            WHERE service_id = {$serviceId}";
+
+    if ($r = mysqli_query($conn, $treatmentQuery)) {
+        if (mysqli_num_rows($r) <= 0) {
+            $query = "INSERT INTO treatments (service_id) VALUES ($serviceId);";
+            if (mysqli_query($conn, $query)) {
+                if (mysqli_affected_rows($conn) > 0) {
+                    $treatmentId = mysqli_insert_id($conn);
+                    $query = "INSERT INTO alternative_treatments (treatment_service_id, alternative_service_id, reason) VALUES ({$serviceId}, {$alternativeId}, '{$reason}');";
+                    foreach ($minTime as $prevTreatmentId => $minTimeMonths) {
+                        if ($minTimeMonths == "")
+                            $minTimeMonths = 0;
+                        $query .= "INSERT INTO previous_treatments (treatment_id, prev_treatment_id, min_time_months) VALUES ({$treatmentId}, {$prevTreatmentId}, {$minTimeMonths});";
+                    }
+                    if (mysqli_multi_query($conn, $query)) {
+                        if (mysqli_affected_rows($conn) > 0) {
+                            return $query;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return -1;
+}
+
+function createChemicalTreatment(int $serviceId): int
+{
+    global $conn;
+
+    $query = "SELECT * FROM previous_treatments WHERE service_id = {$serviceId}";
+
+    if ($r = mysqli_query($conn, $query)) {
+        if (mysqli_num_rows($r) <= 0) {
+            $query = "INSERT INTO previous_treatments (service_id) VALUES ($serviceId)";
+            if (mysqli_query($conn, $query)) {
+                return mysqli_insert_id($conn);
+            }
+        }
+    }
+
+    return -1;
+}
+
+function deleteTreatment(int $id): int
+{
+    global $conn;
+    $query = "DELETE FROM treatments WHERE id = {$id}";
+    if (mysqli_query($conn, $query)) {
+        $query = "DELETE FROM alternative_treatments WHERE treatment_service_id = {$id}";
+        if (mysqli_query($conn, $query)) {
+            return 1;
+        }
+    }
+    return -1;
+}

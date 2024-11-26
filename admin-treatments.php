@@ -5,8 +5,6 @@ if (!isset($_SESSION['user']))
     header('Location: ./login.php');
 if ($_SESSION['user']['role'] !== 'owner' && $_SESSION['user']['role'] !== 'manager')
     header('Location: ./index.php');
-include 'src/api/functions.php';
-$appointments = getAllAppointments() ? array_slice(getAllAppointments(), 0, 8) : null;
 ?>
 
 <div style="height: fit-content; min-height: 100lvh; background: #D9D9D9">
@@ -15,9 +13,9 @@ $appointments = getAllAppointments() ? array_slice(getAllAppointments(), 0, 8) :
         <?php include 'src/includes/admin_side_nav.php'; ?>
         <div style="display: flex; margin: 1.5rem; flex-direction: column; gap: 1rem; width: 100%;">
             <div style="display: flex;">
-                <input type="text" id="appointments-search" class="search-button" placeholder="Search Appointments..."
+                <input type="text" id="treatments-search" class="search-button" placeholder="Search Treatments..."
                     required />
-                <div style="position: relative;">
+                <!-- <div style="position: relative;">
                     <button
                         style="position: relative; height: 4rem; background-color: #A80011; border: 0px; color: white; padding: 2rem 2.5rem; border-top-right-radius: 0.5rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
                         class="filter-button" id="dropdownFilter">
@@ -41,25 +39,20 @@ $appointments = getAllAppointments() ? array_slice(getAllAppointments(), 0, 8) :
                             <button type="button" class="filterAppointments" data-id="Noshow">No show</button>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
             <div style="display: flex; flex-direction: column; gap: 0.5rem">
-                <span
-                    style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Appointments</span>
-                <table style="width: 100%; background: #A80011;">
-                    <thead style="color: white;">
-                        <tr>
-                            <th style="padding: 0.5rem 0rem; font-weight: 400;">Staff</th>
-                            <th style="font-weight: 400;">Customer</th>
-                            <th style="font-weight: 400;">Service</th>
-                            <th style="font-weight: 400;">Date</th>
-                            <th style="font-weight: 400;">Time</th>
-                            <th style="font-weight: 400;">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody style="background-color: white; text-align: center;" id="appointmentsList">
-                    </tbody>
-                </table>
+                <div style="display: flex; justify-content: space-between;">
+                    <span
+                        style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Treatments</span>
+                    <div style="display: flex; gap: 1rem;">
+                        <button
+                            style="background-color: #A80011; border: 0px; color: white; padding: 0rem 2rem; border-radius: 0.5rem; cursor: pointer;"
+                            onclick="window.location.href = './add-treatment.php'">Add a Treatment</button>
+                    </div>
+                </div>
+                <div id="treatmentsList" data-userid="<?php echo $_SESSION['user']['id']; ?>">
+                </div>
             </div>
         </div>
     </div>

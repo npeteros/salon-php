@@ -5,7 +5,7 @@ include 'src/api/functions.php';
 
 $consultation = getConsultationByCustomer($_SESSION['user']['id']);
 if (!$consultation)
-    header('Location: ./consultation-hair.php');
+    header('Location: ./consultation-treatment.php');
 
 $recommendedTreatments = [];
 

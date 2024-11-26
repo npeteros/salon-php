@@ -273,3 +273,9 @@ textarea {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
+
+.divider {
+    border-bottom: 0.1px solid rgb(184, 183, 183);
+    width: 100%;
+    opacity: 100%;
+}

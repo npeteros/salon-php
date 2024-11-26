@@ -64,6 +64,10 @@ $(document).ready(function () {
         }
     })
 
+    $("#chemical").change(function () {
+        this.checked ? $("#suitability").css('display', 'none') : $("#suitability").css('display', 'flex');
+    });
+
     $("#change-role").click(function () {
         if (!changingRoles) {
             $("#change-role").html("Save");
@@ -170,6 +174,7 @@ $(document).ready(function () {
 
     let appointments = [];
     let services = [];
+    let treatments = [];
     let users = [];
 
     function displayAppointments(appointmentArray = appointments) {
@@ -251,6 +256,26 @@ $(document).ready(function () {
         });
     }
 
+    function displayTreatments(treatmentsArray = treatments) {
+        $("#treatmentsList").empty();
+        const toShow = treatmentsArray.slice(0, 12);
+        toShow.forEach(treatment => {
+            const link = $("#treatmentsList").attr("data-userid") ? 'admin-view-treatment.php' : 'view-treatment.php';
+            $("#treatmentsList").append(
+                `<div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: white; cursor: pointer;" onclick="window.location.href = './${link}?id=${treatment.treatment_id}';">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <img src="./uploads/services/${treatment.img_path}" alt="Image" style="width: 3rem; height: 3rem; border-radius: 9999px;">
+                                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                        <span style="font-size: 1.125rem; line-height: 1.75rem;">${treatment.name}</span>
+                                        <span style="font-size: 0.875rem; line-height: 1.25rem;">${treatment.description.length > 35 ? service.description.substring(0, 35) + '...' : treatment.description}</span>
+                                    </div>
+                                </div>
+                                <span style="color: #49454F;">&#x20B1; ${treatment.price}</span>
+                        </div>`
+            );
+        });
+    }
+
     function displayUsers(usersArray = users) {
         $("#usersList").empty();
         const toShow = usersArray.slice(0, 12);
@@ -292,6 +317,7 @@ $(document).ready(function () {
         displayAppointments();
         displayServices();
         displayUsers();
+        displayTreatments();
         $('#filterModal').css('display', 'none');
     });
 
@@ -337,11 +363,30 @@ $(document).ready(function () {
         $('#filterModal').css('display', 'none');
     })
 
+    let showingDropdown = false;
+
+    $("#dropdownFilter").click(function () {
+        $("#dropdown").css('display', showingDropdown ? 'none' : 'block');
+        showingDropdown = !showingDropdown;
+    })
+
+    $(".filterUsers").click(function () {
+        const filteredUsers = users.filter(user => user.role.includes($(this).attr("data-id")));
+
+        displayUsers($(this).attr("data-id") == "all" ? users : filteredUsers);
+    })
+
+    $(".filterAppointments").click(function () {
+        const filteredAppointments = appointments.filter(appointment => appointment.status.includes($(this).attr("data-id").toLowerCase()));
+
+        displayAppointments($(this).attr("data-id") == "all" ? appointments : filteredAppointments);
+    })
+
     $("#filterUsers").submit(function (event) {
         event.preventDefault();
         const name = $("#name").val().toLowerCase();
         const email = $("#email").val().toLowerCase();
-        const role = $("#role").val();
+        const role = $("#role").val().toLowerCase();
 
         const filteredUsers = users.filter(user => {
             return (
@@ -417,6 +462,38 @@ $(document).ready(function () {
                     if (response.code == 200) {
                         services = response.data;
                         displayServices();
+                    }
+                }
+            });
+        });
+    }
+
+    if ($("#treatmentsList").length) {
+        $.ajax({
+            type: "GET",
+            url: "src/api/treatments.php",
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response.code == 200) {
+                    treatments = response.data;
+                    displayTreatments();
+                }
+            }
+        });
+
+        $("#treatments-search").on("input", function () {
+            const search = $("#treatments-search");
+            $.ajax({
+                type: "GET",
+                data: {
+                    search: search.val()
+                },
+                url: "src/api/treatments.php",
+                success: function (response) {
+                    response = JSON.parse(response);
+                    if (response.code == 200) {
+                        treatments = response.data;
+                        displayTreatments();
                     }
                 }
             });
@@ -624,6 +701,40 @@ $(document).ready(function () {
                     }
                 } catch (error) {
                     $("#user-error").html("Something went wrong.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+            },
+        });
+    })
+
+    $("#add-treatment").submit(function (event) {
+        event.preventDefault();
+
+        $("#treatment-error").html("");
+        const formData = new FormData($("#add-treatment")[0]);
+
+        $.ajax({
+            type: "POST",
+            url: "src/api/treatments.php",
+            data: formData,
+            processData: false, // Required for FormData
+            contentType: false, // Required for FormData
+            success: function (response) {
+                try {
+                    response = JSON.parse(response);
+                    if (response.code != 200) {
+                        $("#treatment-error").html(response.data)
+                    } else {
+                        $("#treatment-error").css("color", "#059669");
+                        $("#treatment-error").html("Your treatment has been added. Redirecting...");
+                        setTimeout(() => {
+                            window.location.href = "./admin-treatments.php";
+                        }, 3000);
+                    }
+                } catch (error) {
+                    $("#treatment-error").html("Something went wrong.");
                 }
             },
             error: function (xhr, status, error) {
@@ -872,6 +983,45 @@ $(document).ready(function () {
         });
     })
 
+    $("#delete-treatment").click(function () {
+        if (!confirmDeletion) {
+            confirmDeletion = true;
+            $("#delete-treatment").html("Confirm");
+            $("#treatment-error").css("font-weight", 900);
+            return $("#treatment-error").html("Are you sure you want to delete this treatment?");
+        }
+
+        const treatmentData = {
+            id: $("#delete-treatment").attr("data-id"),
+        };
+
+        $.ajax({
+            type: "DELETE",
+            url: "src/api/treatments.php",
+            data: JSON.stringify(treatmentData),
+            success: function (response) {
+                try {
+                    response = JSON.parse(response);
+                    if (response.code != 200) {
+                        $("#treatment-error").html(response.data)
+                    } else {
+                        $("#treatment-error").css("color", "#059669");
+                        $("#treatment-error").html("Your treatment has been deleted. Redirecting...");
+                        setTimeout(() => {
+                            window.location.href = "./admin-treatments.php";
+                        }, 3000);
+                    }
+                } catch (error) {
+                    $("#treatment-error").html("Something went wrong.");
+                    console.log(error)
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+            },
+        });
+    })
+
     $("#delete-consultation").submit(function (event) {
         event.preventDefault();
 
@@ -1047,7 +1197,7 @@ $(document).ready(function () {
 
 
     $('#none').change(function () {
-        (this.checked) ? $('input[type="radio"]').prop('checked', false).prop('disabled', true) : $('input[type="radio"]').not(this).prop('checked', false).prop('disabled', false);
+        (this.checked) ? $('input[type="checkbox"]').not(this).prop('checked', false).prop('disabled', true) : $('input[type="checkbox"]').not(this).prop('checked', false).prop('disabled', false);
     });
 
     $('input[name="bleaching"]').change(function () {
