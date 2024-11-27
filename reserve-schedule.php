@@ -12,7 +12,7 @@ if ($appointment) {
 
 $consultation = getConsultationByCustomer($_SESSION['user']['id']);
 if (!$consultation)
-    header('Location: ./consultation-treatment.php');
+    header('Location: ./consultation-hair.php');
 
 date_default_timezone_set('Asia/Manila');
 ?>

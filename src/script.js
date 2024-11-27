@@ -858,49 +858,46 @@ $(document).ready(function () {
         });
     })
 
-    $("#submit-consultation").submit(function (event) {
-        event.preventDefault();
+    // $("#submit-consultation").submit(function (event) {
+    //     event.preventDefault();
 
-        $("#consultation-error").html("");
-        const formData = new FormData($("#submit-consultation")[0]);
-        const reservationData = {
-            customer_id: formData.get("customer"),
-            type: formData.get("type"),
-            texture: formData.get("texture"),
-            hair: formData.get("hair"),
-            perming: formData.get("perming"),
-            relax: formData.get("relax"),
-            rebonding: formData.get("rebonding"),
-            bleaching: formData.get("bleaching"),
-        };
+    //     $("#consultation-error").html("");
+    //     const formData = new FormData($("#submit-consultation")[0]);
+    //     const reservationData = {
+    //         customer_id: formData.get("customer"),
+    //         type: formData.get("type"),
+    //         texture: formData.get("texture"),
+    //         hair: formData.get("hair"),
+    //         treatment: formData.get("treatment"),
+    //     };
 
-        $.ajax({
-            type: "POST",
-            url: "src/api/consultations.php",
-            data: reservationData,
-            success: function (response) {
-                try {
-                    response = JSON.parse(response);
-                    if (response.code != 200) {
-                        $("#consultation-error").html(response.data)
-                    } else {
-                        $("#consultation-error").css("color", "#059669");
-                        $("#consultation-error").html("Your consultation has been submitted. Do you wish to reserve an appointment?");
-                        $("#submit-consultation-btn").css("display", "none");
-                        $("#back-consultation-btn").css("display", "none");
-                        $("#redirect-appointment").css("display", "block");
-                        $("#back-dashboard").css("display", "block");
-                    }
-                } catch (error) {
-                    $("#consultation-error").html("Something went wrong.");
-                    console.log(error)
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log(xhr.responseText);
-            },
-        });
-    });
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "src/api/consultations.php",
+    //         data: reservationData,
+    //         success: function (response) {
+    //             try {
+    //                 response = JSON.parse(response);
+    //                 if (response.code != 200) {
+    //                     $("#consultation-error").html(response.data)
+    //                 } else {
+    //                     $("#consultation-error").css("color", "#059669");
+    //                     $("#consultation-error").html("Your consultation has been submitted. Do you wish to reserve an appointment?");
+    //                     $("#submit-consultation-btn").css("display", "none");
+    //                     $("#back-consultation-btn").css("display", "none");
+    //                     $("#redirect-appointment").css("display", "block");
+    //                     $("#back-dashboard").css("display", "block");
+    //                 }
+    //             } catch (error) {
+    //                 $("#consultation-error").html("Something went wrong.");
+    //                 console.log(error)
+    //             }
+    //         },
+    //         error: function (xhr, status, error) {
+    //             console.log(xhr.responseText);
+    //         },
+    //     });
+    // });
 
     let confirmDeletion = false;
 

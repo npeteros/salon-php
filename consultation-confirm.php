@@ -1,9 +1,12 @@
 <?php
-if (!isset($_POST['treatment']))
-    return header("Location: ./consultation-treatment.php");
+if (!isset($_POST['treatment']) || !isset($_POST['type']) || !isset($_POST['texture']) || !isset($_POST['hair']))
+    return header("Location: ./consultation-hair.php");
 if (!isset($_POST['previous']) && !isset($_POST['none'])) {
     $data = [
         'treatment' => $_POST['treatment'],
+        'type' => $_POST['type'],
+        'texture' => $_POST['texture'],
+        'hair' => $_POST['hair'],
     ];
 
     echo '<form id="redirectForm" action="./recommendation.php" method="post">';
@@ -31,7 +34,6 @@ if (isset($_POST['none'])) {
 }
 
 include './src/api/functions.php';
-print_r($_POST);
 ?>
 
 <div style="height: fit-content; min-height: 100lvh; background: #D9D9D9;">
@@ -48,7 +50,7 @@ print_r($_POST);
                             1
                         </span>
                         <span>
-                            <h3 style="font-weight: 500; line-height: 1.25;">Treatment</h3>
+                            <h3 style="font-weight: 500; line-height: 1.25;">Hair</h3>
                         </span>
                     </li>
                     <li class="next">
@@ -56,29 +58,30 @@ print_r($_POST);
                             2
                         </span>
                         <span>
+                            <h3 style="font-weight: 500; line-height: 1.25;">Treatment</h3>
+                        </span>
+                    </li>
+                    <li class="next">
+                        <span class="progress inactive">
+                            3
+                        </span>
+                        <span>
                             <h3 style="font-weight: 500; line-height: 1.25;">History</h3>
                         </span>
                     </li>
                     <li class="next active">
                         <span class="progress active">
-                            3
+                            4
                         </span>
                         <span>
                             <h3 style="font-weight: 500; line-height: 1.25;">Timeline</h3>
                         </span>
                     </li>
-                    <li class="">
-                        <span class="progress inactive">
-                            4
-                        </span>
-                        <span>
-                            <h3 style="font-weight: 500; line-height: 1.25;">Recommendation</h3>
-                        </span>
-                    </li>
                 </ol>
                 <div
                     style="display: flex; padding-left: 1rem; padding-right: 1rem; flex-direction: column; border-radius: 1rem;">
-                    <form method="post" action="./recommendation.php" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <form method="post" action="./recommendation.php"
+                        style="display: flex; flex-direction: column; gap: 1rem;">
                         <div style="display: flex; gap: 1rem;">
                             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
                                 <div style="display: flex; flex-direction: column;">
@@ -99,8 +102,7 @@ print_r($_POST);
                                                 for="<?php echo $treatment['name']; ?>"><?php echo $treatment['name']; ?></label>
                                             <input type="number" name="month_time[<?php echo $previous; ?>]"
                                                 style="display: block; padding: 0.625rem; border-radius: 0.5rem; border-width: 1px; border-color: #D1D5DB; width: 100%; font-size: 0.875rem; line-height: 1.25rem; color: #111827; background-color: #F9FAFB;"
-                                                id="<?php echo $previous; ?>"
-                                                required>
+                                                id="<?php echo $previous; ?>" required>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
@@ -109,9 +111,12 @@ print_r($_POST);
                                     <input type="hidden" name="previous[<?php echo $index; ?>]"
                                         value="<?php echo $value; ?>">
                                 <?php endforeach; ?>
+                                <input type="hidden" name="type" value="<?php echo $_POST['type']; ?>">
+                                <input type="hidden" name="texture" value="<?php echo $_POST['texture']; ?>">
+                                <input type="hidden" name="hair" value="<?php echo $_POST['hair']; ?>">
                             </div>
                         </div>
-                        <button class="next-button" type="submit">Next</button>
+                        <button class="next-button" type="submit">Submit</button>
                     </form>
                     <button class="cancel-button" type="button"
                         onclick="window.location.href = './consultation-treatment.php'">Back</button>

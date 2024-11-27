@@ -62,8 +62,6 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <span style="font-size: 1.25rem; line-height: 1.75rem; font-weight: 700;">Personal
                                         Information</span>
-                                    <a
-                                        style="color: #3B82F6; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;">Edit</a>
                                 </div>
                                 <hr style="margin: 0.5rem 0rem; border-width: 1px; background-color: #E5E7B;" />
                             </div>
@@ -78,8 +76,6 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <span style="font-size: 1.25rem; line-height: 1.75rem; font-weight: 700;">Stylist
                                         Information</span>
-                                    <a
-                                        style="color: #3B82F6; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;">Edit</a>
                                 </div>
                                 <hr style="margin: 0.5rem 0rem; border-width: 1px; background-color: #E5E7B;" />
                             </div>
@@ -104,8 +100,6 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                                     <span
                                         style="font-size: 1.25rem; line-height: 1.75rem; font-weight: 700;">Appointment
                                         Schedule</span>
-                                    <a
-                                        style="color: #3B82F6; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;">Edit</a>
                                 </div>
                                 <hr style="margin: 0.5rem 0rem; border-width: 1px; background-color: #E5E7B;" />
                             </div>
@@ -120,8 +114,6 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <span style="font-size: 1.25rem; line-height: 1.75rem; font-weight: 700;">Service
                                         Details</span>
-                                    <a
-                                        style="color: #3B82F6; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;">Edit</a>
                                 </div>
                                 <hr style="margin: 0.5rem 0rem; border-width: 1px; background-color: #E5E7B;" />
                             </div>

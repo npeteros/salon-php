@@ -103,7 +103,7 @@ $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice
                         style="width: 75%; font-size: 3.75rem; line-height: 1; font-weight: 700; color: #A80011;">Pamper
                         yourself today!</span>
                     <button class="submit-consultation-button"
-                        onclick="window.location.href = './consultation-treatment.php'">Submit a Consultation Now!</button>
+                        onclick="window.location.href = './consultation-hair.php'">Submit a Consultation Now!</button>
                 </div>
             </div>
 

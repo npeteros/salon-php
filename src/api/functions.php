@@ -69,7 +69,16 @@ function getConsultationByCustomer(int $customerId)
 {
     global $conn;
     $consultation = null;
-    $query = "SELECT * FROM consultations WHERE customer_id = {$customerId} AND removed = 0";
+    $query = "SELECT 
+                c.id,
+                c.type,
+                c.texture,
+                c.hair,
+                ct.treatment_id,
+                ct.status
+            FROM consultations c
+            INNER JOIN client_treatments ct ON ct.consultation_id = c.id
+            WHERE customer_id = {$customerId} AND c.removed = 0";
     if ($r = mysqli_query($conn, $query)) {
         if (mysqli_num_rows($r) > 0) {
             while ($row = mysqli_fetch_assoc($r)) {
@@ -1454,7 +1463,7 @@ function getTreatmentById(int $id): array|null
     return $treatment;
 }
 
-function createTreatment(int $serviceId, array $minTime=[], int $alternativeId, string $reason): int|string
+function createTreatment(int $serviceId, array $minTime = [], int $alternativeId, string $reason): int|string
 {
     global $conn;
 

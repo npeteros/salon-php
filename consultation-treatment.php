@@ -3,6 +3,8 @@ define("FILE_CSS", "src/styles/consultation-hair.css");
 include 'src/includes/header.php';
 if (!isset($_SESSION['user']))
     header('Location: ./login.php');
+if(!isset($_POST['type']) || !isset($_POST['texture']) || !isset($_POST['hair']))
+    header("Location: ./consultation-hair.php");
 
 include 'src/api/functions.php';
 
@@ -22,9 +24,17 @@ $treatments = getAllTreatments();
             <div
                 style="display: flex; padding: 1rem; flex-direction: column; gap: 1rem; border-radius: 1rem; background-color: #ffffff;">
                 <ol>
+                    <li class="next">
+                        <span class="progress inactive">
+                            1
+                        </span>
+                        <span>
+                            <h3 style="font-weight: 500; line-height: 1.25;">Hair</h3>
+                        </span>
+                    </li>
                     <li class="next active">
                         <span class="progress active">
-                            1
+                            2
                         </span>
                         <span>
                             <h3 style="font-weight: 500; line-height: 1.25;">Treatment</h3>
@@ -32,7 +42,7 @@ $treatments = getAllTreatments();
                     </li>
                     <li class="next">
                         <span class="progress inactive">
-                            2
+                            3
                         </span>
                         <span>
                             <h3 style="font-weight: 500; line-height: 1.25;">History</h3>
@@ -40,18 +50,10 @@ $treatments = getAllTreatments();
                     </li>
                     <li class="next">
                         <span class="progress inactive">
-                            3
-                        </span>
-                        <span>
-                            <h3 style="font-weight: 500; line-height: 1.25;">Timeline</h3>
-                        </span>
-                    </li>
-                    <li class="">
-                        <span class="progress inactive">
                             4
                         </span>
                         <span>
-                            <h3 style="font-weight: 500; line-height: 1.25;">Recommendation</h3>
+                            <h3 style="font-weight: 500; line-height: 1.25;">Timeline</h3>
                         </span>
                     </li>
                 </ol>
@@ -70,6 +72,9 @@ $treatments = getAllTreatments();
                                 }
                                 ?>
                             </select>
+                            <input type="hidden" name="type" value="<?php echo $_POST['type']; ?>">
+                            <input type="hidden" name="texture" value="<?php echo $_POST['texture']; ?>">
+                            <input type="hidden" name="hair" value="<?php echo $_POST['hair']; ?>">
                         </div>
                         <button class="next-button" type="submit">Next</button>
                     </form>

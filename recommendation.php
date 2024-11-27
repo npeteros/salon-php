@@ -1,8 +1,8 @@
 <?php
 define("FILE_CSS", "src/styles/consultation-hair.css");
 include './src/includes/header.php';
-if (!$_POST['treatment'])
-    return header("Location: ./consultation-treatment.php");
+if (!$_POST['treatment'] || !isset($_POST['type']) || !isset($_POST['texture']) || !isset($_POST['hair']))
+    return header("Location: ./consultation-hair.php");
 $treatmentId = $_POST['treatment'];
 $monthTime = isset($_POST['month_time']) ? $_POST['month_time'] : null;
 $previous = isset($_POST['previous']) ? $_POST['previous'] : [];
@@ -38,11 +38,35 @@ function validatePreviousTreatments($conn, $treatmentId, $previous, $monthTime)
 }
 
 $suitable = validatePreviousTreatments($conn, $treatmentId, $previous, $monthTime);
+$created = true;
+
+function createNewConsultation($conn, $treatmentId, $postData, $suitable)
+{
+    $query = "INSERT INTO consultations (customer_id, type, texture, hair) VALUES ({$_SESSION['user']['id']}, '{$postData['type']}', '{$postData['texture']}', '{$postData['hair']}')";
+    if (mysqli_query($conn, $query)) {
+        $consultationId = mysqli_insert_id($conn);
+        if (mysqli_affected_rows($conn) > 0) {
+            $status = $suitable ? "Suitable" : "Unsuitable";
+            $query = "INSERT INTO client_treatments (consultation_id, treatment_id, status) VALUES ($consultationId, $treatmentId, '$status')";
+            if (mysqli_query($conn, $query)) {
+                return $consultationId;
+            }
+        }
+    }
+    return -1;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $consultationId = createNewConsultation($conn, $treatmentId, $_POST, $suitable);
+    if ($consultationId == -1)
+        $created = false;
+}
+
 $selectedTreatment = getTreatmentById($treatmentId);
 $alternativeTreatments = getAlternativeTreatments($selectedTreatment['service_id']) ?? [];
+print_r($_POST);
 // print_r($suitable ? "Note: This treatment is suitable for your hair." : "Note: This treatment is NOT suitable for your hair.");
 ?>
-
 <div style="height: fit-content; min-height: 100lvh; background: #D9D9D9;">
     <?php include './src/includes/dash_nav.php'; ?>
     <div class="confirmation-container">
@@ -53,84 +77,102 @@ $alternativeTreatments = getAlternativeTreatments($selectedTreatment['service_id
                 style="display: flex; flex-direction: column; padding-top: 1rem; gap: 1rem; border-radius: 1rem; background-color: #E53C37;">
                 <span style="font-weight: 700; font-size: 1.25rem; text-align: center; color: white;">Hair Treatment
                     Recommendation</span>
-                <div
-                    style="display: flex; flex-direction: column; align-items: center; gap: 2rem; background-color: white; padding: 1rem; border-bottom-right-radius: 1rem; border-bottom-left-radius: 1rem;">
-                    <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: rgb(229 229 229); width: 50%; cursor: pointer;"
-                        onclick="window.open('./view-service.php?id=<?php echo $selectedTreatment['service_id']; ?>', '_blank');"
-                        target="_blank">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <img src="./uploads/services/<?php echo $selectedTreatment['img_path']; ?>" alt="Image"
-                                style="width: 3rem; height: 3rem; border-radius: 9999px;">
-                            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                                <span
-                                    style="font-size: 1.125rem; line-height: 1.75rem;"><?php echo $selectedTreatment['name']; ?></span>
-                                <span
-                                    style="font-size: 0.875rem; line-height: 1.25rem;"><?php echo strlen($selectedTreatment['description']) > 35 ? substr($selectedTreatment['description'], 0, 35) . '...' : $selectedTreatment['description']; ?></span>
-                            </div>
-                        </div>
-                        <span style="color: #49454F;">&#x20B1; <?php echo $selectedTreatment['price']; ?></span>
+                <?php if (!$created): ?>
+                    <div
+                        style="display: flex; flex-direction: column; align-items: center; gap: 2rem; background-color: white; padding: 1rem; border-bottom-right-radius: 1rem; border-bottom-left-radius: 1rem;">
+                        <span style="font-weight: 700; font-size: 1.25rem; text-align: center; color: #E53C37;">
+                            There was an error in saving your consultation data. Please contact an administrator.
+                        </span>
                     </div>
-                    <span
-                        style="font-size: 1rem; font-weight: bold; line-height: 1.25rem; text-align: center; color: <?php echo $suitable ? 'green' : 'red'; ?>;"><?php echo $suitable ? "Note: This treatment is suitable for your hair." : "Note: This treatment is NOT suitable for your hair."; ?></span>
+                <?php else: ?>
+                    <div
+                        style="display: flex; flex-direction: column; align-items: center; gap: 2rem; background-color: white; padding: 1rem; border-bottom-right-radius: 1rem; border-bottom-left-radius: 1rem;">
+                        <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: rgb(229 229 229); width: 50%; cursor: pointer;"
+                            onclick="window.open('./view-service.php?id=<?php echo $selectedTreatment['service_id']; ?>', '_blank');"
+                            target="_blank">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <img src="./uploads/services/<?php echo $selectedTreatment['img_path']; ?>" alt="Image"
+                                    style="width: 3rem; height: 3rem; border-radius: 9999px;">
+                                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span
+                                        style="font-size: 1.125rem; line-height: 1.75rem;"><?php echo $selectedTreatment['name']; ?></span>
+                                    <span
+                                        style="font-size: 0.875rem; line-height: 1.25rem;"><?php echo strlen($selectedTreatment['description']) > 35 ? substr($selectedTreatment['description'], 0, 35) . '...' : $selectedTreatment['description']; ?></span>
+                                </div>
+                            </div>
+                            <span style="color: #49454F;">&#x20B1; <?php echo $selectedTreatment['price']; ?></span>
+                        </div>
+                        <span
+                            style="font-size: 1rem; font-weight: bold; line-height: 1.25rem; text-align: center; color: <?php echo $suitable ? 'green' : 'red'; ?>;"><?php echo $suitable ? "Note: This treatment is suitable for your hair." : "Note: This treatment is NOT suitable for your hair."; ?></span>
 
-                    <?php if (!$suitable): ?>
-                        <div class="divider"></div>
-                        <div style="display: flex; flex-direction: column; align-items: start; gap: 1rem; width: 100%;">
-                            <span style="font-weight: 700; font-size: 1.25rem; text-align: center;">Alternative Recommended Treatments:</span>
-                            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%;">
-                                <?php foreach ($alternativeTreatments as $alternativeTreatment): ?>
-                                    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
-                                        <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: rgb(229 229 229); cursor: pointer;"
-                                            onclick="window.open('./view-service.php?id=<?php echo $alternativeTreatment['id']; ?>', '_blank');"
-                                            target="_blank">
-                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                                <img src="./uploads/services/<?php echo $alternativeTreatment['img_path']; ?>"
-                                                    alt="Image" style="width: 3rem; height: 3rem; border-radius: 9999px;">
-                                                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                                                    <span
-                                                        style="font-size: 1.125rem; line-height: 1.75rem;"><?php echo $alternativeTreatment['name']; ?></span>
-                                                    <span
-                                                        style="font-size: 0.875rem; line-height: 1.25rem;"><?php echo strlen($alternativeTreatment['description']) > 35 ? substr($alternativeTreatment['description'], 0, 35) . '...' : $alternativeTreatment['description']; ?></span>
+                        <?php if (!$suitable): ?>
+                            <div class="divider"></div>
+                            <div style="display: flex; flex-direction: column; align-items: start; gap: 1rem; width: 100%;">
+                                <span style="font-weight: 700; font-size: 1.25rem; text-align: center;">Alternative Recommended
+                                    Treatments:</span>
+                                <div
+                                    style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%;">
+                                    <?php
+                                    if (empty($alternativeTreatments)) {
+                                        echo "<span style='font-size: 0.875rem; line-height: 1.25rem; text-align: center;'>No alternative treatments found. Please wait until a few months have passed.</span>";
+                                    }
+
+                                    foreach ($alternativeTreatments as $alternativeTreatment): ?>
+                                        <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                                            <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: rgb(229 229 229); cursor: pointer;"
+                                                onclick="window.open('./view-service.php?id=<?php echo $alternativeTreatment['id']; ?>', '_blank');"
+                                                target="_blank">
+                                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                    <img src="./uploads/services/<?php echo $alternativeTreatment['img_path']; ?>"
+                                                        alt="Image" style="width: 3rem; height: 3rem; border-radius: 9999px;">
+                                                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                                        <span
+                                                            style="font-size: 1.125rem; line-height: 1.75rem;"><?php echo $alternativeTreatment['name']; ?></span>
+                                                        <span
+                                                            style="font-size: 0.875rem; line-height: 1.25rem;"><?php echo strlen($alternativeTreatment['description']) > 35 ? substr($alternativeTreatment['description'], 0, 35) . '...' : $alternativeTreatment['description']; ?></span>
+                                                    </div>
                                                 </div>
+                                                <span style="color: #49454F;">&#x20B1;
+                                                    <?php echo $alternativeTreatment['price']; ?></span>
                                             </div>
-                                            <span style="color: #49454F;">&#x20B1;
-                                                <?php echo $alternativeTreatment['price']; ?></span>
+                                            <span
+                                                style="font-size: 1rem; font-weight: bold; line-height: 1.25rem; opacity: 80%;">Note:
+                                                <?php echo $alternativeTreatment['reason']; ?></span>
                                         </div>
-                                        <span
-                                            style="font-size: 1rem; font-weight: bold; line-height: 1.25rem; text-align: center; opacity: 80%;">Note:
-                                            <?php echo $alternativeTreatment['reason']; ?></span>
-                                    </div>
-                                <?php endforeach; ?>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                        <div class="divider"></div>
+                        <span style="font-weight: 700; font-size: 1.25rem">Hair Profile Information (For Stylist&apos;s
+                            reference)</span>
+                        <div style="display: flex; flex-direction: column; align-items: start; gap: 1rem; width: 100%;">
+                            <div style="display: flex; gap: 0.5rem;">
+                                <span style="font-weight: 700;">
+                                    Hair Type:
+                                </span>
+                                <span><?php echo ucwords($_POST['type']); ?></span>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <span style="font-weight: 700;">
+                                    Hair Texture:
+                                </span>
+                                <span><?php echo ucwords($_POST['texture']); ?></span>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <span style="font-weight: 700;">
+                                    Hair Condition:
+                                </span>
+                                <span><?php echo ucwords($_POST['hair']); ?></span>
                             </div>
                         </div>
-                    <?php endif; ?>
-                    <div style="display: flex; flex-direction: column; margin-top: -1rem; width: 100%;">
-                        <form id="submit-consultation" method="post"
-                            style="display: flex; flex-direction: column; gap: 1rem;">
-                            <input type="hidden" name="customer" id="customer"
-                                value="<?php echo $_SESSION['user']['id']; ?>">
-                            <input type="hidden" name="treatment" value="<?php echo $_POST['treatment']; ?>">
-                            <?php if (isset($_POST['month_time'])): ?> <input type="hidden" name="month_time"
-                                    value="<?php echo $_POST['month_time']; ?>"> <?php endif; ?>
-                            <?php if (isset($_POST['previous'])): ?> <input type="hidden" name="previous"
-                                    value="<?php echo $_POST['previous']; ?>"> <?php endif; ?>
-                            <span style="text-align: center; color: #DC2626; font-size: 0.875rem; line-height: 1.25rem;"
-                                id="reservation-error"></span>
-                            <button class="next-button" type="button" id="redirect-appointment" style="display: none;"
-                                onclick="window.location.href='./reserve-schedule.php'">Reserve an
+                        <div style="display: flex; flex-direction: column; margin-top: -1rem; width: 100%; gap: 1rem;">
+                            <button class="next-button" onclick="window.location.href='./reserve-schedule.php'">Reserve an
                                 Appointment</button>
-                            <button class="cancel-button" type="button" id="back-dashboard" style="display: none;"
-                                onclick="window.location.href='./dashboard.php'">Back to Dashboard</button>
-                            <span style="font-size: 0.875rem; line-height: 1.25rem; text-align: center; color: #DC2626;"
-                                id="consultation-error"></span>
-                            <button class="next-button" type="submit" id="submit-consultation-btn">Submit</button>
-                        </form>
-                        <form action="./consultation-confirm.php" method="POST">
-                            <button class="cancel-button" style="width: 100%;" type="submit"
-                                id="back-consultation-btn">Back</button>
-                        </form>
+                            <button class="cancel-button" style="width: 100%;" onclick="window.location.href='./dashboard.php'"y>Back to Dashboard</button>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
