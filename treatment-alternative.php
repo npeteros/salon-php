@@ -36,17 +36,17 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['treatment_alternative'
                 if (mysqli_affected_rows($conn) > 0) {
                     $treatmentId = mysqli_insert_id($conn);
                     $query = "";
-
+                    
                     foreach ($minTimes as $prevTreatmentId => $minTimeMonths) {
                         if ($minTimeMonths == "")
                             $minTimeMonths = 0;
-                        $query .= "INSERT INTO previous_treatments (treatment_id, prev_treatment_id, min_time_months) VALUES ({$treatmentId}, {$prevTreatmentId}, {$minTimeMonths});";
+                        $query = "INSERT INTO previous_treatments (treatment_id, prev_treatment_id, min_time_months) VALUES ('{$treatmentId}', '{$prevTreatmentId}', '{$minTimeMonths}');";
                         mysqli_query($conn, $query);
                     }
 
                     $query = "";
                     foreach ($alternatives as $alternativeServiceId => $reason) {
-                        $query .= "INSERT INTO alternative_treatments (treatment_service_id, alternative_service_id, reason) VALUES ({$serviceId}, {$alternativeServiceId}, '{$reason}');";
+                        $query = "INSERT INTO alternative_treatments (treatment_service_id, alternative_service_id, reason) VALUES ({$serviceId}, {$alternativeServiceId}, '{$reason}');";
                         mysqli_query($conn, $query);
                     }
                     

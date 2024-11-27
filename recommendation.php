@@ -64,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $selectedTreatment = getTreatmentById($treatmentId);
 $alternativeTreatments = getAlternativeTreatments($selectedTreatment['service_id']) ?? [];
-print_r($_POST);
 // print_r($suitable ? "Note: This treatment is suitable for your hair." : "Note: This treatment is NOT suitable for your hair.");
 ?>
 <div style="height: fit-content; min-height: 100lvh; background: #D9D9D9;">
