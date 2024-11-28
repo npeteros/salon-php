@@ -97,12 +97,12 @@ include './src/api/functions.php';
                                     style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem;">
                                     <?php foreach ($_POST['previous'] as $previous):
 
-                                        $treatment = getTreatmentById($previous);
+                                        $service = getServiceById($previous);
                                         ?>
                                         <div
                                             style="display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.5rem;">
                                             <label
-                                                for="<?php echo $treatment['name']; ?>"><?php echo $treatment['name']; ?></label>
+                                                for="<?php echo $service['name']; ?>"><?php echo $service['name']; ?></label>
                                             <input type="number" name="month_time[<?php echo $previous; ?>]"
                                                 style="display: block; padding: 0.625rem; border-radius: 0.5rem; border-width: 1px; border-color: #D1D5DB; width: 100%; font-size: 0.875rem; line-height: 1.25rem; color: #111827; background-color: #F9FAFB;"
                                                 id="<?php echo $previous; ?>" required>

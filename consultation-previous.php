@@ -5,7 +5,7 @@ define("FILE_CSS", "src/styles/consultation-hair.css");
 include './src/includes/header.php';
 include './src/api/functions.php';
 
-$treatments = getAllTreatments();
+$services = getAllServices();
 ?>
 
 <script>
@@ -69,14 +69,14 @@ $treatments = getAllTreatments();
                                         with the following:</span>
                                 </div>
                                 <div
-                                    style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem;">
-                                    <?php foreach ($treatments as $treatment): ?>
+                                    style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem;">
+                                    <?php foreach ($services as $service): ?>
                                         <div style="display: flex; gap: 0.25rem; margin-top: 0.5rem;">
                                             <input type="checkbox" name="previous[]"
-                                                value="<?php echo $treatment['treatment_id']; ?>"
-                                                id="<?php echo $treatment['name']; ?>">
+                                                value="<?php echo $service['id']; ?>"
+                                                id="<?php echo $service['name']; ?>">
                                             <label
-                                                for="<?php echo $treatment['name']; ?>"><?php echo $treatment['name']; ?></label>
+                                                for="<?php echo $service['name']; ?>"><?php echo $service['name']; ?></label>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>

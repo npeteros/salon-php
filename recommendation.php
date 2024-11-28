@@ -12,14 +12,14 @@ include './src/api/functions.php';
 
 function validatePreviousTreatments($conn, $treatmentId, $previous, $monthTime)
 {
-    foreach ($previous as $prevTreatmentId) {
-        $submittedMinTimeMonths = isset($monthTime[$prevTreatmentId]) ? (int) $monthTime[$prevTreatmentId] : 0;
+    foreach ($previous as $prevServiceId) {
+        $submittedMinTimeMonths = isset($monthTime[$prevServiceId]) ? (int) $monthTime[$prevServiceId] : 0;
 
         $query = "
             SELECT min_time_months 
             FROM previous_treatments 
             WHERE treatment_id = {$treatmentId} 
-              AND prev_treatment_id = {$prevTreatmentId}";
+              AND prev_service_id = {$prevServiceId}";
 
         $result = mysqli_query($conn, $query);
 
