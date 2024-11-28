@@ -11,7 +11,6 @@ if (!isset($_POST['service_id']))
     header("Location: ./add-treatment.php");
 
 $services = getAllServices();
-$treatments = getAllTreatments();
 
 $errorMsg = '';
 $successMsg = '';
@@ -37,10 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['treatment_alternative'
                     $treatmentId = mysqli_insert_id($conn);
                     $query = "";
                     
-                    foreach ($minTimes as $prevTreatmentId => $minTimeMonths) {
+                    foreach ($minTimes as $serviceId => $minTimeMonths) {
                         if ($minTimeMonths == "")
                             $minTimeMonths = 0;
-                        $query = "INSERT INTO previous_treatments (treatment_id, prev_treatment_id, min_time_months) VALUES ('{$treatmentId}', '{$prevTreatmentId}', '{$minTimeMonths}');";
+                        $query = "INSERT INTO previous_treatments (treatment_id, prev_service_id, min_time_months) VALUES ('{$treatmentId}', '{$serviceId}', '{$minTimeMonths}');";
                         mysqli_query($conn, $query);
                     }
 
@@ -91,22 +90,22 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['treatment_alternative'
                                     style="grid-column: span 2 / span 2; font-weight: bold; font-size: 1.125rem; line-height: 1.75rem;">Select
                                     Alternative Treatments</span>
                                 <?php
-                                if ($treatments):
-                                    foreach ($treatments as $treatment): ?>
+                                if ($services):
+                                    foreach ($services as $service): ?>
                                         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                                             <div style="display: flex; gap: 0.25rem; margin-top: 0.5rem;">
                                                 <input type="checkbox"
-                                                    name="treatments[<?php echo $treatment['service_id']; ?>]" value="1"
-                                                    id="checkbox-<?php echo $treatment['treatment_id']; ?>"
-                                                    onclick="toggleTextarea(<?php echo $treatment['treatment_id']; ?>)">
-                                                <label for="checkbox-<?php echo $treatment['treatment_id']; ?>">
-                                                    <?php echo htmlspecialchars($treatment['name']); ?>
+                                                    name="treatments[<?php echo $service['id']; ?>]" value="1"
+                                                    id="checkbox-<?php echo $service['id']; ?>"
+                                                    onclick="toggleTextarea(<?php echo $service['id']; ?>)">
+                                                <label for="checkbox-<?php echo $service['id']; ?>">
+                                                    <?php echo htmlspecialchars($service['name']); ?>
                                                 </label>
                                             </div>
                                             <div
                                                 style="display: flex; flex-direction: column; gap: 0.5rem; grid-column: span 2 / span 2;">
-                                                <textarea name="treatments[<?php echo $treatment['service_id']; ?>]"
-                                                    id="textarea-<?php echo $treatment['treatment_id']; ?>"
+                                                <textarea name="treatments[<?php echo $service['id']; ?>]"
+                                                    id="textarea-<?php echo $service['id']; ?>"
                                                     placeholder="This alternative treatment is recommended due to the following reasons:"
                                                     disabled></textarea>
                                             </div>

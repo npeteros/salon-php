@@ -11,7 +11,6 @@ if (!isset($_POST['service_id']))
     header("Location: ./add-treatment.php");
 
 $services = getAllServices();
-$treatments = getAllTreatments();
 ?>
 
 <div style="height: fit-content; min-height: 100lvh; background: #D9D9D9;">
@@ -34,13 +33,13 @@ $treatments = getAllTreatments();
                                     style="grid-column: span 2 / span 2; font-weight: bold; font-size: 1.125rem; line-height: 1.75rem;">Previous
                                     Treatment Requirements</span>
                                 <?php
-                                if ($treatments):
-                                    foreach ($treatments as $treatment): ?>
+                                if ($services):
+                                    foreach ($services as $service): ?>
                                         <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                            <label for="rebond"><?php echo $treatment['name']; ?> <span
+                                            <label for="rebond"><?php echo $service['name']; ?> <span
                                                     style="font-size: 0.75rem; line-height: 1rem;">(Leave blank if
                                                     NA)</span></label>
-                                            <input type="number" name="min_time[<?php echo $treatment['treatment_id']; ?>]"
+                                            <input type="number" name="min_time[<?php echo $service['id']; ?>]"
                                                 style="display: block; padding: 0.625rem; border-radius: 0.5rem; border-width: 1px; border-color: #D1D5DB; width: 100%; font-size: 0.875rem; line-height: 1.25rem; color: #111827; background-color: #F9FAFB;"
                                                 placeholder="Minimum time span (in months)" />
                                         </div>

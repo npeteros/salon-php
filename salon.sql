@@ -92,7 +92,7 @@ CREATE TABLE `consultations` (
 CREATE TABLE `previous_treatments` (
   `id` int(11) NOT NULL,
   `treatment_id` int(11) NOT NULL,
-  `prev_treatment_id` int(11) NOT NULL,
+  `prev_service_id` bigint(20) UNSIGNED NOT NULL,
   `min_time_months` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -224,7 +224,7 @@ ALTER TABLE `consultations`
 ALTER TABLE `previous_treatments`
   ADD PRIMARY KEY (`id`),
   ADD KEY `treatment_id` (`treatment_id`),
-  ADD KEY `prev_treatment_id` (`prev_treatment_id`);
+  ADD KEY `prev_service_id` (`prev_service_id`);
 
 --
 -- Indexes for table `reviews`
@@ -365,7 +365,7 @@ ALTER TABLE `consultations`
 --
 ALTER TABLE `previous_treatments`
   ADD CONSTRAINT `previous_treatments_ibfk_1` FOREIGN KEY (`treatment_id`) REFERENCES `treatments` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `previous_treatments_ibfk_2` FOREIGN KEY (`prev_treatment_id`) REFERENCES `treatments` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `previous_treatments_ibfk_2` FOREIGN KEY (`prev_service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `reviews`
