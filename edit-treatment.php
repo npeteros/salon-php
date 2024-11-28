@@ -22,7 +22,6 @@ function editTreatment($conn, $treatmentId, $postData)
 
     $treatmentInfo = getTreatmentEditInfo($_GET['id']);
 
-    // Ensure $postData contains valid data
     if (!isset($postData['service_id']) || !isset($postData['min_time'])) {
         $errorMsg = "Missing required data.";
         return $errorMsg;
@@ -41,23 +40,23 @@ function editTreatment($conn, $treatmentId, $postData)
     }
 
     // Handle the previous treatments (min_time)
-    foreach ($minTime as $prevTreatmentId => $minTimeMonths) {
+    foreach ($minTime as $prevServiceId => $minTimeMonths) {
         $minTimeMonths = ($minTimeMonths == "") ? 0 : intval($minTimeMonths);
 
         // Check if the previous treatment record exists
-        $query = "SELECT COUNT(*) AS count FROM previous_treatments WHERE treatment_id = {$treatmentId} AND prev_treatment_id = {$prevTreatmentId};";
+        $query = "SELECT COUNT(*) AS count FROM previous_treatments WHERE treatment_id = {$treatmentId} AND prev_service_id = {$prevServiceId};";
         $count = mysqli_fetch_array(mysqli_query($conn, $query))['count'];
 
         if ($count == 0) {
             // Insert a new record if it doesn't exist
-            $query = "INSERT INTO previous_treatments (treatment_id, prev_treatment_id, min_time_months) VALUES ({$treatmentId}, {$prevTreatmentId}, {$minTimeMonths});";
+            $query = "INSERT INTO previous_treatments (treatment_id, prev_service_id, min_time_months) VALUES ({$treatmentId}, {$prevServiceId}, {$minTimeMonths});";
             if (!mysqli_query($conn, $query)) {
                 $errorMsg = "Error inserting previous treatment";
                 return $errorMsg;
             }
         } else {
             // Update the existing record
-            $query = "UPDATE previous_treatments SET min_time_months = {$minTimeMonths} WHERE treatment_id = {$treatmentId} AND prev_treatment_id = {$prevTreatmentId};";
+            $query = "UPDATE previous_treatments SET min_time_months = {$minTimeMonths} WHERE treatment_id = {$treatmentId} AND prev_service_id = {$prevServiceId};";
             if (!mysqli_query($conn, $query)) {
                 $errorMsg = "Error updating previous treatment";
                 return $errorMsg;
@@ -146,19 +145,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 style="display: grid; 	grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%;">
                                 <input type="hidden" name="service_id" value="<?php echo $treatment['service_id']; ?>">
                                 <span
-                                    style="grid-column: span 2 / span 2; font-weight: bold; font-size: 1.125rem; line-height: 1.75rem;">Previous
-                                    Treatment Requirements</span>
+                                    style="grid-column: span 2 / span 2; font-weight: bold; font-size: 1.125rem; line-height: 1.75rem;">Previous Treatment Requirements</span>
                                 <?php
-                                foreach ($treatments as $prevTreatment):
-                                    $previousTreatmentIndex = array_search($prevTreatment['treatment_id'], array_column($previousTreatments, 'prev_treatment_id'));
-                                    // if ($prevTreatment['treatment_id'] == $treatment['treatment_id'])
-                                    //     continue;
+                                foreach ($services as $service):
+                                    $previousTreatmentIndex = array_search($service['id'], array_column($previousTreatments, 'prev_service_id'));
                                     ?>
                                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                        <label for="rebond"><?php echo $prevTreatment['name']; ?> <span
+                                        <label for="rebond"><?php echo $service['name']; ?> <span
                                                 style="font-size: 0.75rem; line-height: 1rem;">(Leave blank if
                                                 NA)</span></label>
-                                        <input type="number" name="min_time[<?php echo $prevTreatment['treatment_id']; ?>]"
+                                        <input type="number" name="min_time[<?php echo $service['id']; ?>]"
                                             <?php if (is_numeric($previousTreatmentIndex)) { ?>
                                                 value="<?php echo $previousTreatments[$previousTreatmentIndex]['min_time_months']; ?>"
                                             <?php } ?>
@@ -186,25 +182,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     $alternativeTreatments[$row['alternative_service_id']] = $row['reason'];
                                 }
 
-                                foreach ($treatments as $treatment): ?>
+                                foreach ($services as $service): ?>
                                     <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                                         <div style="display: flex; align-items: center; gap: 0.25rem; margin-top: 0.5rem;">
                                             <input type="checkbox"
-                                                name="alternatives[<?php echo $treatment['service_id']; ?>]" 
+                                                name="alternatives[<?php echo $service['id']; ?>]" 
                                                 value="1"
-                                                id="checkbox-<?php echo $treatment['treatment_id']; ?>"
-                                                <?php if (isset($alternativeTreatments[$treatment['service_id']])): ?> checked <?php endif; ?>
-                                                onclick="toggleTextarea(<?php echo $treatment['treatment_id']; ?>)">
-                                            <label for="checkbox-<?php echo $treatment['treatment_id']; ?>">
-                                                <?php echo htmlspecialchars($treatment['name']); ?>
+                                                id="checkbox-<?php echo $service['id']; ?>"
+                                                <?php if (isset($alternativeTreatments[$service['id']])): ?> checked <?php endif; ?>
+                                                onclick="toggleTextarea(<?php echo $service['id']; ?>)">
+                                            <label for="checkbox-<?php echo $service['id']; ?>">
+                                                <?php echo htmlspecialchars($service['name']); ?>
                                             </label><span
                                                 style="font-size: 0.75rem; line-height: 1rem;">(Leave blank to remove alternative treatment)</span></label>
                                         </div>
                                         <div style="display: flex; flex-direction: column; gap: 0.5rem; grid-column: span 2 / span 2;">
-                                            <textarea name="alternatives[<?php echo $treatment['service_id']; ?>]"
-                                                id="textarea-<?php echo $treatment['treatment_id']; ?>"
+                                            <textarea name="alternatives[<?php echo $service['id']; ?>]"
+                                                id="textarea-<?php echo $service['id']; ?>"
                                                 placeholder="This alternative treatment is recommended due to the following reasons:"
-                                                <?php if (!isset($alternativeTreatments[$treatment['service_id']])): ?> disabled <?php endif; ?>><?php echo isset($alternativeTreatments[$treatment['service_id']]) ? htmlspecialchars($alternativeTreatments[$treatment['service_id']]) : ''; ?></textarea>
+                                                <?php if (!isset($alternativeTreatments[$service['id']])): ?> disabled <?php endif; ?>><?php echo isset($alternativeTreatments[$service['id']]) ? htmlspecialchars($alternativeTreatments[$service['id']]) : ''; ?></textarea>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
