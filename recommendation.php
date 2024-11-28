@@ -2,7 +2,8 @@
 define("FILE_CSS", "src/styles/consultation-hair.css");
 include './src/includes/header.php';
 if (!$_POST['treatment'] || !isset($_POST['type']) || !isset($_POST['texture']) || !isset($_POST['hair']))
-    return header("Location: ./consultation-hair.php");
+    print_r($_POST);
+    // return header("Location: ./consultation-hair.php");
 $treatmentId = $_POST['treatment'];
 $monthTime = isset($_POST['month_time']) ? $_POST['month_time'] : null;
 $previous = isset($_POST['previous']) ? $_POST['previous'] : [];

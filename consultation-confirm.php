@@ -1,6 +1,7 @@
 <?php
 if (!isset($_POST['treatment']) || !isset($_POST['type']) || !isset($_POST['texture']) || !isset($_POST['hair']))
-    return header("Location: ./consultation-hair.php");
+    // return header("Location: ./consultation-hair.php");
+    print_r($_POST);
 if (!isset($_POST['previous']) && !isset($_POST['none'])) {
     $data = [
         'treatment' => $_POST['treatment'],
@@ -15,13 +16,15 @@ if (!isset($_POST['previous']) && !isset($_POST['none'])) {
     }
     echo '</form>';
     echo '<script>document.getElementById("redirectForm").submit();</script>';
-    exit;
 }
 define("FILE_CSS", "src/styles/consultation-hair.css");
 include './src/includes/header.php';
 if (isset($_POST['none'])) {
     $data = [
         'treatment' => $_POST['treatment'],
+        'type' => $_POST['type'],
+        'texture' => $_POST['texture'],
+        'hair' => $_POST['hair'],
     ];
 
     echo '<form id="redirectForm" action="./recommendation.php" method="post">';
