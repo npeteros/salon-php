@@ -237,20 +237,24 @@ $(document).ready(function () {
 
     function displayServices(servicesArray = services) {
         $("#servicesList").empty();
+        console.log(servicesArray);
         const toShow = servicesArray.slice(0, 12);
         toShow.forEach(service => {
 
             const link = $("#servicesList").attr("data-userid") ? 'admin-view-service.php' : 'view-service.php';
             $("#servicesList").append(`
-                        <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: white; cursor: pointer;" onclick="window.location.href = './${link}?id=${service.id}';">
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: white; cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%;" onclick="window.location.href = './${link}?id=${service.id}';">
                                     <img src="./uploads/services/${service.img_path}" alt="Image" style="width: 3rem; height: 3rem; border-radius: 9999px;">
                                     <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                                         <span style="font-size: 1.125rem; line-height: 1.75rem;">${service.name}</span>
                                         <span style="font-size: 0.875rem; line-height: 1.25rem;">${service.description.length > 35 ? service.description.substring(0, 35) + '...' : service.description}</span>
                                     </div>
                                 </div>
-                                <span style="color: #49454F;">&#x20B1; ${service.price}</span>
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; width: 100%;">
+                                    <span style="color: #49454F; text-align: right;">&#x20B1; ${service.price}</span>
+                                    ${!$("#servicesList").attr("data-userid") && service.chemical == 0 ? `<button onclick="window.location.href = './reserve-schedule.php?id=${service.id}'" style="background-color: #A80011; border: 0px; color: white; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer;">Reserve appointment</button>` : ''}
+                                </div>
                         </div>`
             );
         });
@@ -763,10 +767,10 @@ $(document).ready(function () {
                         $("#service-error").html(response.data)
                     } else {
                         $("#service-error").css("color", "#059669");
-                        $("#service-error").html("Your service has been added. Redirecting...");
-                        setTimeout(() => {
-                            window.location.href = "./admin-services.php";
-                        }, 3000);
+                        $("#service-error").html(response.data);
+                        // setTimeout(() => {
+                        //     window.location.href = "./admin-services.php";
+                        // }, 3000);
                     }
                 } catch (error) {
                     $("#service-error").html("Something went wrong.");
@@ -900,6 +904,47 @@ $(document).ready(function () {
     // });
 
     let confirmDeletion = false;
+
+    $(".cancel-appointment").click(function () {
+        if (!confirmDeletion) {
+            confirmDeletion = true;
+            $(".cancel-appointment").html("Confirm");
+            $(".cancel-appointment-msg").css("font-weight", 900);
+            return $(".cancel-appointment-msg").html("Are you sure you want to cancel this appointment?");
+        }
+
+        const userData = {
+            id: $(".cancel-appointment").attr("data-id"),
+            cancel: 1
+        }
+
+        $.ajax({
+            type: "PATCH",
+            url: "src/api/appointments.php",
+            data: JSON.stringify(userData),
+            success: function (response) {
+                try {
+                    console.log("RES: ", response)
+                    response = JSON.parse(response);
+                    if (response.code != 200) {
+                        $(".cancel-appointment-msg").html(response.data)
+                    } else {
+                        $(".cancel-appointment-msg").css("color", "#059669");
+                        $(".cancel-appointment-msg").html("Your appointment has been cancelled. Redirecting...");
+                        setTimeout(() => {
+                            window.location.href = "./appointments.php";
+                        }, 3000);
+                    }
+                } catch (error) {
+                    $(".cancel-appointment-msg").html("Something went wrong.");
+                    console.log("ERR: ", error)
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+            },
+        });
+    })
 
     $("#delete-user").click(function () {
         if (!confirmDeletion) {

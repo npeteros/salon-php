@@ -34,7 +34,7 @@ include 'src/api/functions.php';
                                     <label for="name">Service Name</label>
                                     <input type="text" name="name"
                                         style="display: block; padding: 0.625rem; border-radius: 0.5rem; border-width: 1px; border-color: #D1D5DB; width: 100%; font-size: 0.875rem; line-height: 1.25rem; color: #111827; background-color: #F9FAFB;"
-                                        placeholder="Rebond Treatment" required>
+                                        placeholder="Rebond Treatment">
                                 </div>
                                 <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
                                     <label for="price">Service Price</label>
@@ -45,26 +45,31 @@ include 'src/api/functions.php';
                                         </div>
                                         <input type="number" name="price" step="0.01"
                                             style="display: block; padding: 0.625rem; padding-left: 2.5rem; border-radius: 0.5rem; border-width: 1px; border-color: #D1D5DB; width: 100%; font-size: 0.875rem; line-height: 1.25rem; color: #111827; background-color: #F9FAFB;"
-                                            placeholder="4915.55" required>
+                                            placeholder="4915.55">
                                     </div>
                                 </div>
                                 <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
                                     <label for="duration">Service Duration (by minutes)</label>
                                     <input type="number" name="duration"
                                         style="display: block; padding: 0.625rem; border-radius: 0.5rem; border-width: 1px; border-color: #D1D5DB; width: 100%; font-size: 0.875rem; line-height: 1.25rem; color: #111827; background-color: #F9FAFB;"
-                                        placeholder="120" required>
+                                        placeholder="120">
                                 </div>
                                 <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
                                     <label for="followup_duration">Follow Up Duration (by minutes)</label>
                                     <input type="number" name="followup_duration"
                                         style="display: block; padding: 0.625rem; border-radius: 0.5rem; border-width: 1px; border-color: #D1D5DB; width: 100%; font-size: 0.875rem; line-height: 1.25rem; color: #111827; background-color: #F9FAFB;"
-                                        placeholder="109" required>
+                                        placeholder="109">
                                 </div>
                                 <div
                                     style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; grid-column: span 2 / span 2;">
                                     <label for="description">Service Description</label>
                                     <textarea name="description"
-                                        placeholder="Get smooth, straight, and shiny hair with our long-lasting Rebond Treatment! Ideal for frizzy or wavy hair, it restructures bonds to give you sleek, frizz-free locks that last up to 6 months with minimal maintenance." required></textarea>
+                                        placeholder="Get smooth, straight, and shiny hair with our long-lasting Rebond Treatment! Ideal for frizzy or wavy hair, it restructures bonds to give you sleek, frizz-free locks that last up to 6 months with minimal maintenance."
+                                        required></textarea>
+                                </div>
+                                <div style="display: flex; gap: 0.25rem; width: 100%; grid-column: span 2 / span 2;">
+                                    <input type="checkbox" name="chemical">
+                                    <label for="chemical">This is a chemical treatment</label>
                                 </div>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 0.5rem;">

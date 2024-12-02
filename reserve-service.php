@@ -60,7 +60,7 @@ $services = getAllServices();
                                 style="padding: 0.5rem 1rem; border-radius: 0.5rem; border-width: 1px;" required>
                                 <?php
                                 foreach ($services as $service) {
-                                    echo '<option value="' . $service['id'] . '" ' . ($service['id'] == $_POST['service'] ? 'selected' : '') . '>' . $service['name'] . '</option>';
+                                    echo '<option value="' . $service['id'] . '" ' . ($service['id'] == $_GET['id'] ? 'selected' : '') . '>' . $service['name'] . '</option>';
                                 }
                                 ;
                                 ?>

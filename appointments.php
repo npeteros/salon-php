@@ -32,9 +32,10 @@ $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice
                 <div style="display: flex; justify-content: space-between;">
                     <span
                         style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Appointments</span>
-                    <button
-                        style="background-color: #A80011; border: 0px; color: white; padding: 0rem 2rem; border-radius: 0.5rem; cursor: pointer;"
-                        onclick="window.location.href = './reserve-schedule.php'">Reserve Appointment</button>
+                    <?php if (!getPendingAppointment($_SESSION['user']['id'])) { ?><button
+                            style="background-color: #A80011; border: 0px; color: white; padding: 0rem 2rem; border-radius: 0.5rem; cursor: pointer;"
+                            onclick="window.location.href = './reserve-schedule.php'">Reserve Appointment</button>
+                    <?php } ?>
                 </div>
                 <table style="width: 100%; background: #A80011;">
                     <thead style="color: white;">

@@ -378,6 +378,17 @@ function updateAppointment(int $id, int $customerId, int $stylistId, string $sta
     return -1;
 }
 
+function cancelAppointment(int $id): int
+{
+    global $conn;
+    $query = "UPDATE appointments SET status = 'cancelled' WHERE id = {$id}";
+    if (mysqli_query($conn, $query)) {
+        $rows = mysqli_affected_rows($conn);
+        return $rows;
+    }
+    return -1;
+}
+
 function deleteAppointment(int $id): int
 {
     global $conn;
@@ -649,6 +660,7 @@ function getPopularServicesBySearch(string $search): array|null
             s.description as description,
             s.price as price,
             s.img_path as img_path,
+            s.chemical as chemical,
             COUNT(a.id) as appointment_count
         FROM
             services s
@@ -682,6 +694,7 @@ function getPopularServices(): array|null
             s.description as description,
             s.price as price,
             s.img_path as img_path,
+            s.chemical as chemical,
             COUNT(a.id) as appointment_count
         FROM
             services s
@@ -713,6 +726,7 @@ function getPopularServiceById(int $id): array|null
             s.duration as duration,
             s.followup_duration as followup_duration,
             s.img_path as img_path,
+            s.chemical as chemical,
             COUNT(a.id) as appointment_count
         FROM
             services s
@@ -731,10 +745,10 @@ function getPopularServiceById(int $id): array|null
     return $services;
 }
 
-function createServiceWithPicture(string $name, float $price, int $duration, int $followup_duration, string $description, array $image): int
+function createServiceWithPicture(string $name, float $price, int $duration, int $followup_duration, string $description, array $image, int $chemical): int
 {
     global $conn;
-    $query = "INSERT INTO services (name, price, description, duration, followup_duration) VALUES ('{$name}', {$price}, '{$description}', {$duration}, {$followup_duration})";
+    $query = "INSERT INTO services (name, price, description, duration, followup_duration, chemical) VALUES ('{$name}', {$price}, '{$description}', {$duration}, {$followup_duration}, {$chemical})";
     if (mysqli_query($conn, $query)) {
         $id = mysqli_insert_id($conn);
         if ($image['error'] === UPLOAD_ERR_OK) {
@@ -763,10 +777,10 @@ function createServiceWithPicture(string $name, float $price, int $duration, int
     return -1;
 }
 
-function createService(string $name, float $price, int $duration, int $followup_duration, string $description): int
+function createService(string $name, float $price, int $duration, int $followup_duration, string $description, int $chemical): int
 {
     global $conn;
-    $query = "INSERT INTO services (name, price, description, duration, followup_duration) VALUES ('{$name}', {$price}, '{$description}', {$duration}, {$followup_duration})";
+    $query = "INSERT INTO services (name, price, description, duration, followup_duration, chemical) VALUES ('{$name}', {$price}, '{$description}', {$duration}, {$followup_duration}, {$chemical})";
     if (mysqli_query($conn, $query)) {
         $id = mysqli_insert_id($conn);
         return $id;

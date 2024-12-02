@@ -11,27 +11,38 @@ if (!isset($_SESSION['user']))
         <?php include 'src/includes/side_nav.php'; ?>
 
         <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%; margin: 1.5rem;">
-            <div style="display: flex; flex-direction: column;">
-                <div>
-                    <div style="position: relative;">
-                        <div
-                            style="position: absolute; display: flex; top: 0; bottom: 0; padding-left: 0.75rem; align-items: center; pointer-events: none;">
-                            <svg class="w-4 h-4 text-gray-500 dark:text-neutral-400" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                            </svg>
+            <div style="display: flex;">
+                <input type="text" id="appointments-search" class="search-button" placeholder="Search Appointments..."
+                    required />
+                <div style="position: relative;">
+                    <button
+                        style="position: relative; height: 4rem; background-color: #A80011; border: 0px; color: white; padding: 2rem 2.5rem; border-top-right-radius: 0.5rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
+                        class="filter-button" id="dropdownFilter">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="m6 9 6 6 6-6"></path>
+                        </svg>
+                    </button>
+
+                    <div id="dropdown"
+                        style="display: none; position: absolute; z-index: 10; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; border-top-width: 1px; border-color: #F3F4F6; width: 6rem; background-color: #ffffff; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);">
+                        <div style="padding-top: 0.5rem; padding-bottom: 0.5rem; font-size: 0.875rem; line-height: 1.25rem; color: #374151;"
+                            aria-labelledby="dropdown-button">
+                            <button type="button" class="filterAppointments" data-id="all">All</button>
+                            <button type="button" class="filterAppointments" data-id="Pending">Pending</button>
+                            <button type="button" class="filterAppointments" data-id="Confirmed">Confirmed</button>
+                            <button type="button" class="filterAppointments" data-id="Rescheduled">Rescheduled</button>
+                            <button type="button" class="filterAppointments" data-id="Completed">Completed</button>
+                            <button type="button" class="filterAppointments" data-id="Cancelled">Cancelled</button>
+                            <button type="button" class="filterAppointments" data-id="Noshow">No show</button>
                         </div>
-                        <input type="text" id="services-search" class="search-button" placeholder="Search Services..."
-                            required />
                     </div>
                 </div>
             </div>
             <div style="display: flex; flex-direction: column; gap: 0.5rem">
-                <span
-                    style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Services</span>
-                <div
-                    id="servicesList">
+                <span style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Services</span>
+                <div id="servicesList">
                 </div>
             </div>
         </div>

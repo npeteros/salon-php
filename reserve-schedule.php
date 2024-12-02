@@ -61,7 +61,7 @@ date_default_timezone_set('Asia/Manila');
                 </ol>
                 <div
                     style="display: flex; padding-left: 1rem; padding-right: 1rem; flex-direction: column; border-radius: 1rem;">
-                    <form method="post" action="./reserve-service.php"
+                    <form method="post" action="./reserve-service.php<?php if (isset($_GET['id'])) echo '?id=' . $_GET['id']; ?>"
                         style="display: flex; flex-direction: column; gap: 1rem;">
                         <div style="display: flex; gap: 1rem;">
                             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 50%;">

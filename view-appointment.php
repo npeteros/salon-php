@@ -73,7 +73,14 @@ switch ($appointment['appointment_status']) {
                                         style="display: flex; justify-content: space-between; padding: 0.5rem 1.5rem; border-radius: 9999px; color: white; height: fit-content; width: fit-content; <?php echo $color; ?>">
                                         <?php echo $appointment['appointment_status'] == "noshow" ? "No show" : ucfirst($appointment['appointment_status']); ?>
                                     </div>
-
+                                    <?php if ($appointment['appointment_status'] == 'pending' || $appointment['appointment_status'] == 'rescheduled') { ?>
+                                        <span
+                                            style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline; cursor: pointer; text-align: center; width: 100%;"
+                                            data-id="<?php echo $_GET['id']; ?>"
+                                            class="cancel-appointment">Cancel</span>
+                                        <span class="cancel-appointment-msg"
+                                            style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;"></span>
+                                    <?php } ?>
                                     <?php if ($appointment['appointment_status'] == "noshow") { ?>
                                         <a href="reschedule-appointment.php?appointment_id=<?php echo $appointment['appointment_id']; ?>"
                                             style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;">Reschedule</a>
@@ -119,11 +126,19 @@ switch ($appointment['appointment_status']) {
                             </div>
                         </div>
                         <div class="small-action-responsive">
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
                                 <div
                                     style="display: flex; justify-content: space-between; padding: 0.5rem 1.5rem; border-radius: 9999px; color: white; height: fit-content; width: fit-content; <?php echo $color; ?>">
                                     <?php echo $appointment['appointment_status'] == "noshow" ? "No show" : ucfirst($appointment['appointment_status']); ?>
                                 </div>
+                                <?php if ($appointment['appointment_status'] == 'pending' || $appointment['appointment_status'] == 'rescheduled') { ?>
+                                    <span
+                                        style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline; cursor: pointer; text-align: center; width: 100%;"
+                                        data-id="<?php echo $_GET['id']; ?>"
+                                        class="cancel-appointment">Cancel</span>
+                                    <span class="cancel-appointment-msg"
+                                        style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;"></span>
+                                <?php } ?>
                                 <?php if ($appointment['appointment_status'] == "noshow") { ?>
                                     <a href="reschedule-appointment.php?appointment_id=<?php echo $appointment['appointment_id']; ?>"
                                         style="color: black; font-size: 0.875rem; line-height: 1.25rem; text-decoration: underline;">Reschedule</a>

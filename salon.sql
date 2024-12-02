@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 27, 2024 at 08:46 PM
+-- Generation Time: Dec 02, 2024 at 02:45 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -120,12 +120,13 @@ CREATE TABLE `reviews` (
 
 CREATE TABLE `services` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(32) NOT NULL,
-  `price` decimal(11,2) NOT NULL,
+  `name` varchar(32) NOT NULL DEFAULT 'N/A',
+  `price` decimal(11,2) NOT NULL DEFAULT 0.00,
   `description` varchar(255) NOT NULL,
-  `duration` int(11) NOT NULL,
-  `followup_duration` int(11) NOT NULL,
+  `duration` int(11) NOT NULL DEFAULT 0,
+  `followup_duration` int(11) NOT NULL DEFAULT 0,
   `img_path` varchar(255) NOT NULL DEFAULT 'default.svg',
+  `chemical` tinyint(4) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
