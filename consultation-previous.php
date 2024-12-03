@@ -5,7 +5,7 @@ define("FILE_CSS", "src/styles/consultation-hair.css");
 include './src/includes/header.php';
 include './src/api/functions.php';
 
-$services = getAllServices();
+$services = getAllChemicalServices();
 ?>
 
 <script>

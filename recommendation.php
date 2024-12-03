@@ -3,7 +3,7 @@ define("FILE_CSS", "src/styles/consultation-hair.css");
 include './src/includes/header.php';
 if (!$_POST['treatment'] || !isset($_POST['type']) || !isset($_POST['texture']) || !isset($_POST['hair']))
     print_r($_POST);
-    // return header("Location: ./consultation-hair.php");
+// return header("Location: ./consultation-hair.php");
 $treatmentId = $_POST['treatment'];
 $monthTime = isset($_POST['month_time']) ? $_POST['month_time'] : null;
 $previous = isset($_POST['previous']) ? $_POST['previous'] : [];
@@ -58,9 +58,11 @@ function createNewConsultation($conn, $treatmentId, $postData, $suitable)
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $consultationId = createNewConsultation($conn, $treatmentId, $_POST, $suitable);
-    if ($consultationId == -1)
-        $created = false;
+    if ($suitable) {
+        $consultationId = createNewConsultation($conn, $treatmentId, $_POST, $suitable);
+        if ($consultationId == -1)
+            $created = false;
+    }
 }
 
 $selectedTreatment = getTreatmentById($treatmentId);
@@ -103,7 +105,7 @@ $alternativeTreatments = getAlternativeTreatments($selectedTreatment['service_id
                             <span style="color: #49454F;">&#x20B1; <?php echo $selectedTreatment['price']; ?></span>
                         </div>
                         <span
-                            style="font-size: 1rem; font-weight: bold; line-height: 1.25rem; text-align: center; color: <?php echo $suitable ? 'green' : 'red'; ?>;"><?php echo $suitable ? "Note: This treatment is suitable for your hair." : "Note: This treatment is NOT suitable for your hair."; ?></span>
+                            style="font-size: 1rem; font-weight: bold; line-height: 1.25rem; text-align: center; color: <?php echo $suitable ? 'green' : 'red'; ?>;"><?php echo $suitable ? "Note: This treatment is suitable for your hair." : "Note: This treatment is not suitable. Please select another recommended treatment."; ?></span>
 
                         <?php if (!$suitable): ?>
                             <div class="divider"></div>
@@ -167,9 +169,16 @@ $alternativeTreatments = getAlternativeTreatments($selectedTreatment['service_id
                             </div>
                         </div>
                         <div style="display: flex; flex-direction: column; margin-top: -1rem; width: 100%; gap: 1rem;">
-                            <button class="next-button" onclick="window.location.href='./reserve-schedule.php'">Reserve an
-                                Appointment</button>
-                            <button class="cancel-button" style="width: 100%;" onclick="window.location.href='./dashboard.php'"y>Back to Dashboard</button>
+                            <?php if ($suitable): ?>
+                                <button class="next-button"
+                                    onclick="window.location.href='./reserve-schedule.php'">Reserve an
+                                    Appointment</button>
+                            <?php else: ?>
+                                <button class="next-button" onclick="window.location.href='./consultation-hair.php'">Select
+                                    Another Treatment</button>
+                            <?php endif; ?>
+                            <button class="cancel-button" style="width: 100%;"
+                                onclick="window.location.href='./dashboard.php'" y>Back to Dashboard</button>
                         </div>
                     </div>
                 <?php endif; ?>

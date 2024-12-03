@@ -113,7 +113,7 @@
     --ring-color: #3B82F6;
 }
 
-.filterUsers, .filterAppointments {
+.filterUsers, .filterAppointments, .filterServices {
     display: inline-flex;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
@@ -125,7 +125,7 @@
     cursor: pointer;
 }
 
-.filterUsers:hover, .filterAppointments:hover {
+.filterUsers:hover, .filterAppointments:hover, .filterServices:hover {
     background-color: rgb(212 212 212);
 }
 

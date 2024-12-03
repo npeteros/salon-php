@@ -7,10 +7,10 @@ if (!isset($_SESSION['user']))
 if ($_SESSION['user']['role'] !== 'owner' && $_SESSION['user']['role'] !== 'manager')
     header('Location: ./index.php');
 
-if (!isset($_POST['service_id']))
+if (!isset($_POST['service_id']) || !isset($_POST['type']) || !isset($_POST['texture']) || !isset($_POST['hair']))
     header("Location: ./add-treatment.php");
 
-$services = getAllServices();
+$services = getAllChemicalServices();
 ?>
 
 <div style="height: fit-content; min-height: 100lvh; background: #D9D9D9;">
@@ -43,12 +43,14 @@ $services = getAllServices();
                                                 style="display: block; padding: 0.625rem; border-radius: 0.5rem; border-width: 1px; border-color: #D1D5DB; width: 100%; font-size: 0.875rem; line-height: 1.25rem; color: #111827; background-color: #F9FAFB;"
                                                 placeholder="Minimum time span (in months)" />
                                         </div>
-                                    <?php endforeach;
-                                else: ?>
-                                <span>No existing treatments found</span>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <span>No existing treatments found</span>
                                 <?php endif; ?>
-                                <input type="hidden" name="service_id"
-                                    value="<?php echo $_POST['service_id']; ?>">
+                                <input type="hidden" name="service_id" value="<?php echo $_POST['service_id']; ?>">
+                                <input type="hidden" name="type" value="<?php echo $_POST['type']; ?>">
+                                <input type="hidden" name="texture" value="<?php echo $_POST['texture']; ?>">
+                                <input type="hidden" name="hair" value="<?php echo $_POST['hair']; ?>">
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                 <span

@@ -23,7 +23,7 @@ $treatments = getAllTreatments();
                     Treatment</span>
                 <div
                     style="display: flex; flex-direction: column; gap: 0.875rem; background-color: white; padding: 1rem; border-bottom-right-radius: 1rem; border-bottom-left-radius: 1rem;">
-                    <form method="POST" action="./treatment-previous.php" style="display: flex; gap: 1.5rem;">
+                    <form method="POST" action="./treatment-hair.php" style="display: flex; gap: 1.5rem;">
                         <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
                             <div
                                 style="display: grid; 	grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%;">

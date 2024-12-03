@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 02, 2024 at 02:45 PM
+-- Generation Time: Dec 03, 2024 at 06:41 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -153,7 +153,10 @@ CREATE TABLE `stylist_specialties` (
 
 CREATE TABLE `treatments` (
   `id` int(11) NOT NULL,
-  `service_id` bigint(20) UNSIGNED NOT NULL
+  `service_id` bigint(20) UNSIGNED NOT NULL,
+  `hair_type` enum('Straight','Curly','Wavy','Kinky') NOT NULL,
+  `hair_texture` enum('Fine','Medium','Thick') NOT NULL,
+  `hair_condition` enum('Dry','Damaged','Oily','Chemically Treated','Normal') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

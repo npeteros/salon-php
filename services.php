@@ -29,13 +29,9 @@ if (!isset($_SESSION['user']))
                         style="display: none; position: absolute; z-index: 10; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; border-top-width: 1px; border-color: #F3F4F6; width: 6rem; background-color: #ffffff; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);">
                         <div style="padding-top: 0.5rem; padding-bottom: 0.5rem; font-size: 0.875rem; line-height: 1.25rem; color: #374151;"
                             aria-labelledby="dropdown-button">
-                            <button type="button" class="filterAppointments" data-id="all">All</button>
-                            <button type="button" class="filterAppointments" data-id="Pending">Pending</button>
-                            <button type="button" class="filterAppointments" data-id="Confirmed">Confirmed</button>
-                            <button type="button" class="filterAppointments" data-id="Rescheduled">Rescheduled</button>
-                            <button type="button" class="filterAppointments" data-id="Completed">Completed</button>
-                            <button type="button" class="filterAppointments" data-id="Cancelled">Cancelled</button>
-                            <button type="button" class="filterAppointments" data-id="Noshow">No show</button>
+                            <button type="button" class="filterServices" style="text-align: left;" data-id="all">All</button>
+                            <button type="button" class="filterServices" style="text-align: left;" data-id="1">Chemical Treatments</button>
+                            <button type="button" class="filterServices" style="text-align: left;" data-id="0">Non-chemical Treatments</button>
                         </div>
                     </div>
                 </div>

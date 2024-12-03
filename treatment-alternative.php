@@ -7,16 +7,19 @@ if (!isset($_SESSION['user']))
 if ($_SESSION['user']['role'] !== 'owner' && $_SESSION['user']['role'] !== 'manager')
     header('Location: ./index.php');
 
-if (!isset($_POST['service_id']))
+if (!isset($_POST['service_id']) || !isset($_POST['type']) || !isset($_POST['texture']) || !isset($_POST['hair']))
     header("Location: ./add-treatment.php");
 
-$services = getAllServices();
+$services = getAllChemicalServices();
 
 $errorMsg = '';
 $successMsg = '';
 
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['treatment_alternative'])) {
     $serviceId = $_POST['service_id'];
+    $type = $_POST['type'];
+    $texture = $_POST['texture'];
+    $hair = $_POST['hair'];
     $minTimes = $_POST['min_time'] ?? [];
     $alternatives = $_POST['treatments'] ?? [];
 
@@ -30,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['treatment_alternative'
         if (mysqli_num_rows($r) > 0) {
             $errorMsg = "Treatment already exists for this service";
         } else {
-            $query = "INSERT INTO treatments (service_id) VALUES ($serviceId);";
+            $query = "INSERT INTO treatments (service_id, hair_type, hair_texture, hair_condition) VALUES ($serviceId, '$type', '$texture', '$hair');";
             if (mysqli_query($conn, $query)) {
                 if (mysqli_affected_rows($conn) > 0) {
                     $treatmentId = mysqli_insert_id($conn);
@@ -115,6 +118,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['treatment_alternative'
                                     <span>No existing treatments found</span>
                                 <?php endif; ?>
                                 <input type="hidden" name="service_id" value="<?php echo $_POST['service_id']; ?>">
+                                <input type="hidden" name="type" value="<?php echo $_POST['type']; ?>">
+                                <input type="hidden" name="texture" value="<?php echo $_POST['texture']; ?>">
+                                <input type="hidden" name="hair" value="<?php echo $_POST['hair']; ?>">
                                 <?php if (isset($_POST['min_time'])): ?>
                                     <?php foreach ($_POST['min_time'] as $index => $value): ?>
                                         <input type="hidden" name="min_time[<?php echo $index; ?>]"

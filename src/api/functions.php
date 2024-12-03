@@ -625,6 +625,19 @@ function getAllServices(): array|null
     return $services;
 }
 
+function getAllChemicalServices(): array|null
+{
+    global $conn;
+    $services = null;
+    $query = 'SELECT * FROM services WHERE chemical = 1';
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $services[] = $row;
+        }
+    }
+    return $services;
+}
+
 function getServiceById(int $id): array|null
 {
     global $conn;
@@ -1294,6 +1307,32 @@ function getAllTreatments(): array|null
                 treatments t
             INNER JOIN 
                 services s ON t.service_id = s.id
+            ORDER BY 
+                s.name ASC;";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $treatments[] = $row;
+        }
+    }
+
+    return $treatments;
+}
+
+function getAllTreatmentsByCharacteristics(string $type, string $texture, string $condition): array|null
+{
+    global $conn;
+    $treatments = null;
+    $query = "SELECT 
+                t.id AS treatment_id,
+                t.service_id,
+                s.*
+            FROM 
+                treatments t
+            INNER JOIN 
+                services s ON t.service_id = s.id
+            WHERE 
+                t.hair_type = '{$type}' OR t.hair_texture = '{$texture}' OR t.hair_condition = '{$condition}'
             ORDER BY 
                 s.name ASC;";
 

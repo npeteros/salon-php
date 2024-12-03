@@ -386,6 +386,12 @@ $(document).ready(function () {
         displayAppointments($(this).attr("data-id") == "all" ? appointments : filteredAppointments);
     })
 
+    $(".filterServices").click(function () {
+        const filteredServices = services.filter(service => service.chemical == $(this).attr("data-id"));
+
+        displayServices($(this).attr("data-id") == "all" ? services : filteredServices);
+    })
+
     $("#filterUsers").submit(function (event) {
         event.preventDefault();
         const name = $("#name").val().toLowerCase();
@@ -768,9 +774,9 @@ $(document).ready(function () {
                     } else {
                         $("#service-error").css("color", "#059669");
                         $("#service-error").html(response.data);
-                        // setTimeout(() => {
-                        //     window.location.href = "./admin-services.php";
-                        // }, 3000);
+                        setTimeout(() => {
+                            window.location.href = "./admin-services.php";
+                        }, 3000);
                     }
                 } catch (error) {
                     $("#service-error").html("Something went wrong.");

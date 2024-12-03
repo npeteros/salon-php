@@ -12,7 +12,7 @@ $consultation = getConsultationByCustomer($_SESSION['user']['id']);
 if ($consultation)
     header('Location: ./consultations.php');
 
-$treatments = getAllTreatments();
+$treatments = getAllTreatmentsByCharacteristics($_POST['type'], $_POST['texture'], $_POST['hair']);
 ?>
 
 <div style="min-height: 100lvh; background: #D9D9D9;">
@@ -62,7 +62,7 @@ $treatments = getAllTreatments();
                     <form method="post" action="./consultation-previous.php"
                         style="display: flex; flex-direction: column; gap: 1rem;">
                         <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                            <label for="treatment">Select Desired Treatment</label>
+                            <label for="treatment">Recommended Treatments:</label>
                             <select name="treatment"
                                 style="display: block; padding: 0.625rem; border-radius: 0.5rem; border-width: 1px; border-color: #D1D5DB; width: 100%; font-size: 0.875rem; line-height: 1.25rem; color: #111827; background-color: #F9FAFB;"
                                 required>
