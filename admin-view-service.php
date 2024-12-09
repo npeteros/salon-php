@@ -30,7 +30,8 @@ if (!$service)
                         <div style="display: flex; gap: 1rem; align-items: start; grid-column: span 4 / span 4;">
                             <div
                                 style="padding: 0.875rem; border: 1px solid rgb(212 212 212); border-radius: 1rem; width: 8rem; height: 8rem;">
-                                <img src="./uploads/services/<?php echo $service['img_path']; ?>" alt="Image" style="width: 100%; height: 100%;">
+                                <img src="./uploads/services/<?php echo $service['img_path']; ?>" alt="Image"
+                                    style="width: 100%; height: 100%;">
                             </div>
                             <div
                                 style="display: flex; flex-direction: column; gap: 0.25rem; width: 12rem; align-items: start;">
@@ -69,6 +70,10 @@ if (!$service)
                         <div style="display: flex; flex-direction: column; gap: 0.5rem">
                             <button
                                 style="padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 1.25rem; padding-right: 1.25rem; margin-bottom: 0.5rem; border-radius: 0.5rem; font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; color: #ffffff; height: fit-content; background-color: #E53C37; border: none; cursor: pointer;"
+                                onclick="window.location.href = './add-specialist.php?id=<?php echo $service['id']; ?>'">Add
+                                Specialist</button>
+                            <button
+                                style="padding-top: 0.625rem; padding-bottom: 0.625rem; padding-left: 1.25rem; padding-right: 1.25rem; margin-bottom: 0.5rem; border-radius: 0.5rem; font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; color: #E53C37; height: fit-content; background-color: white; border: 1px solid #E53C37; cursor: pointer;"
                                 onclick="window.location.href = './edit-service.php?id=<?php echo $service['id']; ?>'">Edit
                                 Service</button>
                             <button

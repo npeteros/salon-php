@@ -39,6 +39,24 @@ switch ($appointment['appointment_status']) {
         $color = 'background-color: rgb(115 115 115);';
         break;
 }
+
+$statusCriteria = [
+    'pending' => ['confirmed', 'cancelled'],
+    'confirmed' => ['rescheduled', 'completed', 'noshow'],
+    'cancelled' => [],
+    'rescheduled' => ['confirmed', 'cancelled'],
+    'completed' => [],
+    'noshow' => []
+];
+
+$statusLabels = [
+    'pending' => 'Pending',
+    'confirmed' => 'Confirmed',
+    'rescheduled' => 'Rescheduled',
+    'completed' => 'Completed',
+    'cancelled' => 'Cancelled',
+    'noshow' => 'No Show'
+];
 ?>
 
 <div style="height: fit-content; min-height: 100lvh; background: #D9D9D9;">
@@ -106,16 +124,25 @@ switch ($appointment['appointment_status']) {
                             <input type="hidden" name="customer_id" value="<?php echo $appointment['customer_id']; ?>">
                             <input type="hidden" name="stylist_id" value="<?php echo $appointment['stylist_id']; ?>">
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                                <?php if(count($statusCriteria[$appointment['appointment_status']])): ?>
                                 <select name="status"
                                     style="display: block; padding: 0.625rem; border-radius: 0.5rem; border-width: 1px; border-color: #D1D5DB; width: 100%; font-size: 0.875rem; line-height: 1.25rem; color: #111827; background-color: #F9FAFB; ">
-                                    <option value="pending" <?php echo $appointment['appointment_status'] == 'pending' ? 'selected' : ''; ?>>Pending</option>
+                                    <?php
+                                    $currentStatus = $appointment['appointment_status'];
+                                    foreach ($statusCriteria[$currentStatus] as $status): ?>
+                                        <option value="<?= $status ?>" <?= $currentStatus == $status ? 'selected' : '' ?>>
+                                            <?= $statusLabels[$status] ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                    <!-- <option value="pending" <?php echo $appointment['appointment_status'] == 'pending' ? 'selected' : ''; ?>>Pending</option>
                                     <option value="confirmed" <?php echo $appointment['appointment_status'] == 'confirmed' ? 'selected' : ''; ?>>Confirmed</option>
                                     <option value="rescheduled" <?php echo $appointment['appointment_status'] == 'rescheduled' ? 'selected' : ''; ?>>
                                         Rescheduled</option>
                                     <option value="completed" <?php echo $appointment['appointment_status'] == 'completed' ? 'selected' : ''; ?>>Completed</option>
                                     <option value="cancelled" <?php echo $appointment['appointment_status'] == 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
-                                    <option value="noshow" <?php echo $appointment['appointment_status'] == 'noshow' ? 'selected' : ''; ?>>No Show</option>
+                                    <option value="noshow" <?php echo $appointment['appointment_status'] == 'noshow' ? 'selected' : ''; ?>>No Show</option> -->
                                 </select>
+                                <?php endif; ?>
                                 <button
                                     style="display: flex; justify-content: space-between; padding: 0.5rem 1.5rem; border-radius: 9999px; color: white; height: fit-content; width: fit-content; background-color: rgb(34 197 94); border: none; cursor: pointer;"
                                     type="submit">

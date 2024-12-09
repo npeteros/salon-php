@@ -7,7 +7,7 @@ if (!isset($_SESSION['user']))
 if ($_SESSION['user']['role'] !== 'owner' && $_SESSION['user']['role'] !== 'manager')
     header('Location: ./index.php');
 
-if (!isset($_POST['service_id']) || !isset($_POST['type']) || !isset($_POST['texture']) || !isset($_POST['hair']))
+if (!isset($_POST['service_id']) || !isset($_POST['attributes']))
     header("Location: ./add-treatment.php");
 
 $services = getAllChemicalServices();
@@ -17,9 +17,7 @@ $successMsg = '';
 
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['treatment_alternative'])) {
     $serviceId = $_POST['service_id'];
-    $type = $_POST['type'];
-    $texture = $_POST['texture'];
-    $hair = $_POST['hair'];
+    $selectedAttributes = $_POST['attributes'] ?? [];
     $minTimes = $_POST['min_time'] ?? [];
     $alternatives = $_POST['treatments'] ?? [];
 
@@ -33,12 +31,22 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['treatment_alternative'
         if (mysqli_num_rows($r) > 0) {
             $errorMsg = "Treatment already exists for this service";
         } else {
-            $query = "INSERT INTO treatments (service_id, hair_type, hair_texture, hair_condition) VALUES ($serviceId, '$type', '$texture', '$hair');";
+            $query = "INSERT INTO treatments (service_id, ";
+            foreach ($selectedAttributes as $attribute) {
+                $query .= "{$attribute}, ";
+            }
+            $query = substr($query, 0, -2);
+            $query .= ") VALUES ($serviceId, ";
+            foreach ($selectedAttributes as $attribute) {
+                $query .= "1, ";
+            }
+            $query = substr($query, 0, -2);
+            $query .= ");";
             if (mysqli_query($conn, $query)) {
                 if (mysqli_affected_rows($conn) > 0) {
                     $treatmentId = mysqli_insert_id($conn);
                     $query = "";
-                    
+
                     foreach ($minTimes as $serviceId => $minTimeMonths) {
                         if ($minTimeMonths == "")
                             $minTimeMonths = 0;
@@ -51,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['treatment_alternative'
                         $query = "INSERT INTO alternative_treatments (treatment_service_id, alternative_service_id, reason) VALUES ({$serviceId}, {$alternativeServiceId}, '{$reason}');";
                         mysqli_query($conn, $query);
                     }
-                    
+
                     $successMsg = "Treatment created successfully";
 
                     echo '<script>setTimeout(function() {
@@ -97,9 +105,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['treatment_alternative'
                                     foreach ($services as $service): ?>
                                         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                                             <div style="display: flex; gap: 0.25rem; margin-top: 0.5rem;">
-                                                <input type="checkbox"
-                                                    name="treatments[<?php echo $service['id']; ?>]" value="1"
-                                                    id="checkbox-<?php echo $service['id']; ?>"
+                                                <input type="checkbox" name="treatments[<?php echo $service['id']; ?>]"
+                                                    value="1" id="checkbox-<?php echo $service['id']; ?>"
                                                     onclick="toggleTextarea(<?php echo $service['id']; ?>)">
                                                 <label for="checkbox-<?php echo $service['id']; ?>">
                                                     <?php echo htmlspecialchars($service['name']); ?>
@@ -118,9 +125,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['treatment_alternative'
                                     <span>No existing treatments found</span>
                                 <?php endif; ?>
                                 <input type="hidden" name="service_id" value="<?php echo $_POST['service_id']; ?>">
-                                <input type="hidden" name="type" value="<?php echo $_POST['type']; ?>">
-                                <input type="hidden" name="texture" value="<?php echo $_POST['texture']; ?>">
-                                <input type="hidden" name="hair" value="<?php echo $_POST['hair']; ?>">
+                                <?php foreach ($_POST['attributes'] as $attribute): ?>
+                                    <input type="hidden" name="attributes[]"
+                                        value="<?php echo htmlspecialchars($attribute); ?>">
+                                <?php endforeach; ?>
                                 <?php if (isset($_POST['min_time'])): ?>
                                     <?php foreach ($_POST['min_time'] as $index => $value): ?>
                                         <input type="hidden" name="min_time[<?php echo $index; ?>]"

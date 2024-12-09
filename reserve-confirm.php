@@ -145,7 +145,7 @@ $stylistReviewSummary = getStylistReviewSummary($_POST['stylist']);
                                 id="reservation-error"></span>
                             <button class="next-button" type="submit">Submit</button>
                         </form>
-                        <form method="post" action="./reserve-stylist.php">
+                        <form method="post" action="./reserve-stylist.php<?php if (isset($_GET['id'])) echo '?id=' . $_GET['id']; ?>">
                             <input type="hidden" name="date" id="date" value="<?php echo $_POST['date'] ?>" />
                             <input type="hidden" name="time" id="time" value="<?php echo $_POST['time'] ?>" />
                             <input type="hidden" name="service" id="service" value="<?php echo $_POST['service'] ?>">

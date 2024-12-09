@@ -150,6 +150,7 @@ function getAllAppointments(): array|null
             c.name as customer,
             u.name as stylist, 
             s.name as service, 
+            s.price as price,
             a.status as status,
             a.scheduled_date as schedule
         FROM 
@@ -160,6 +161,40 @@ function getAllAppointments(): array|null
             users u ON u.id = a.stylist_id
         JOIN
             users c ON c.id = a.customer_id
+        ORDER BY
+            a.scheduled_date DESC;";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $appointments[] = $row;
+        }
+    }
+    return $appointments;
+}
+
+function getCompletedAppointments(): array
+{
+    global $conn;
+    $appointments = [];
+    $query =
+        "SELECT 
+            a.id as appointment_id,
+            c.name as customer,
+            u.name as stylist, 
+            s.id as service_id,
+            s.name as service, 
+            s.price as price,
+            a.status as status,
+            a.scheduled_date as schedule
+        FROM 
+            appointments a 
+        JOIN 
+            services s ON s.id = a.service_id 
+        JOIN 
+            users u ON u.id = a.stylist_id
+        JOIN
+            users c ON c.id = a.customer_id
+        WHERE a.status = 'completed'
         ORDER BY
             a.scheduled_date DESC;";
 
@@ -839,6 +874,26 @@ function getAllStylistSpecialties(): array|null
     return $specialties;
 }
 
+function getUnspecialistStylists(int $serviceId): array
+{
+    global $conn;
+    $stylists = [];
+    $query = "SELECT 
+                * 
+            FROM 
+                users 
+            WHERE 
+                role = 'stylist' 
+                AND id NOT IN 
+                    (SELECT stylist_id FROM stylist_specialties WHERE service_id = {$serviceId})";
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $stylists[] = $row;
+        }
+    }
+    return $stylists;
+}
+
 function getStylistSpecialtiesByStylistId(int $stylistId): array|null
 {
     global $conn;
@@ -951,6 +1006,56 @@ function getAllStylists(): array|null
     }
     return $reviewSummary;
 }
+
+function getAvailableStylists($serviceId, $date)
+{
+    // Fetch service duration
+    global $conn;
+    $service = [];
+    $query = "SELECT duration FROM services WHERE id = {$serviceId}";
+    if ($r = mysqli_query($conn, $query)) {
+        if (mysqli_num_rows($r) > 0) {
+            $service = mysqli_fetch_assoc($r);
+        }
+    }
+
+    $duration = $service['duration'];
+
+    $dateTime = new DateTime($date);
+    $startDateTime = $dateTime->format('Y-m-d H:i:s');
+    $dateTime->modify("+$duration minutes");
+    $endDateTime = $dateTime->format('Y-m-d H:i:s');
+
+    $query = "
+        SELECT 
+            u.id AS stylist_id,
+            u.name AS stylist_name
+        FROM users u
+        JOIN stylist_specialties ss ON ss.stylist_id = u.id
+        WHERE ss.service_id = {$serviceId}
+          AND u.role = 'stylist'
+          AND u.id NOT IN (
+              SELECT a.stylist_id
+              FROM appointments a
+              JOIN services s ON a.service_id = s.id
+              WHERE (a.status = 'pending' OR a.status = 'confirmed')
+                AND a.scheduled_date < '{$endDateTime}'
+                AND DATE_ADD(a.scheduled_date, INTERVAL s.duration MINUTE) > '{$startDateTime}'
+          )
+    ";
+
+    if ($r = mysqli_query($conn, $query)) {
+        $result = mysqli_fetch_all($r, MYSQLI_ASSOC);
+    }
+
+    $availableStylists = [];
+    foreach ($result as $stylist) {
+        $availableStylists[] = $stylist;
+    }
+
+    return $availableStylists;
+}
+
 
 function getStylistById(int $stylistId): array|null
 {
@@ -1319,10 +1424,10 @@ function getAllTreatments(): array|null
     return $treatments;
 }
 
-function getAllTreatmentsByCharacteristics(string $type, string $texture, string $condition): array|null
+function getAllTreatmentsByCharacteristics(string $type, string $texture, string $condition): array
 {
     global $conn;
-    $treatments = null;
+    $treatments = [];
     $query = "SELECT 
                 t.id AS treatment_id,
                 t.service_id,
@@ -1332,7 +1437,7 @@ function getAllTreatmentsByCharacteristics(string $type, string $texture, string
             INNER JOIN 
                 services s ON t.service_id = s.id
             WHERE 
-                t.hair_type = '{$type}' OR t.hair_texture = '{$texture}' OR t.hair_condition = '{$condition}'
+                t.{$type} = 1 OR t.{$texture} = 1 OR t.{$condition} = 1
             ORDER BY 
                 s.name ASC;";
 
@@ -1580,4 +1685,220 @@ function deleteTreatment(int $id): int
         }
     }
     return -1;
+}
+
+function getDailySalesFromDates($dates, $appointments)
+{
+    $dailySales = [];
+
+    foreach ($dates as $date) {
+        $totalSales = 0;
+        $totalAppointments = 0;
+
+        foreach ($appointments as $appointment) {
+            $appointmentDate = date('F j, Y', strtotime($appointment['schedule']));
+            if ($appointmentDate === $date) {
+                $totalSales += $appointment['price'];
+                $totalAppointments++;
+            }
+        }
+
+        $dailySales[] = [
+            'date' => $date,
+            'total_sales' => $totalSales,
+            'total_appointments' => $totalAppointments,
+        ];
+    }
+
+    return $dailySales;
+}
+
+function getWeeklySalesFromDates($weeks, $appointments)
+{
+    $weeklySales = [];
+
+    foreach ($weeks as $weekRange) {
+        [$startDate, $endDate] = explode(' - ', $weekRange);
+        $totalSales = 0;
+        $totalAppointments = 0;
+
+        foreach ($appointments as $appointment) {
+            $appointmentDate = date('M j', strtotime($appointment['schedule']));
+            if ($appointmentDate >= $startDate && $appointmentDate <= $endDate) {
+                $totalSales += $appointment['price'];
+                $totalAppointments++;
+            }
+        }
+
+        $weeklySales[] = [
+            'week' => $weekRange,
+            'total_sales' => $totalSales,
+            'total_appointments' => $totalAppointments,
+        ];
+    }
+
+    return $weeklySales;
+}
+
+function getMonthlySalesFromDates($months, $appointments)
+{
+    $monthlySales = [];
+
+    foreach ($months as $month) {
+        $totalSales = 0;
+        $totalAppointments = 0;
+
+        foreach ($appointments as $appointment) {
+            $appointmentMonth = date('M', strtotime($appointment['schedule']));
+            if ($appointmentMonth === $month) {
+                $totalSales += $appointment['price'];
+                $totalAppointments++;
+            }
+        }
+
+        $monthlySales[] = [
+            'month' => $month,
+            'total_sales' => $totalSales,
+            'total_appointments' => $totalAppointments,
+        ];
+    }
+
+    return $monthlySales;
+}
+
+function getYearlySalesFromDates($years, $appointments)
+{
+    $yearlySales = [];
+
+    foreach ($years as $year) {
+        $totalSales = 0;
+        $totalAppointments = 0;
+
+        foreach ($appointments as $appointment) {
+            $appointmentYear = date('Y', strtotime($appointment['schedule']));
+            if ($appointmentYear === $year) {
+                $totalSales += $appointment['price'];
+                $totalAppointments++;
+            }
+        }
+
+        $yearlySales[] = [
+            'year' => $year,
+            'total_sales' => $totalSales,
+            'total_appointments' => $totalAppointments,
+        ];
+    }
+
+    return $yearlySales;
+}
+
+function getServiceSales($appointments)
+{
+    $serviceSales = []; // Array to store sales grouped by service
+
+    foreach ($appointments as $appointment) {
+        $serviceId = $appointment['service_id'];
+        $serviceName = $appointment['service'];
+        $price = $appointment['price'];
+
+        if (!isset($serviceSales[$serviceId])) {
+            $serviceSales[$serviceId] = [
+                'service' => $serviceName,
+                'total_sales' => 0,
+                'total_appointments' => 0
+            ];
+        }
+
+        $serviceSales[$serviceId]['total_sales'] += $price;
+        $serviceSales[$serviceId]['total_appointments']++;
+    }
+
+    return $serviceSales;
+}
+
+function getLastXDays($days)
+{
+    $dates = [];
+    for ($i = 0; $i < $days; $i++) {
+        $dates[] = date('F j, Y', strtotime("-$i days"));
+    }
+    return array_reverse($dates);
+}
+
+function getLastXWeeks($weeks)
+{
+    $weekRanges = [];
+    for ($i = 0; $i < $weeks; $i++) {
+        $endOfWeek = date('M j', strtotime("last Monday - $i weeks"));
+        $startOfWeek = date('M j', strtotime("$endOfWeek - 7 days"));
+        $weekRanges[] = "$startOfWeek - $endOfWeek";
+    }
+    return array_reverse($weekRanges);
+}
+
+function getLastXMonths($months)
+{
+    $monthRanges = [];
+    for ($i = 0; $i < $months; $i++) {
+        $monthRanges[] = date('M', strtotime("-$i months"));
+    }
+    return array_reverse($monthRanges); // Reverse to have chronological order
+}
+
+function getLastXYears($years)
+{
+    $yearRanges = [];
+    for ($i = 0; $i < $years; $i++) {
+        $yearRanges[] = date('Y', strtotime("-$i years"));
+    }
+    return array_reverse($yearRanges); // Reverse to have chronological order
+}
+
+function getSalesByPeriod($appointments, $period)
+{
+    $salesData = [];
+
+    foreach ($appointments as $appointment) {
+        $serviceId = $appointment['service_id'];
+        $serviceName = $appointment['service'];
+        $price = $appointment['price'];
+        $scheduledDate = $appointment['schedule'];
+
+        switch ($period) {
+            case 'daily':
+                $groupKey = date('Y-m-d', strtotime($scheduledDate));
+                $dateRange = date('F j, Y', strtotime($scheduledDate));
+                break;
+            case 'weekly':
+                $startOfWeek = date('Y-m-d', strtotime('last Monday', strtotime($scheduledDate)));
+                $endOfWeek = date('Y-m-d', strtotime('next Sunday', strtotime($scheduledDate)));
+                $groupKey = date('o-W', strtotime($scheduledDate));
+                $dateRange = date('M j', strtotime($startOfWeek)) . ' - ' . date('M j, Y', strtotime($endOfWeek));
+                break;
+            case 'monthly':
+                $groupKey = date('Y-m', strtotime($scheduledDate));
+                $dateRange = date('F Y', strtotime($scheduledDate));
+                break;
+            case 'yearly':
+                $groupKey = date('Y', strtotime($scheduledDate));
+                $dateRange = date('Y', strtotime($scheduledDate));
+                break;
+            default:
+                throw new Exception("Invalid period: $period");
+        }
+
+        if (!isset($salesData[$groupKey][$serviceId])) {
+            $salesData[$groupKey][$serviceId] = [
+                'service' => $serviceName,
+                'total_sales' => 0,
+                'total_appointments' => 0,
+                'date_range' => $dateRange,
+            ];
+        }
+
+        $salesData[$groupKey][$serviceId]['total_sales'] += $price;
+        $salesData[$groupKey][$serviceId]['total_appointments'] += 1;
+    }
+
+    return $salesData;
 }

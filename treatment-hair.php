@@ -29,25 +29,25 @@ if (!isset($_POST['service_id']))
                                 <label for="name" style="font-weight: 700;">Hair Type</label>
                                 <div style="display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); grid-auto-flow: column; height: 100%;">
                                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="radio" name="type" id="ty-straight" value="Straight" 
+                                        <input type="checkbox" name="attributes[]" id="ty-straight" value="straight" 
                                             <?php echo isset($_POST['type']) ? $_POST['type'] == "Straight" ? "checked" : "" : null; ?>
-                                            class="form-input" required />
+                                            class="form-input"  />
                                         <label for="straight">Straight</label>
                                     </div>
                                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="radio" name="type" id="ty-wavy" value="Wavy"
+                                        <input type="checkbox" name="attributes[]" id="ty-wavy" value="wavy"
                                             <?php echo isset($_POST['type']) ? $_POST['type'] == "Wavy" ? "checked" : "" : null; ?>
                                             class="form-input" />
                                         <label for="wavy">Wavy</label>
                                     </div>
                                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="radio" name="type" id="ty-curly" value="Curly"
+                                        <input type="checkbox" name="attributes[]" id="ty-curly" value="curly"
                                             <?php echo isset($_POST['type']) ? $_POST['type'] == "Curly" ? "checked" : "" : null; ?>
                                             class="form-input" />
                                         <label for="curly">Curly</label>
                                     </div>
                                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="radio" name="type" id="ty-kinky" value="Kinky"
+                                        <input type="checkbox" name="attributes[]" id="ty-kinky" value="kinky"
                                             <?php echo isset($_POST['type']) ? $_POST['type'] == "Kinky" ? "checked" : "" : null; ?>
                                             class="form-input" />
                                         <label for="kinky">Kinky</label>
@@ -57,19 +57,19 @@ if (!isset($_POST['service_id']))
                             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 50%;">
                                 <label for="name" style="font-weight: 700;">Hair Texture</label>
                                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                    <input type="radio" name="texture" id="t-fine" value="Fine" 
+                                    <input type="checkbox" name="attributes[]" id="t-fine" value="fine" 
                                         <?php echo isset($_POST['texture']) ? $_POST['texture'] == "Fine" ? "checked" : "" : null; ?>
-                                        class="form-input" required />
+                                        class="form-input"  />
                                     <label for="fine">Fine</label>
                                 </div>
                                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                    <input type="radio" name="texture" id="t-medium" value="Medium"
+                                    <input type="checkbox" name="attributes[]" id="t-medium" value="medium"
                                         <?php echo isset($_POST['texture']) ? $_POST['texture'] == "Medium" ? "checked" : "" : null; ?>
                                         class="form-input" />
                                     <label for="medium">Medium</label>
                                 </div>
                                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                    <input type="radio" name="texture" id="t-thick" value="Thick"
+                                    <input type="checkbox" name="attributes[]" id="t-thick" value="thick"
                                         <?php echo isset($_POST['texture']) ? $_POST['texture'] == "Thick" ? "checked" : "" : null; ?>
                                         class="form-input" />
                                     <label for="thick">Thick</label>
@@ -79,31 +79,31 @@ if (!isset($_POST['service_id']))
                                 <label for="name" style="font-weight: 700;">Hair Condition</label>
                                 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); height: 100%;">
                                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="radio" name="hair" id="h-damaged" value="Damaged"
+                                        <input type="checkbox" name="attributes[]" id="h-damaged" value="damaged"
                                         <?php echo isset($_POST['hair']) ? $_POST['hair'] == "Damaged" ? "checked" : "" : null; ?>
-                                            class="form-input" required />
+                                            class="form-input"  />
                                         <label for="damaged">Damaged</label>
                                     </div>
                                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="radio" name="hair" id="h-dry" value="Dry"
+                                        <input type="checkbox" name="attributes[]" id="h-dry" value="dry"
                                         <?php echo isset($_POST['hair']) ? $_POST['hair'] == "Dry" ? "checked" : "" : null; ?>
                                             class="form-input" />
                                         <label for="dry">Dry</label>
                                     </div>
                                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="radio" name="hair" id="h-oily" value="Oily"
+                                        <input type="checkbox" name="attributes[]" id="h-oily" value="oily"
                                         <?php echo isset($_POST['hair']) ? $_POST['hair'] == "Oily" ? "checked" : "" : null; ?>
                                             class="form-input" />
                                         <label for="oily">Oily</label>
                                     </div>
                                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="radio" name="hair" id="h-normal" value="Normal"
+                                        <input type="checkbox" name="attributes[]" id="h-normal" value="normal"
                                         <?php echo isset($_POST['hair']) ? $_POST['hair'] == "Normal" ? "checked" : "" : null; ?>
                                             class="form-input" />
                                         <label for="normal">Normal</label>
                                     </div>
                                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="radio" name="hair" id="h-chemical" value="Chemically Treated"
+                                        <input type="checkbox" name="attributes[]" id="h-chemical" value="chemical"
                                         <?php echo isset($_POST['hair']) ? $_POST['hair'] == "Chemically Treated" ? "checked" : "" : null; ?>
                                             class="form-input" />
                                         <label for="chemical">Chemically Treated</label>

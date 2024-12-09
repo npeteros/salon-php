@@ -8,8 +8,23 @@ if ($_SESSION['user']['role'] !== 'owner' && $_SESSION['user']['role'] !== 'mana
 include 'src/api/functions.php';
 
 $popularServices = getPopularServices() ? array_slice(getPopularServices(), 0, 3) : null;
-$appointments = getAllAppointments() ? array_slice(getAllAppointments(), 0, 8) : null;
-$users = getAllUsers() ? array_slice(getAllUsers(), 0, 3) : null;
+$appointments = getCompletedAppointments() ?? [];
+
+$recordedDays = 7;
+$recordedWeeks = 4;
+$recordedMonths = 12;
+$recordedYears = 3;
+
+$dailySales = getDailySalesFromDates(getLastXDays($recordedDays), $appointments);
+$weeklySales = getWeeklySalesFromDates(getLastXWeeks($recordedWeeks), $appointments);
+$monthlySales = getMonthlySalesFromDates(getLastXMonths($recordedMonths), $appointments);
+$yearlySales = getYearlySalesFromDates(getLastXYears($recordedYears), $appointments);
+$serviceSales = getServiceSales($appointments);
+
+$dailyServiceSales = array_slice(getSalesByPeriod($appointments, 'daily'), 0, 7);
+$weeklyServiceSales = array_slice(getSalesByPeriod($appointments, 'weekly'), 0, 7);
+$monthlyServiceSales = array_slice(getSalesByPeriod($appointments, 'monthly'), 0, 7);
+$yearlyServiceSales = array_slice(getSalesByPeriod($appointments, 'yearly'), 0, 7);
 ?>
 
 <div style="height: fit-content; min-height: 100lvh; background: #D9D9D9;">
@@ -19,77 +34,148 @@ $users = getAllUsers() ? array_slice(getAllUsers(), 0, 3) : null;
 
         <div class="main-content-container">
             <div style="display: flex; flex-direction: column; gap: 1rem">
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <span
-                        style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Appointments</span>
-                    <table style="width: 100%; background: #A80011;">
-                        <thead style="color: white;">
-                            <tr>
-                                <th style="padding: 0.5rem 0rem; font-weight: 400;">Staff</th>
-                                <th style="font-weight: 400;">Customer</th>
-                                <th style="font-weight: 400;">Service</th>
-                                <th style="font-weight: 400;">Date</th>
-                                <th style="font-weight: 400;">Time</th>
-                                <th style="font-weight: 400;">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody style="background-color: white; text-align: center;">
-                            <?php
-                            if (isset($appointments)) {
-                                foreach ($appointments as $appointment):
-                                    $dateTime = new DateTime($appointment['schedule']);
-                                    $date = $dateTime->format('Y-m-d');
-                                    $time = $dateTime->format('H:i A');
+                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span
+                                style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">General
+                                Sales
+                                Report</span>
+                            <div class="filter-container">
+                                <label for="filter">Filter by:</label>
+                                <select id="filter" onchange="filterTable()">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="yearly">Yearly</option>
+                                    <option value="service">Service</option>
+                                </select>
+                            </div>
+                        </div>
 
-                                    $color = 'background-color: rgb(115 115 115);';
+                        <table class="sales-table">
+                            <thead>
+                                <tr>
+                                    <th>Date Range</th>
+                                    <th>Sales (PHP)</th>
+                                    <th>Appointments</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salesTable">
+                                <?php
+                                foreach ($dailySales as $sale) {
+                                    echo '<tr class="daily">
+                                    <td>' . $sale['date'] . '</td>
+                                    <td>&#x20B1; ' . number_format($sale['total_sales']) . '</td>
+                                    <td>' . $sale['total_appointments'] . '</td>
+                                </tr>';
+                                }
+                                foreach ($weeklySales as $sale) {
+                                    echo '<tr class="weekly">
+                                    <td>' . $sale['week'] . '</td>
+                                    <td>&#x20B1; ' . $sale['total_sales'] . '</td>
+                                    <td>' . $sale['total_appointments'] . '</td>
+                                </tr>';
+                                }
+                                foreach ($monthlySales as $sale) {
+                                    echo '<tr class="monthly">
+                                    <td>' . $sale['month'] . '</td>
+                                    <td>&#x20B1; ' . $sale['total_sales'] . '</td>
+                                    <td>' . $sale['total_appointments'] . '</td>
+                                </tr>';
+                                }
+                                foreach ($yearlySales as $sale) {
+                                    echo '<tr class="yearly">
+                                    <td>' . $sale['year'] . '</td>
+                                    <td>&#x20B1; ' . $sale['total_sales'] . '</td>
+                                    <td>' . $sale['total_appointments'] . '</td>
+                                </tr>';
+                                }
+                                foreach ($serviceSales as $service => $sales) {
+                                    echo '<tr class="service">
+                                    <td>' . $sales['service'] . '</td>
+                                    <td>&#x20B1; ' . $sales['total_sales'] . '</td>
+                                    <td>' . $sales['total_appointments'] . '</td>
+                                </tr>';
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span
+                                style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Service
+                                Sales Report</span>
+                            <div class="filter-container">
+                                <label for="filter">Filter by:</label>
+                                <select id="serviceFilter" onchange="filterServiceSalesTable()">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="yearly">Yearly</option>
+                                </select>
+                            </div>
+                        </div>
 
-                                    switch ($appointment['status']) {
-                                        case 'pending':
-                                            $color = 'background-color: rgb(115 115 115);';
-                                            break;
-                                        case 'confirmed':
-                                            $color = 'background-color: rgb(14 165 233);';
-                                            break;
-                                        case 'completed':
-                                            $color = 'background-color: rgb(34 197 94);';
-                                            break;
-                                        case 'rescheduled':
-                                            $color = 'background-color: rgb(234 179 8);';
-                                            break;
-                                        case 'cancelled':
-                                        case 'noshow':
-                                            $color = 'background-color: rgb(239 68 68);';
-                                            break;
-                                        default:
-                                            $color = 'background-color: rgb(115 115 115);';
-                                            break;
+                        <table class="sales-table">
+                            <thead>
+                                <tr>
+                                    <th>Date Range</th>
+                                    <th>Service</th>
+                                    <th>Sales (PHP)</th>
+                                    <th>Appointments</th>
+                                </tr>
+                            </thead>
+                            <tbody id="serviceSalesTable">
+                                <?php
+                                foreach ($dailyServiceSales as $date => $services) {
+                                    foreach ($services as $service) {
+                                        echo '<tr class="daily">
+                                            <td>' . $service['date_range'] . '</td>
+                                            <td>' . $service['service'] . '</td>
+                                            <td>&#x20B1; ' . number_format($service['total_sales']) . '</td>
+                                            <td>' . $service['total_appointments'] . '</td>
+                                        </tr>';
                                     }
-
-                                    ?>
-                                    <tr onclick="window.location.href = 'admin-view-appointment.php?id=<?php echo $appointment['appointment_id']; ?>';"
-                                        class="appointment-row">
-                                        <td style="display: flex; justify-content: center; padding: 0.5rem 0;">
-                                            <?php echo $appointment['stylist']; ?>
-                                        </td>
-                                        <td><?php echo $appointment['customer']; ?></td>
-                                        <td><?php echo $appointment['service']; ?></td>
-                                        <td><?php echo $date; ?></td>
-                                        <td><?php echo $time; ?></td>
-                                        <td style="padding-left: 1rem; padding-right: 1rem; width: 9rem; ">
-                                            <div
-                                                style="<?php echo $color; ?> border-radius: 9999px; color: white; padding-top: 0.25rem; padding-bottom: 0.25rem;">
-                                                <?php echo $appointment['status'] == "noshow" ? "No show" : ucfirst($appointment['status']); ?>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach;
-                            } else
-                                null; ?>
-                        </tbody>
-                    </table>
+                                }
+                                foreach ($weeklyServiceSales as $date => $services) {
+                                    foreach ($services as $service) {
+                                        echo '<tr class="weekly">
+                                            <td>' . $service['date_range'] . '</td>
+                                            <td>' . $service['service'] . '</td>
+                                            <td>&#x20B1; ' . number_format($service['total_sales']) . '</td>
+                                            <td>' . $service['total_appointments'] . '</td>
+                                        </tr>';
+                                    }
+                                }
+                                foreach ($monthlyServiceSales as $date => $services) {
+                                    foreach ($services as $service) {
+                                        echo '<tr class="monthly">
+                                            <td>' . $service['date_range'] . '</td>
+                                            <td>' . $service['service'] . '</td>
+                                            <td>&#x20B1; ' . number_format($service['total_sales']) . '</td>
+                                            <td>' . $service['total_appointments'] . '</td>
+                                        </tr>';
+                                    }
+                                }
+                                foreach ($yearlyServiceSales as $date => $services) {
+                                    foreach ($services as $service) {
+                                        echo '<tr class="yearly">
+                                            <td>' . $service['date_range'] . '</td>
+                                            <td>' . $service['service'] . '</td>
+                                            <td>&#x20B1; ' . number_format($service['total_sales']) . '</td>
+                                            <td>' . $service['total_appointments'] . '</td>
+                                        </tr>';
+                                    }
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="services-users-container">
-                    <div class="popular-services-container" style="grid-column: span 2 / span 2;">
+                    <div class="popular-services-container" style="grid-column: span 5 / span 5;">
                         <span style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Popular
                             Services</span>
                         <?php if (isset($popularServices))
@@ -106,29 +192,10 @@ $users = getAllUsers() ? array_slice(getAllUsers(), 0, 3) : null;
                                                     style="font-size: 0.875rem; line-height: 1.25rem;"><?php echo strlen($service['description'] > 70) ? substr($service['description'], 0, 70) . "..." : $service['description']; ?></span>
                                             </div>
                                         </div>
-                                        <span style="color: #49454F;"> <?php echo $service['price']; ?></span>
-                                    </div>
-                                </div>
-                            <?php endforeach; else
-                            null; ?>
-                    </div>
-                    <div class="popular-services-container" style="grid-column: span 3 / span 3;">
-                        <span
-                            style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Users</span>
-                        <?php if (isset($users))
-                            foreach ($users as $user): ?>
-                                <div style="background-color: white; display: flex; flex-direction: column; padding: 1rem; border-radius: 0.875rem; cursor: pointer;"
-                                    onclick="window.location.href = './view-user.php?id=<?php echo $user['id']; ?>';">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <div style="display: flex; gap: 1rem; width: 3rem; height: 3rem;">
-                                            <img src="./uploads/<?php echo $user['img_path']; ?>" alt="user"
-                                                style="width: 100%; border-radius: 9999px;">
-                                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                                <span><?php echo $user['name']; ?></span>
-                                                <span style="opacity: 50%;"><?php echo $user['email']; ?></span>
-                                            </div>
-                                        </div>
-                                        <div style="display: flex; align-items: center;"><?php echo ucfirst($user['role']); ?>
+                                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                                            <span style="color: #49454F;"> <?php echo $service['price']; ?></span>
+                                            <span style="opacity: 50%;">Used in <?php echo $service['appointment_count'] ?>
+                                                appointment<?php echo $service['appointment_count'] <= 1 ? '' : 's' ?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -140,5 +207,39 @@ $users = getAllUsers() ? array_slice(getAllUsers(), 0, 3) : null;
         </div>
     </div>
 </div>
+
+<script>
+    function filterTable() {
+        const filter = document.getElementById('filter').value;
+        const rows = document.querySelectorAll('#salesTable tr');
+
+        rows.forEach(row => {
+            if (row.classList.contains(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function filterServiceSalesTable() {
+        const filter = document.getElementById('serviceFilter').value;
+        const rows = document.querySelectorAll('#serviceSalesTable tr');
+
+        rows.forEach(row => {
+            if (row.classList.contains(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    document.getElementById("filter").value = "daily";
+    document.getElementById("serviceFilter").value = "daily";
+
+    filterTable();
+    filterServiceSalesTable();
+</script>
 
 <?php include 'src/includes/footer.php'; ?>

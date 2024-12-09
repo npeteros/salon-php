@@ -17,6 +17,35 @@
     }
 }
 
+.responsive-nav-link {
+    display: block;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.responsive-nav-link:hover {
+    background-color: #F3F4F6;
+}
+
+.nav-menu-button {
+    display: block;
+    align-items: center;
+    color: #000000;
+    background-color: transparent;
+    border: none;
+
+    @media (min-width: 1024px) {
+        display: none;
+    }
+}
+
+
 .side-nav-divider {
     border: 0.1px solid rgb(184, 183, 183);
     width: 100%;
@@ -167,4 +196,59 @@
 .appointment-row:hover {
     background-color: rgb(212 212 212);
     ;
+}
+
+.filter-container {
+    text-align: right;
+    margin-bottom: 0.5rem;
+}
+
+.filter-container label {
+    font-size: 0.875rem;
+    margin-right: 0.5rem;
+}
+
+.filter-container select {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.625rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+}
+
+.sales-table {
+    width: 100%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.sales-table thead {
+    background-color: #D01C27;
+    color: #fff;
+}
+
+.sales-table th,
+.sales-table td {
+    padding: 0.625rem 0.875rem;
+    text-align: left;
+}
+
+.sales-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.sales-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.sales-table th {
+    text-transform: uppercase;
+    font-size: 0.875rem;
+}
+
+.sales-table td {
+    font-size: 0.875rem;
 }

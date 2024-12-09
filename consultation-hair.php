@@ -57,7 +57,7 @@ $treatments = getAllTreatments();
                 </ol>
                 <div
                     style="display: flex; padding-left: 1rem; padding-right: 1rem; flex-direction: column; border-radius: 1rem;">
-                    <form method="post" action="./consultation-treatment.php" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <form method="post" action="./consultation-treatment.php<?php if(isset($_GET['id'])) echo "?id=" . $_GET['id']; ?>" style="display: flex; flex-direction: column; gap: 1rem;">
                         <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem;">
                             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 50%;">
                                 <label for="name" style="font-weight: 700;">Hair Type</label>

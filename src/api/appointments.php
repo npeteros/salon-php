@@ -24,7 +24,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case "POST":
         if (!isset($_POST['customer_id']) || !isset($_POST['stylist_id']) || !isset($_POST['service_id']) || !isset($_POST['status']) || !isset($_POST['scheduled_date']))
             return printJsonData(400, "Missing required fields");
-        return createAppointment((int) $_POST['customer_id'], (int) $_POST['stylist_id'], (int) $_POST['service_id'], $_POST['status'], $_POST['scheduled_date']) == -1 ? printJsonData(500, "Error creating appointment") : printJsonData(200, "Appointment created successfully");
+        if (!in_array($_POST['stylist_id'], array_column(getAvailableStylists($_POST['service_id'], $_POST['scheduled_date']), "stylist_id")))
+            return printJsonData(400, "All stylists are unavailable at your requested time. Please choose a different time or service");
+        return createAppointment((int) $_POST['customer_id'], (int) $_POST['stylist_id'], (int) $_POST['service_id'], $_POST['status'], $_POST['scheduled_date']) == -1 ? printJsonData(400, "Error creating appointment") : printJsonData(200, getAppointmentById(mysqli_insert_id($conn)));
     case "PATCH":
         $data = json_decode(file_get_contents("php://input"), true);
         if (isset($data['id']) && isset($data['cancel'])) {

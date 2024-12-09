@@ -4,7 +4,9 @@ if (($_SERVER['REQUEST_METHOD'] != "POST" || !isset($_POST['date']) || !isset($_
 define('FILE_CSS', 'src/styles/reserve-appointment.css');
 include './src/includes/header.php';
 include './src/api/functions.php';
-$stylists = getAllStylists();
+$date = $_POST['date'] . " " . $_POST['time'];
+$service = $_POST['service'];
+$stylists = getAvailableStylists($service, $date);
 // $stylists = getStylistsBySpecialties($_POST['service']);
 ?>
 
@@ -53,25 +55,29 @@ $stylists = getAllStylists();
 
                 <div
                     style="display: flex; padding-left: 1rem; padding-right: 1rem; flex-direction: column; border-radius: 1rem;">
-                    <form method="post" action='reserve-confirm.php'
+                    <form method="post" action='./reserve-confirm.php<?php if (isset($_GET['id'])) echo '?id=' . $_GET['id']; ?>'
                         style="display: flex; flex-direction: column; gap: 1rem;">
                         <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                            <label for="name" style="font-weight: 700;">Confirm Stylist</label>
-                            <select name="stylist" id="stylist"
-                                style="padding: 0.5rem 1rem; border-radius: 0.5rem; border-width: 1px;" required>
-                                <?php
-                                foreach ($stylists as $stylist) {
-                                    echo '<option value="' . $stylist['stylist_id'] . '" ' . ($stylist['stylist_id'] == $_POST['stylist'] ? 'selected' : '') . '>' . $stylist['stylist_name'] . '</option>';
-                                }
-                                ?>
-                            </select>
+                            <?php if (count($stylists)): ?>
+                                <label for="name" style="font-weight: 700;">Confirm Stylist</label>
+                                <select name="stylist" id="stylist"
+                                    style="padding: 0.5rem 1rem; border-radius: 0.5rem; border-width: 1px;" required>
+                                    <?php
+                                    foreach ($stylists as $stylist) {
+                                        echo '<option value="' . $stylist['stylist_id'] . '" ' . ($stylist['stylist_id'] == $_POST['stylist'] ? 'selected' : '') . '>' . $stylist['stylist_name'] . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            <?php else: ?>
+                                <label for="name" style="font-weight: 700; text-align: center; color: red;">All stylists are unavailable at your requested time. Please choose a different time or service</label>
+                            <?php endif; ?>
                             <input type="hidden" name="date" id="date" value="<?php echo $_POST['date'] ?>" />
                             <input type="hidden" name="time" id="time" value="<?php echo $_POST['time'] ?>" />
                             <input type="hidden" name="service" id="service" value="<?php echo $_POST['service'] ?>"">
                         </div>
-                        <button class=" next-button" type="submit">Next</button>
+                        <button class=" next-button" type="submit" <?php echo count($stylists) == 0 ? 'disabled' : ''; ?> style="<?php echo count($stylists) == 0 ? 'cursor: not-allowed; color: #6B7280; background: #D9D9D9;' : ''; ?>">Next</button>
                     </form>
-                    <form method="post" action="./reserve-service.php">
+                    <form method="post" action="<?php echo isset($_GET['id']) ? './reserve-schedule.php?id=' . $_GET['id'] : './reserve-service.php'; ?>">
                         <input type="hidden" name="date" id="date" value="<?php echo $_POST['date'] ?>" />
                         <input type="hidden" name="time" id="time" value="<?php echo $_POST['time'] ?>" />
                         <input type="hidden" name="service" id="service" value="<?php echo $_POST['service'] ?>"">

@@ -5,6 +5,22 @@ define('FILE_CSS', 'src/styles/reserve-appointment.css');
 include './src/includes/header.php';
 include './src/api/functions.php';
 $services = getAllServices();
+if (isset($_GET['id']) && in_array($_GET['id'], array_column($services, 'id')) && isset($_POST['date']) && isset($_POST['time'])) {
+
+    $id = $_GET['id'];
+
+    echo '<form method="post" action="./reserve-stylist.php?id=' . $id . '" id="redirectForm">
+        <input type="hidden" name="date" id="date" value="' . htmlspecialchars($_POST['date']) . '" />
+        <input type="hidden" name="time" id="time" value="' . htmlspecialchars($_POST['time']) . '" />
+        <input type="hidden" name="service" id="service" value="' . htmlspecialchars($id) . '">
+    </form>';
+
+    echo '<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        +document.getElementById("redirectForm").submit();
+    });
+    </script>';
+}
 ?>
 
 <div style="min-height: 100lvh; background: #D9D9D9">

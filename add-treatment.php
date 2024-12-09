@@ -7,7 +7,7 @@ if (!isset($_SESSION['user']))
 if ($_SESSION['user']['role'] !== 'owner' && $_SESSION['user']['role'] !== 'manager')
     header('Location: ./index.php');
 
-$services = getAllServices();
+$services = getAllChemicalServices();
 $treatments = getAllTreatments();
 ?>
 

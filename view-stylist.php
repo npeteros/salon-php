@@ -34,35 +34,41 @@ $reviews = getReviewsByStylistId($_GET['id']);
                         </div>
                         <div class="info-container">
                             <div
-                                style="display: flex; flex-direction: column; gap: 0.25rem; width: 12rem; align-items: start;">
-                                <span
-                                    style="font-weight: 700; font-size: 1.875rem;"><?php echo $stylist['stylist_name']; ?></span>
+                                style="display: flex; flex-direction: column; gap: 0.25rem; width: 100%; align-items: start;">
+                                <div style="display: flex; gap: 1rem;">
+                                    <span
+                                        style="font-weight: 700; font-size: 1.875rem;"><?php echo $stylist['stylist_name']; ?></span>
+
+                                    <div style="display: flex; height: fit-content;">
+                                        <div
+                                            style="border: 1px solid rgb(212 212 212); border-radius: 1rem; padding: 0.25rem 1.5rem; display: flex; gap: 0.25rem">
+                                            <?php for ($i = 0; $i < round(number_format($stylist['average_rating'], 1)); $i++) { ?>
+                                                <svg width="16" height="16" fill="yellow" stroke="black" viewBox="0 0 24 24"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z">
+                                                    </path>
+                                                </svg>
+                                            <?php } ?>
+                                            <span style="width: 100%;"><?php echo round(number_format($stylist['average_rating'], 1)); ?>
+                                                Overall</span>
+                                        </div>
+                                    </div>
+                                </div>
                                 <span style="opacity: 50%;"><?php echo $stylist['stylist_email'] ?></span>
                                 <span style="opacity: 50%;">Handled <?php echo $stylist['total_appointments'] ?>
                                     appointment<?php echo $stylist['total_appointments'] > 1 ? 's' : ''; ?></span>
-                                <div style="opacity: 50%; display: flex; flex-direction: column; margin: 1rem 0rem;">
+                                <div style="opacity: 100%;display: flex; flex-direction: column; margin: 1rem 0rem;">
                                     Specialities:
-                                    <div style="display: flex; gap: 1rem;">
+                                    <div style="display: flex; gap: 0.5rem;">
                                         <?php if ($stylistSpecialties) {
                                             foreach ($stylistSpecialties as $speciality): ?>
-                                                <span><?php echo $speciality['service_name']; ?></span>
+                                                <span style="font-weight: 600; background: #E53C37; color: white; padding: 0.25rem 0.5rem; border-radius: 1rem;"><?php echo $speciality['service_name']; ?></span>
                                             <?php endforeach;
                                         } ?>
                                     </div>
                                 </div>
 
-                            </div>
-                            <div style="display: flex; height: fit-content;">
-                                <div
-                                    style="border: 1px solid rgb(212 212 212); border-radius: 1rem; padding: 0.25rem 1.5rem; display: flex; gap: 0.25rem">
-                                    <svg width="16" height="16" fill="yellow" stroke="black" viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z">
-                                        </path>
-                                    </svg>
-                                    <span><?php echo number_format($stylist['average_rating'], 1); ?> Overall</span>
-                                </div>
                             </div>
                         </div>
                     </div>

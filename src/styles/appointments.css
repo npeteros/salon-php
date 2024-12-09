@@ -17,6 +17,35 @@
     }
 }
 
+.responsive-nav-link {
+    display: block;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.responsive-nav-link:hover {
+    background-color: #F3F4F6;
+}
+
+.nav-menu-button {
+    display: block;
+    align-items: center;
+    color: #000000;
+    background-color: transparent;
+    border: none;
+
+    @media (min-width: 1024px) {
+        display: none;
+    }
+}
+
+
 .side-nav-divider {
     border: 0.1px solid rgb(184, 183, 183);
     width: 100%;

@@ -7,7 +7,7 @@ if (!isset($_SESSION['user']))
 if ($_SESSION['user']['role'] !== 'owner' && $_SESSION['user']['role'] !== 'manager')
     header('Location: ./index.php');
 
-if (!isset($_POST['service_id']) || !isset($_POST['type']) || !isset($_POST['texture']) || !isset($_POST['hair']))
+if (!isset($_POST['service_id']) || !isset($_POST['attributes']))
     header("Location: ./add-treatment.php");
 
 $services = getAllChemicalServices();
@@ -48,9 +48,10 @@ $services = getAllChemicalServices();
                                     <span>No existing treatments found</span>
                                 <?php endif; ?>
                                 <input type="hidden" name="service_id" value="<?php echo $_POST['service_id']; ?>">
-                                <input type="hidden" name="type" value="<?php echo $_POST['type']; ?>">
-                                <input type="hidden" name="texture" value="<?php echo $_POST['texture']; ?>">
-                                <input type="hidden" name="hair" value="<?php echo $_POST['hair']; ?>">
+                                <?php foreach ($_POST['attributes'] as $attribute): ?>
+                                    <input type="hidden" name="attributes[]"
+                                        value="<?php echo htmlspecialchars($attribute); ?>">
+                                <?php endforeach; ?>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                 <span

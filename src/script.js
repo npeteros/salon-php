@@ -39,6 +39,7 @@ $(document).ready(function () {
     let changingRoles = false;
 
     let shownPassword = false;
+    let showConfirm = false;
 
     $(document).on('click', function (event) {
         if ($(event.target).is('#filterModal')) {
@@ -61,6 +62,16 @@ $(document).ready(function () {
         } else {
             $(".password-input").attr("type", "text");
             shownPassword = true;
+        }
+    })
+
+    $("#show-confirm").click(function () {
+        if (showConfirm) {
+            $(".confirm-password-input").attr("type", "password");
+            showConfirm = false;
+        } else {
+            $(".confirm-password-input").attr("type", "text");
+            showConfirm = true;
         }
     })
 
@@ -243,17 +254,17 @@ $(document).ready(function () {
 
             const link = $("#servicesList").attr("data-userid") ? 'admin-view-service.php' : 'view-service.php';
             $("#servicesList").append(`
-                        <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: white; cursor: pointer;">
-                                <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%;" onclick="window.location.href = './${link}?id=${service.id}';">
+                        <div style="border-radius: 0.375rem; display: flex; padding: 1.5rem; background-color: white; cursor: pointer;">
+                                <div style="display: flex; gap: 0.5rem; ${!$("#servicesList").attr("data-userid") ? "width: 100%;" : "width: 100%;"}" onclick="window.location.href = './${link}?id=${service.id}';">
                                     <img src="./uploads/services/${service.img_path}" alt="Image" style="width: 3rem; height: 3rem; border-radius: 9999px;">
-                                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <div style="display: flex; flex-direction: column; gap: 0.25rem; width: 100%;">
                                         <span style="font-size: 1.125rem; line-height: 1.75rem;">${service.name}</span>
                                         <span style="font-size: 0.875rem; line-height: 1.25rem;">${service.description.length > 35 ? service.description.substring(0, 35) + '...' : service.description}</span>
                                     </div>
                                 </div>
-                                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; width: 100%;">
-                                    <span style="color: #49454F; text-align: right;">&#x20B1; ${service.price}</span>
-                                    ${!$("#servicesList").attr("data-userid") && service.chemical == 0 ? `<button onclick="window.location.href = './reserve-schedule.php?id=${service.id}'" style="background-color: #A80011; border: 0px; color: white; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer;">Reserve appointment</button>` : ''}
+                                <div style="display: flex; flex-direction: column;  align-items: flex-end; gap: 0.5rem;width: 6rem;">
+                                    <span style="color: #49454F; text-align: left;">&#x20B1; ${service.price}</span>
+                                    ${!$("#servicesList").attr("data-userid") && service.chemical == 0 ? `<button onclick="window.location.href = './reserve-schedule.php?id=${service.id}'" style="background-color: #A80011; border: 0px; color: white; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; width: 10rem;">Reserve appointment</button>` : ''}
                                 </div>
                         </div>`
             );
@@ -849,17 +860,19 @@ $(document).ready(function () {
             success: function (response) {
                 try {
                     response = JSON.parse(response);
+                    console.log(response)
                     if (response.code != 200) {
                         $("#reservation-error").html(response.data)
                     } else {
                         $("#reservation-error").css("color", "#059669");
-                        $("#reservation-error").html("Your reservation has been confirmed. Redirecting...");
+                        $("#reservation-error").html(`Your appointment for ${response.data.service_name} with ${response.data.stylist_name} at ${new Date(response.data.appointment_date).toDateString()} ${new Date(response.data.appointment_date).toLocaleTimeString()} has been confirmed. Redirecting...`);
                         setTimeout(() => {
                             window.location.href = "./dashboard.php";
                         }, 3000);
                     }
                 } catch (error) {
                     $("#reservation-error").html("Something went wrong.");
+                    console.log(response);
                 }
             },
             error: function (xhr, status, error) {
@@ -1267,7 +1280,7 @@ $(document).ready(function () {
 
     $("#menu-button").click(function () {
         if (!menuDisplayed) {
-            $("#menu").css("display", "flex");
+            $("#menu").css("display", "block");
             $("#menu-button").html(`<svg width = "24" height = "24" fill = "currentColor"viewBox = "0 0 24 24" xmlns = "http://www.w3.org/2000/svg" > <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path> </svg> `)
             menuDisplayed = true;
         } else {

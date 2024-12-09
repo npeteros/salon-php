@@ -10,9 +10,9 @@ if ($appointment) {
     header('Location: ./view-appointment.php?id=' . (int) $appointment[0]['id']);
 }
 
-$consultation = getConsultationByCustomer($_SESSION['user']['id']);
-if (!$consultation)
-    header('Location: ./consultation-hair.php');
+// $consultation = getConsultationByCustomer($_SESSION['user']['id']);
+// if (!$consultation)
+//     header('Location: ./consultation-hair.php');
 
 date_default_timezone_set('Asia/Manila');
 ?>

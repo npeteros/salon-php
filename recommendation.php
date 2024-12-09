@@ -9,6 +9,7 @@ $monthTime = isset($_POST['month_time']) ? $_POST['month_time'] : null;
 $previous = isset($_POST['previous']) ? $_POST['previous'] : [];
 
 include './src/api/functions.php';
+$treatment = getTreatmentById($treatmentId);
 
 function validatePreviousTreatments($conn, $treatmentId, $previous, $monthTime)
 {
@@ -171,7 +172,8 @@ $alternativeTreatments = getAlternativeTreatments($selectedTreatment['service_id
                         <div style="display: flex; flex-direction: column; margin-top: -1rem; width: 100%; gap: 1rem;">
                             <?php if ($suitable): ?>
                                 <button class="next-button"
-                                    onclick="window.location.href='./reserve-schedule.php'">Reserve an
+                                    onclick="window.location.href='./reserve-schedule.php?id=<?php echo $treatment['service_id']; ?>'">Reserve
+                                    an
                                     Appointment</button>
                             <?php else: ?>
                                 <button class="next-button" onclick="window.location.href='./consultation-hair.php'">Select
