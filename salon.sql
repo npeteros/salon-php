@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 03, 2024 at 06:41 PM
+-- Generation Time: Dec 09, 2024 at 05:41 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -154,9 +154,18 @@ CREATE TABLE `stylist_specialties` (
 CREATE TABLE `treatments` (
   `id` int(11) NOT NULL,
   `service_id` bigint(20) UNSIGNED NOT NULL,
-  `hair_type` enum('Straight','Curly','Wavy','Kinky') NOT NULL,
-  `hair_texture` enum('Fine','Medium','Thick') NOT NULL,
-  `hair_condition` enum('Dry','Damaged','Oily','Chemically Treated','Normal') NOT NULL
+  `straight` int(11) DEFAULT NULL,
+  `wavy` int(11) DEFAULT NULL,
+  `curly` int(11) DEFAULT NULL,
+  `kinky` int(11) DEFAULT NULL,
+  `fine` int(11) DEFAULT NULL,
+  `medium` int(11) DEFAULT NULL,
+  `thick` int(11) DEFAULT NULL,
+  `damaged` int(11) DEFAULT NULL,
+  `dry` int(11) DEFAULT NULL,
+  `oily` int(11) DEFAULT NULL,
+  `normal` int(11) DEFAULT NULL,
+  `chemical` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -174,7 +183,7 @@ CREATE TABLE `users` (
   `img_path` varchar(255) NOT NULL DEFAULT 'default.png',
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=5;
 
 --
 -- Dumping data for table `users`
@@ -330,7 +339,7 @@ ALTER TABLE `treatments`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
