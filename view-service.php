@@ -66,8 +66,14 @@ if (!$service)
                             </div>
                         </div>
                     </div>
-                    <span style="font-weight: 700; font-size: 1rem; text-align: center; color: #E53C37;">This service needs consultation.</span>
-                    <button type="button" onclick="window.location.href = './consultation-hair.php?id=<?php echo $service['id']; ?>'" style="cursor: pointer; background-color: #E53C37; display: flex; justify-content: center; border: 1px solid white; border-radius: 0.25rem; color: white; padding: 0.5rem 0;">Proceed to Consultation</button>
+                    <?php if ($service['chemical']): ?>
+                        <span style="font-weight: 700; font-size: 1rem; text-align: center; color: #E53C37;">This service
+                            needs consultation.</span>
+                        <button type="button"
+                            onclick="window.location.href = './consultation-hair.php?id=<?php echo $service['id']; ?>'"
+                            style="cursor: pointer; background-color: #E53C37; display: flex; justify-content: center; border: 1px solid white; border-radius: 0.25rem; color: white; padding: 0.5rem 0;">Proceed
+                            to Consultation</button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

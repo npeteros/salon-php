@@ -11,6 +11,58 @@ if (!isset($_POST['service_id']) || !isset($_POST['attributes']))
     header("Location: ./add-treatment.php");
 
 $services = getAllChemicalServices();
+
+$errorMsg = '';
+$successMsg = '';
+
+if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['treatment_previous'])) {
+    $serviceId = $_POST['service_id'];
+    $selectedAttributes = $_POST['attributes'] ?? [];
+    $minTimes = $_POST['min_time'] ?? [];
+
+    $treatmentQuery = "SELECT 
+                service_id
+            FROM 
+                treatments
+            WHERE service_id = {$serviceId}";
+
+    if ($r = mysqli_query($conn, $treatmentQuery)) {
+        if (mysqli_num_rows($r) > 0) {
+            $errorMsg = "Treatment already exists for this service";
+        } else {
+            $query = "INSERT INTO treatments (service_id, ";
+            foreach ($selectedAttributes as $attribute) {
+                $query .= "{$attribute}, ";
+            }
+            $query = substr($query, 0, -2);
+            $query .= ") VALUES ($serviceId, ";
+            foreach ($selectedAttributes as $attribute) {
+                $query .= "1, ";
+            }
+            $query = substr($query, 0, -2);
+            $query .= ");";
+            if (mysqli_query($conn, $query)) {
+                if (mysqli_affected_rows($conn) > 0) {
+                    $treatmentId = mysqli_insert_id($conn);
+                    $query = "";
+
+                    foreach ($minTimes as $serviceId => $minTimeMonths) {
+                        if ($minTimeMonths == "")
+                            $minTimeMonths = 0;
+                        $query = "INSERT INTO previous_treatments (treatment_id, prev_service_id, min_time_months) VALUES ('{$treatmentId}', '{$serviceId}', '{$minTimeMonths}');";
+                        mysqli_query($conn, $query);
+                    }
+
+                    $successMsg = "Treatment created successfully";
+
+                    echo '<script>setTimeout(function() {
+                        window.location.href = "./admin-treatments.php";
+                    }, 2000);</script>';
+                }
+            }
+        }
+    }
+}
 ?>
 
 <div style="height: fit-content; min-height: 100lvh; background: #D9D9D9;">
@@ -25,7 +77,7 @@ $services = getAllChemicalServices();
                     Treatment</span>
                 <div
                     style="display: flex; flex-direction: column; gap: 0.875rem; background-color: white; padding: 1rem; border-bottom-right-radius: 1rem; border-bottom-left-radius: 1rem;">
-                    <form method="POST" action="./treatment-alternative.php" style="display: flex; gap: 1.5rem;">
+                    <form method="POST" action="./treatment-previous.php" style="display: flex; gap: 1.5rem;">
                         <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
                             <div
                                 style="display: grid; 	grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%;">
@@ -52,12 +104,13 @@ $services = getAllChemicalServices();
                                     <input type="hidden" name="attributes[]"
                                         value="<?php echo htmlspecialchars($attribute); ?>">
                                 <?php endforeach; ?>
+                                <input type="hidden" name="treatment_previous" value="1" />
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                 <span
-                                    style="text-align: center; color: #DC2626; font-size: 0.875rem; line-height: 1.25rem;"
-                                    id="treatment-error"></span>
-                                <button class="next-button" type="submit">Next</button>
+                                    style="text-align: center; <?php echo $errorMsg !== '' ? 'color: #DC2626;' : 'color: #059669;'; ?> font-size: 0.875rem; line-height: 1.25rem;"
+                                    id="treatment-error"><?php echo $errorMsg === '' ? $successMsg : $errorMsg; ?></span>
+                                <button class="next-button" type="submit">Submit</button>
                             </div>
                         </div>
                     </form>

@@ -1056,6 +1056,34 @@ function getAvailableStylists($serviceId, $date)
     return $availableStylists;
 }
 
+function getPopularStylists(): array
+{
+    global $conn;
+    $stylists = [];
+
+    $query = "SELECT 
+            u.id,
+            u.name,
+            u.img_path,
+            u.email,
+            COUNT(r.rating) AS review_count,
+            AVG(r.rating) AS average_rating
+        FROM reviews r
+        JOIN appointments a ON r.appointment_id = a.id
+        JOIN users u ON a.stylist_id = u.id
+        WHERE u.role = 'stylist'
+        GROUP BY u.id, u.name
+        ORDER BY average_rating DESC, review_count DESC;";
+
+    if ($r = mysqli_query($conn, $query)) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            $stylists[] = $row;
+        }
+    }
+
+    return $stylists;
+
+}
 
 function getStylistById(int $stylistId): array|null
 {

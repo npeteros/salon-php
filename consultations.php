@@ -42,44 +42,6 @@ $suitable = $consultation['status'] == 'Suitable' ? true : false;
                     <span
                         style="font-size: 1rem; font-weight: bold; line-height: 1.25rem; text-align: center; color: <?php echo $suitable ? 'green' : 'red'; ?>;"><?php echo $suitable ? "Note: This treatment is suitable for your hair." : "Note: This treatment is NOT suitable for your hair."; ?></span>
 
-                    <?php if (!$suitable): ?>
-                        <div class="divider"></div>
-                        <div style="display: flex; flex-direction: column; align-items: start; gap: 1rem; width: 100%;">
-                            <span style="font-weight: 700; font-size: 1.25rem; text-align: center;">Alternative Recommended
-                                Treatments:</span>
-                            <div
-                                style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%;">
-                                <?php
-                                if (empty($alternativeTreatments)) {
-                                    echo "<span style='font-size: 0.875rem; line-height: 1.25rem; text-align: center;'>No alternative treatments found. Please wait until a few months have passed.</span>";
-                                }
-
-                                foreach ($alternativeTreatments as $alternativeTreatment): ?>
-                                    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
-                                        <div style="border-radius: 0.375rem; display: flex; justify-content: space-between; padding: 1.5rem; background-color: rgb(229 229 229); cursor: pointer;"
-                                            onclick="window.open('./view-service.php?id=<?php echo $alternativeTreatment['id']; ?>', '_blank');"
-                                            target="_blank">
-                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                                <img src="./uploads/services/<?php echo $alternativeTreatment['img_path']; ?>"
-                                                    alt="Image" style="width: 3rem; height: 3rem; border-radius: 9999px;">
-                                                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                                                    <span
-                                                        style="font-size: 1.125rem; line-height: 1.75rem;"><?php echo $alternativeTreatment['name']; ?></span>
-                                                    <span
-                                                        style="font-size: 0.875rem; line-height: 1.25rem;"><?php echo strlen($alternativeTreatment['description']) > 35 ? substr($alternativeTreatment['description'], 0, 35) . '...' : $alternativeTreatment['description']; ?></span>
-                                                </div>
-                                            </div>
-                                            <span style="color: #49454F;">&#x20B1;
-                                                <?php echo $alternativeTreatment['price']; ?></span>
-                                        </div>
-                                        <span
-                                            style="font-size: 1rem; font-weight: bold; line-height: 1.25rem; opacity: 80%;">Note:
-                                            <?php echo $alternativeTreatment['reason']; ?></span>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
                     <div class="divider"></div>
                     <span style="font-weight: 700; font-size: 1.25rem">Hair Profile Information (For Stylist&apos;s
                         reference)</span>

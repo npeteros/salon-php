@@ -1,12 +1,14 @@
-<?php
-define('FILE_CSS', 'src/styles/dashboard.css');
+<?php define('FILE_CSS', 'src/styles/dashboard.css');
 include 'src/includes/header.php';
-if (!isset($_SESSION['user']))
+if
+(!isset($_SESSION['user']))
     header('Location: ./login.php');
 include 'src/api/functions.php';
-
 $popularServices = getPopularServices() ? array_slice(getPopularServices(), 0, 3) : [];
-$appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice(getAppointmentsByCustomer($_SESSION['user']['id']), 0, 3) : null;
+$appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ?
+    array_slice(getAppointmentsByCustomer($_SESSION['user']['id']), 0, 3) : null;
+$popularStylists = getPopularStylists()
+    ? array_slice(getPopularStylists(), 0, 3) : [];
 ?>
 
 <div style="height: fit-content; min-height: 100lvh; background: #D9D9D9;">
@@ -103,7 +105,8 @@ $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice
                         style="width: 75%; font-size: 3.75rem; line-height: 1; font-weight: 700; color: #A80011;">Pamper
                         yourself today!</span>
                     <button class="submit-consultation-button"
-                        onclick="window.location.href = './consultation-hair.php'">Submit a Consultation Now!</button>
+                        onclick="window.location.href = './consultation-hair.php'">Submit a Consultation
+                        Now!</button>
                 </div>
             </div>
 
@@ -132,81 +135,29 @@ $appointments = getAppointmentsByCustomer($_SESSION['user']['id']) ? array_slice
                         <?php endforeach; else
                         null; ?>
                 </div>
-                <div class="appointments-content-container">
-                    <div style="display: flex; flex-direction:column; gap: 1rem; width: 100%;">
-                        <div style="height: 100%; width: 100%; display: flex; flex-direction: column; gap: 1rem;">
-                            <span
-                                style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Appointments</span>
-                            <table style="width: 100%; background: #A80011;">
-                                <thead style="color: white;">
-                                    <tr>
-                                        <th style="padding: 0.5rem 0rem; font-weight: 400;">Staff</th>
-                                        <th style="font-weight: 400;">Service</th>
-                                        <th style="font-weight: 400;">Date</th>
-                                        <th style="font-weight: 400;">Time</th>
-                                        <th style="font-weight: 400;">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody style="background-color: white; text-align: center;">
-                                    <?php
-                                    if (isset($appointments)) {
-                                        foreach ($appointments as $appointment):
-                                            $dateTime = new DateTime($appointment['schedule']);
-                                            $date = $dateTime->format('Y-m-d');
-                                            $time = $dateTime->format('H:i A');
-
-                                            $color = 'background-color: rgb(115 115 115);';
-
-                                            switch ($appointment['status']) {
-                                                case 'pending':
-                                                    $color = 'background-color: rgb(115 115 115);';
-                                                    break;
-                                                case 'confirmed':
-                                                    $color = 'background-color: rgb(14 165 233);';
-                                                    break;
-                                                case 'completed':
-                                                    $color = 'background-color: rgb(34 197 94);';
-                                                    break;
-                                                case 'rescheduled':
-                                                    $color = 'background-color: rgb(234 179 8);';
-                                                    break;
-                                                case 'cancelled':
-                                                case 'noshow':
-                                                    $color = 'background-color: rgb(239 68 68);';
-                                                    break;
-                                                default:
-                                                    $color = 'background-color: rgb(115 115 115);';
-                                                    break;
-                                            }
-
-                                            ?>
-                                            <tr onclick="window.location.href = 'view-appointment.php?id=<?php echo $appointment['appointment_id']; ?>';"
-                                                class="appointment-row">
-                                                <td style="display: flex; justify-content: center; padding: 0.5rem 0;">
-                                                    <!-- <?php echo $appointment['stylist']; ?> -->
-                                                    <img src="./uploads/<?php echo $appointment['stylist_img']; ?>" alt="staff"
-                                                        style="width: 2rem; height: 2rem; border-radius: 9999px;">
-                                                </td>
-                                                <td><?php echo $appointment['service']; ?></td>
-                                                <td><?php echo $date; ?></td>
-                                                <td><?php echo $time; ?></td>
-                                                <td style="padding-left: 1rem; padding-right: 1rem; width: 9rem; ">
-                                                    <div
-                                                        style="<?php echo $color; ?> border-radius: 9999px; color: white; padding-top: 0.25rem; padding-bottom: 0.25rem;">
-                                                        <?php echo $appointment['status'] == "noshow" ? "No show" : ucfirst($appointment['status']); ?>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach;
-                                    } else
-                                        null; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- <div class="h-1/2 w-full">
-                            <span class="text-[#A80011] dark:text-white text-2xl font-medium">Consultations</span>
-                        </div> -->
-                    </div>
+                <div class="popular-services-container">
+                    <span style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Popular
+                        Stylists</span>
+                    <?php if (isset($popularStylists))
+                        foreach ($popularStylists as $stylist): ?>
+                            <div
+                                style="display: flex; padding: 1rem; justify-content: space-between; border-radius: 1rem; background-color: #ffffff;">
+                                <div style="display: flex; justify-content: space-between; width: 100%; cursor: pointer;"
+                                    onclick="window.location.href = './view-service.php?id=<?php echo $stylist['id']; ?>';">
+                                    <div style="display: flex; gap: 1rem; align-items: center; color: #000000;">
+                                        <img src="./uploads/<?php echo $stylist['img_path']; ?>" alt="Image"
+                                            style="width: 3rem; height: 3rem; border-radius: 9999px;">
+                                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                            <span style="font-weight: 500;"><?php echo $stylist['name']; ?></span>
+                                            <span
+                                                style="font-size: 0.875rem; line-height: 1.25rem;"><?php echo $stylist['email']; ?></span>
+                                        </div>
+                                    </div>
+                                    <span style="color: #49454F;"> <?php echo printStars(round($stylist['average_rating'])); ?></span>
+                                </div>
+                            </div>
+                        <?php endforeach; else
+                        null; ?>
                 </div>
             </div>
         </div>

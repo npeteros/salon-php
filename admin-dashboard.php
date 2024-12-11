@@ -34,145 +34,75 @@ $yearlyServiceSales = array_slice(getSalesByPeriod($appointments, 'yearly'), 0, 
 
         <div class="main-content-container">
             <div style="display: flex; flex-direction: column; gap: 1rem">
-                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span
-                                style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">General
-                                Sales
-                                Report</span>
-                            <div class="filter-container">
-                                <label for="filter">Filter by:</label>
-                                <select id="filter" onchange="filterTable()">
-                                    <option value="daily">Daily</option>
-                                    <option value="weekly">Weekly</option>
-                                    <option value="monthly">Monthly</option>
-                                    <option value="yearly">Yearly</option>
-                                    <option value="service">Service</option>
-                                </select>
-                            </div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Service
+                            Sales Report</span>
+                        <div class="filter-container">
+                            <label for="filter">Filter by:</label>
+                            <select id="serviceFilter" onchange="filterServiceSalesTable()">
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
                         </div>
+                    </div>
 
-                        <table class="sales-table">
-                            <thead>
-                                <tr>
-                                    <th>Date Range</th>
-                                    <th>Sales (PHP)</th>
-                                    <th>Appointments</th>
-                                </tr>
-                            </thead>
-                            <tbody id="salesTable">
-                                <?php
-                                foreach ($dailySales as $sale) {
+                    <table class="sales-table">
+                        <thead>
+                            <tr>
+                                <th>Date Range</th>
+                                <th>Service</th>
+                                <th>Sales (PHP)</th>
+                                <th>Appointments</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serviceSalesTable">
+                            <?php
+                            foreach ($dailyServiceSales as $date => $services) {
+                                foreach ($services as $service) {
                                     echo '<tr class="daily">
-                                    <td>' . $sale['date'] . '</td>
-                                    <td>&#x20B1; ' . number_format($sale['total_sales']) . '</td>
-                                    <td>' . $sale['total_appointments'] . '</td>
-                                </tr>';
+                                            <td>' . $service['date_range'] . '</td>
+                                            <td>' . $service['service'] . '</td>
+                                            <td>&#x20B1; ' . number_format($service['total_sales']) . '</td>
+                                            <td>' . $service['total_appointments'] . '</td>
+                                        </tr>';
                                 }
-                                foreach ($weeklySales as $sale) {
+                            }
+                            foreach ($weeklyServiceSales as $date => $services) {
+                                foreach ($services as $service) {
                                     echo '<tr class="weekly">
-                                    <td>' . $sale['week'] . '</td>
-                                    <td>&#x20B1; ' . $sale['total_sales'] . '</td>
-                                    <td>' . $sale['total_appointments'] . '</td>
-                                </tr>';
+                                            <td>' . $service['date_range'] . '</td>
+                                            <td>' . $service['service'] . '</td>
+                                            <td>&#x20B1; ' . number_format($service['total_sales']) . '</td>
+                                            <td>' . $service['total_appointments'] . '</td>
+                                        </tr>';
                                 }
-                                foreach ($monthlySales as $sale) {
+                            }
+                            foreach ($monthlyServiceSales as $date => $services) {
+                                foreach ($services as $service) {
                                     echo '<tr class="monthly">
-                                    <td>' . $sale['month'] . '</td>
-                                    <td>&#x20B1; ' . $sale['total_sales'] . '</td>
-                                    <td>' . $sale['total_appointments'] . '</td>
-                                </tr>';
+                                            <td>' . $service['date_range'] . '</td>
+                                            <td>' . $service['service'] . '</td>
+                                            <td>&#x20B1; ' . number_format($service['total_sales']) . '</td>
+                                            <td>' . $service['total_appointments'] . '</td>
+                                        </tr>';
                                 }
-                                foreach ($yearlySales as $sale) {
+                            }
+                            foreach ($yearlyServiceSales as $date => $services) {
+                                foreach ($services as $service) {
                                     echo '<tr class="yearly">
-                                    <td>' . $sale['year'] . '</td>
-                                    <td>&#x20B1; ' . $sale['total_sales'] . '</td>
-                                    <td>' . $sale['total_appointments'] . '</td>
-                                </tr>';
-                                }
-                                foreach ($serviceSales as $service => $sales) {
-                                    echo '<tr class="service">
-                                    <td>' . $sales['service'] . '</td>
-                                    <td>&#x20B1; ' . $sales['total_sales'] . '</td>
-                                    <td>' . $sales['total_appointments'] . '</td>
-                                </tr>';
-                                }
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span
-                                style="font-size: 1.5rem; line-height: 2rem; font-weight: 500; color: #A80011;">Service
-                                Sales Report</span>
-                            <div class="filter-container">
-                                <label for="filter">Filter by:</label>
-                                <select id="serviceFilter" onchange="filterServiceSalesTable()">
-                                    <option value="daily">Daily</option>
-                                    <option value="weekly">Weekly</option>
-                                    <option value="monthly">Monthly</option>
-                                    <option value="yearly">Yearly</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <table class="sales-table">
-                            <thead>
-                                <tr>
-                                    <th>Date Range</th>
-                                    <th>Service</th>
-                                    <th>Sales (PHP)</th>
-                                    <th>Appointments</th>
-                                </tr>
-                            </thead>
-                            <tbody id="serviceSalesTable">
-                                <?php
-                                foreach ($dailyServiceSales as $date => $services) {
-                                    foreach ($services as $service) {
-                                        echo '<tr class="daily">
                                             <td>' . $service['date_range'] . '</td>
                                             <td>' . $service['service'] . '</td>
                                             <td>&#x20B1; ' . number_format($service['total_sales']) . '</td>
                                             <td>' . $service['total_appointments'] . '</td>
                                         </tr>';
-                                    }
                                 }
-                                foreach ($weeklyServiceSales as $date => $services) {
-                                    foreach ($services as $service) {
-                                        echo '<tr class="weekly">
-                                            <td>' . $service['date_range'] . '</td>
-                                            <td>' . $service['service'] . '</td>
-                                            <td>&#x20B1; ' . number_format($service['total_sales']) . '</td>
-                                            <td>' . $service['total_appointments'] . '</td>
-                                        </tr>';
-                                    }
-                                }
-                                foreach ($monthlyServiceSales as $date => $services) {
-                                    foreach ($services as $service) {
-                                        echo '<tr class="monthly">
-                                            <td>' . $service['date_range'] . '</td>
-                                            <td>' . $service['service'] . '</td>
-                                            <td>&#x20B1; ' . number_format($service['total_sales']) . '</td>
-                                            <td>' . $service['total_appointments'] . '</td>
-                                        </tr>';
-                                    }
-                                }
-                                foreach ($yearlyServiceSales as $date => $services) {
-                                    foreach ($services as $service) {
-                                        echo '<tr class="yearly">
-                                            <td>' . $service['date_range'] . '</td>
-                                            <td>' . $service['service'] . '</td>
-                                            <td>&#x20B1; ' . number_format($service['total_sales']) . '</td>
-                                            <td>' . $service['total_appointments'] . '</td>
-                                        </tr>';
-                                    }
-                                }
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
+                            }
+                            ?>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="services-users-container">
                     <div class="popular-services-container" style="grid-column: span 5 / span 5;">
@@ -209,19 +139,6 @@ $yearlyServiceSales = array_slice(getSalesByPeriod($appointments, 'yearly'), 0, 
 </div>
 
 <script>
-    function filterTable() {
-        const filter = document.getElementById('filter').value;
-        const rows = document.querySelectorAll('#salesTable tr');
-
-        rows.forEach(row => {
-            if (row.classList.contains(filter)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    }
-
     function filterServiceSalesTable() {
         const filter = document.getElementById('serviceFilter').value;
         const rows = document.querySelectorAll('#serviceSalesTable tr');
@@ -235,10 +152,8 @@ $yearlyServiceSales = array_slice(getSalesByPeriod($appointments, 'yearly'), 0, 
         });
     }
 
-    document.getElementById("filter").value = "daily";
     document.getElementById("serviceFilter").value = "daily";
-
-    filterTable();
+    
     filterServiceSalesTable();
 </script>
 

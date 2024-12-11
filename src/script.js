@@ -257,14 +257,14 @@ $(document).ready(function () {
                         <div style="border-radius: 0.375rem; display: flex; padding: 1.5rem; background-color: white; cursor: pointer;">
                                 <div style="display: flex; gap: 0.5rem; ${!$("#servicesList").attr("data-userid") ? "width: 100%;" : "width: 100%;"}" onclick="window.location.href = './${link}?id=${service.id}';">
                                     <img src="./uploads/services/${service.img_path}" alt="Image" style="width: 3rem; height: 3rem; border-radius: 9999px;">
-                                    <div style="display: flex; flex-direction: column; gap: 0.25rem; width: 100%;">
+                                    <div style="display: flex; flex-direction: column; gap: 0.25rem; width: 9rem;">
                                         <span style="font-size: 1.125rem; line-height: 1.75rem;">${service.name}</span>
-                                        <span style="font-size: 0.875rem; line-height: 1.25rem;">${service.description.length > 35 ? service.description.substring(0, 35) + '...' : service.description}</span>
+                                        <span style="font-size: 0.875rem; line-height: 1.25rem; width: 100%;">${service.description.length > 35 ? service.description.substring(0, 35) + '...' : service.description}</span>
                                     </div>
                                 </div>
                                 <div style="display: flex; flex-direction: column;  align-items: flex-end; gap: 0.5rem;width: 6rem;">
                                     <span style="color: #49454F; text-align: left;">&#x20B1; ${service.price}</span>
-                                    ${!$("#servicesList").attr("data-userid") && service.chemical == 0 ? `<button onclick="window.location.href = './reserve-schedule.php?id=${service.id}'" style="background-color: #A80011; border: 0px; color: white; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; width: 10rem;">Reserve appointment</button>` : ''}
+                                    ${!$("#servicesList").attr("data-userid") && service.chemical == 0 ? `<button onclick="testFunction(${service.id})" style="background-color: #A80011; border: 0px; color: white; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; width: 10rem;">Reserve appointment</button>` : ''}
                                 </div>
                         </div>`
             );
