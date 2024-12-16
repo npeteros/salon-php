@@ -120,6 +120,20 @@ $(document).ready(function () {
         changingRoles = !changingRoles;
     })
 
+    $('.star').on('click', function () {
+        const index = $(this).index();
+        const rating = index + 1;
+
+        // Update the hidden input value
+        $('#rating').val(rating);
+
+        // Reset all stars
+        $('.star').removeClass('selected');
+
+        // Highlight the selected stars
+        $('.star').slice(0, rating).addClass('selected');
+    });
+
     if ($("#stylistsList").length) {
         $.ajax({
             type: "GET",

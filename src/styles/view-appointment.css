@@ -308,3 +308,25 @@ textarea {
     width: 100%;
     opacity: 100%;
 }
+
+.rating-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.star {
+    width: 1rem;
+    height: 1rem;
+    color: rgb(209, 213, 219);
+    cursor: pointer;
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+svg:hover {
+    transform: scale(1.1);
+}
+
+.star.selected {
+    color: rgb(253, 224, 71);
+}
