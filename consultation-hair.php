@@ -137,8 +137,8 @@ $treatments = getAllTreatments();
                                         <label for="normal">Normal</label>
                                     </div>
                                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="radio" name="hair" id="h-chemical" value="Chemically Treated"
-                                        <?php echo isset($_POST['hair']) ? $_POST['hair'] == "Chemically Treated" ? "checked" : "" : null; ?>
+                                        <input type="radio" name="hair" id="h-chemical" value="chemical"
+                                        <?php echo isset($_POST['hair']) ? $_POST['hair'] == "chemical" ? "checked" : "" : null; ?>
                                             class="form-input" />
                                         <label for="chemical">Chemically Treated</label>
                                     </div>
